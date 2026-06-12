@@ -16,7 +16,7 @@ const stepCopy = {
   1: {
     eyebrow: "شروع انتخاب",
     title: "نوع لباس را انتخاب کنید",
-    description: "ابتدا جنسیت و سپس مدل لباس را تعیین کنید تا مسیر طراحی دقیق‌تر شود."
+    description: "ابتدا جنسیت و سپس نوع لباس را تعیین کنید تا مسیر طراحی دقیق‌تر شود."
   },
   2: {
     eyebrow: "انتخاب متریال",
@@ -63,7 +63,7 @@ export function DesignStepper() {
         <CardHeader className="border-b border-white/60 bg-white/35">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="text-xs font-semibold text-rose-600">{copy.eyebrow}</p>
+              <p className="text-xs font-semibold text-rose-600 pb-10">{copy.eyebrow}</p>
               <CardTitle className="mt-2">{copy.title}</CardTitle>
               <CardDescription>{copy.description}</CardDescription>
             </div>
