@@ -30,8 +30,8 @@ export function StepSketch({ previewUrl, description, onFileChange, onDescriptio
         onDragOver={(event) => event.preventDefault()}
         onDrop={handleDrop}
         className={cn(
-          "group flex min-h-72 cursor-pointer flex-col items-center justify-center rounded-[2rem] border border-dashed border-lilac-200 bg-white/45 p-5 text-center backdrop-blur-xl transition-all hover:border-lilac-300 hover:bg-white/75 hover:shadow-soft-lilac",
-          previewUrl && "border-solid border-lilac-300 bg-white/70"
+          "group flex min-h-72 cursor-pointer flex-col items-center justify-center rounded-[2rem] border border-dashed border-rose-200 bg-white/45 p-5 text-center backdrop-blur-xl transition-all hover:border-rose-300 hover:bg-white/75 hover:shadow-soft-rose",
+          previewUrl && "border-solid border-rose-300 bg-white/70"
         )}
       >
         <input
@@ -44,7 +44,7 @@ export function StepSketch({ previewUrl, description, onFileChange, onDescriptio
           <img src={previewUrl} alt="پیش‌نمایش اسکچ بارگذاری‌شده" className="h-56 w-full rounded-[1.5rem] object-cover" />
         ) : (
           <>
-            <span className="mb-4 flex size-14 items-center justify-center rounded-full bg-lilac-100 text-lilac-500 transition group-hover:scale-105">
+            <span className="mb-4 flex size-14 items-center justify-center rounded-full bg-rose-100 text-rose-500 transition group-hover:scale-105">
               <HiOutlineArrowUpTray className="size-7" />
             </span>
             <span className="text-sm font-semibold text-foreground">اسکچ دستی را اینجا رها کنید</span>

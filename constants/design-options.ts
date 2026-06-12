@@ -32,7 +32,7 @@ export const GARMENT_TYPES: GarmentType[] = [
 ];
 
 export const FABRIC_OPTIONS: FabricOption[] = [
-  { id: "solid-lilac", kind: "solid", label: "یاسی", hex: "#C8A2C8" },
+  { id: "solid-rose", kind: "solid", label: "یاسی", hex: "#C8A2C8" },
   { id: "solid-ivory", kind: "solid", label: "استخوانی", hex: "#F8F4EC" },
   { id: "solid-sage", kind: "solid", label: "مریم‌گلی", hex: "#BFCAB5" },
   { id: "solid-rose", kind: "solid", label: "رز ملایم", hex: "#EBC6CF" },

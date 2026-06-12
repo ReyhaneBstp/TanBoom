@@ -48,7 +48,7 @@ export function DesignStepper() {
     <div className="mx-auto w-full max-w-5xl">
       <div className="mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-end">
         <div className="max-w-2xl">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/55 px-3 py-1.5 text-xs font-semibold text-lilac-600 backdrop-blur-xl">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/55 px-3 py-1.5 text-xs font-semibold text-rose-600 backdrop-blur-xl">
             <HiOutlineSparkles className="size-4" />
             طراحی لباس سفارشی
           </div>
@@ -67,7 +67,7 @@ export function DesignStepper() {
         <CardHeader className="border-b border-white/60 bg-white/35">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="text-xs font-semibold text-lilac-600">{copy.eyebrow}</p>
+              <p className="text-xs font-semibold text-rose-600">{copy.eyebrow}</p>
               <CardTitle className="mt-2">{copy.title}</CardTitle>
               <CardDescription>{copy.description}</CardDescription>
             </div>

@@ -15,7 +15,7 @@ export function StepResult({ images, enhancedPrompt, onRestart }: StepResultProp
     <div className="space-y-5">
       <div className="grid gap-4 md:grid-cols-3">
         {images.map((image) => (
-          <article key={image.id} className="overflow-hidden rounded-[2rem] border border-white/80 bg-white/55 p-3 shadow-soft-lilac backdrop-blur-xl">
+          <article key={image.id} className="overflow-hidden rounded-[2rem] border border-white/80 bg-white/55 p-3 shadow-soft-rose backdrop-blur-xl">
             <img src={image.src} alt={image.title} className="aspect-[4/5] w-full rounded-[1.55rem] object-cover" />
             <div className="flex items-center justify-between px-2 py-3">
               <div>
@@ -27,7 +27,7 @@ export function StepResult({ images, enhancedPrompt, onRestart }: StepResultProp
               <a
                 href={image.src}
                 download={`${image.id}-custom-design.svg`}
-                className="flex size-9 items-center justify-center rounded-full bg-white/80 text-lilac-500 transition hover:bg-lilac-100"
+                className="flex size-9 items-center justify-center rounded-full bg-white/80 text-rose-500 transition hover:bg-rose-100"
                 aria-label={`دانلود ${image.title}`}
               >
                 <HiOutlineArrowDownTray className="size-5" />
@@ -41,7 +41,7 @@ export function StepResult({ images, enhancedPrompt, onRestart }: StepResultProp
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <HiOutlineSparkles className="size-5 text-lilac-500" />
+              <HiOutlineSparkles className="size-5 text-rose-500" />
               خروجی آماده تحویل به خیاط
             </h3>
             <p className="mt-1 text-xs leading-6 text-muted-foreground">

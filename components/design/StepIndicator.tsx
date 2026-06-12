@@ -18,21 +18,20 @@ export function StepIndicator({ currentStep, completedSteps }: StepIndicatorProp
             key={step.id}
             className={cn(
               "rounded-[1.15rem] px-2.5 py-2.5 text-center transition-all",
-              isActive && "bg-white shadow-soft-lilac",
-              isCompleted && !isActive && "bg-lilac-100/70"
+              isActive && "bg-white shadow-soft-rose",
+              isCompleted && !isActive && "bg-rose-100/70"
             )}
           >
             <div
               className={cn(
                 "mx-auto mb-1 flex size-7 items-center justify-center rounded-full text-xs font-semibold",
-                isActive ? "bg-lilac-300 text-white" : "bg-white/70 text-muted-foreground",
-                isCompleted && !isActive && "bg-lilac-300/80 text-white"
+                isActive ? "bg-rose-300 text-white" : "bg-white/70 text-muted-foreground",
+                isCompleted && !isActive && "bg-rose-300/80 text-white"
               )}
             >
               {step.id}
             </div>
-            <p className="truncate text-[11px] font-semibold text-foreground">{step.title}</p>
-            <p className="hidden truncate text-[10px] text-muted-foreground sm:block">{step.caption}</p>
+            <p className="truncate text-[11px] font-semibold text-foreground mt-1">{step.title}</p>
           </div>
         );
       })}

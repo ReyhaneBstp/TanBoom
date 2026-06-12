@@ -52,7 +52,7 @@ export function StepGender({ gender, garmentTypeId, onSelectGender, onSelectGarm
         </div>
 
         {!gender ? (
-          <div className="rounded-[1.4rem] border border-dashed border-lilac-200 bg-white/40 px-4 py-5 text-center text-xs text-muted-foreground backdrop-blur-xl">
+          <div className="rounded-[1.4rem] border border-dashed border-rose-200 bg-white/40 px-4 py-5 text-center text-xs text-muted-foreground backdrop-blur-xl">
             ابتدا یکی از گزینه‌های زنانه یا مردانه را انتخاب کنید.
           </div>
         ) : null}

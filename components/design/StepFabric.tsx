@@ -35,7 +35,7 @@ export function StepFabric({ activeFabricKind, selectedFabricIds, onChangeKind, 
               onClick={() => onChangeKind(tab.id)}
               className={cn(
                 "flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition",
-                activeFabricKind === tab.id ? "bg-white text-lilac-600 shadow-soft-lilac" : "text-muted-foreground"
+                activeFabricKind === tab.id ? "bg-white text-rose-600 shadow-soft-rose" : "text-muted-foreground"
               )}
             >
               <Icon className="size-4" />
@@ -56,8 +56,8 @@ export function StepFabric({ activeFabricKind, selectedFabricIds, onChangeKind, 
                 type="button"
                 onClick={() => onToggleFabric(fabric.id)}
                 className={cn(
-                  "group rounded-[1.5rem] border border-white/80 bg-white/45 p-3 text-center backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:bg-white/75 hover:shadow-soft-lilac",
-                  selected && "border-lilac-300 bg-white shadow-soft-lilac ring-4 ring-lilac-200/35"
+                  "group rounded-[1.5rem] border border-white/80 bg-white/45 p-3 text-center backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:bg-white/75 hover:shadow-soft-rose",
+                  selected && "border-rose-300 bg-white shadow-soft-rose ring-4 ring-rose-200/35"
                 )}
               >
                 <span
@@ -85,8 +85,8 @@ export function StepFabric({ activeFabricKind, selectedFabricIds, onChangeKind, 
                 type="button"
                 onClick={() => onToggleFabric(fabric.id)}
                 className={cn(
-                  "min-w-36 rounded-[1.6rem] border border-white/80 bg-white/45 p-2.5 text-right backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:bg-white/75 hover:shadow-soft-lilac",
-                  selected && "border-lilac-300 bg-white shadow-soft-lilac ring-4 ring-lilac-200/35"
+                  "min-w-36 rounded-[1.6rem] border border-white/80 bg-white/45 p-2.5 text-right backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:bg-white/75 hover:shadow-soft-rose",
+                  selected && "border-rose-300 bg-white shadow-soft-rose ring-4 ring-rose-200/35"
                 )}
               >
                 <span
@@ -94,7 +94,7 @@ export function StepFabric({ activeFabricKind, selectedFabricIds, onChangeKind, 
                   style={{ backgroundImage: `url("${fabric.imageData}")` }}
                 >
                   {selected ? (
-                    <span className="absolute left-3 top-3 flex size-7 items-center justify-center rounded-full bg-lilac-300 text-white">
+                    <span className="absolute left-3 top-3 flex size-7 items-center justify-center rounded-full bg-rose-300 text-white">
                       <HiOutlineCheck className="size-4" />
                     </span>
                   ) : null}
