@@ -14,7 +14,7 @@ import { StepSketch } from "./StepSketch";
 
 const stepCopy = {
   1: {
-    eyebrow: "شروع طراحی",
+    eyebrow: "شروع انتخاب",
     title: "نوع لباس را انتخاب کنید",
     description: "ابتدا جنسیت و سپس مدل لباس را تعیین کنید تا مسیر طراحی دقیق‌تر شود."
   },
@@ -48,13 +48,9 @@ export function DesignStepper() {
     <div className="mx-auto w-full max-w-5xl">
       <div className="mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-end">
         <div className="max-w-2xl">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/55 px-3 py-1.5 text-xs font-semibold text-rose-600 backdrop-blur-xl">
-            <HiOutlineSparkles className="size-4" />
-            طراحی لباس سفارشی
-          </div>
-          <h1 className="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">آتلیه مینیمال طراحی لباس</h1>
-          <p className="mt-4 max-w-xl text-sm leading-8 text-muted-foreground">
-            یک مسیر پنج‌مرحله‌ای شفاف برای تبدیل ایده، پارچه و اسکچ اولیه به خروجی تصویری چندنما.
+          <h1 className="text-2xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">طراحی لباسی نو؛ </h1>
+          <p className="mt-4 text-2xl leading-2 text-muted-foreground">
+           با روایتی از سمت تو ...
           </p>
         </div>
 
