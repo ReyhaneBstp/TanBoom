@@ -1,12 +1,11 @@
 import {
-  HiOutlineBriefcase,
-  HiOutlineCake,
-  HiOutlineShoppingBag,
-  HiOutlineSparkles,
-  HiOutlineSquare2Stack,
-  HiOutlineUserCircle
-} from "react-icons/hi2";
-
+  GiArmoredPants,
+  GiTShirt,
+  GiSkirt,
+  GiOutbackHat,
+  GiPirateCoat,
+  GiLargeDress,
+} from "react-icons/gi";
 import type { GarmentType } from "@/types/design";
 
 interface GarmentIconProps {
@@ -16,12 +15,12 @@ interface GarmentIconProps {
 
 export function GarmentIcon({ icon, className }: GarmentIconProps) {
   const Icon = {
-    shirt: HiOutlineSparkles,
-    pants: HiOutlineSquare2Stack,
-    skirt: HiOutlineCake,
-    hat: HiOutlineUserCircle,
-    coat: HiOutlineBriefcase,
-    dress: HiOutlineShoppingBag
+    shirt: GiTShirt,
+    pants: GiArmoredPants,
+    skirt: GiSkirt,
+    hat: GiOutbackHat,
+    coat: GiPirateCoat,
+    dress: GiLargeDress,
   }[icon];
 
   return <Icon className={className} />;

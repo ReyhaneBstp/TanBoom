@@ -35,7 +35,7 @@ export function OptionCard({
       <div className="flex w-full items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
           <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            {icon && <span className="text-2xl text-rose-500">{icon}</span>}
+            {icon && <span className="text-2xl text-rose-400">{icon}</span>}
             {title}
           </span>
           {description && (
@@ -46,7 +46,7 @@ export function OptionCard({
         </div>
 
         {selected && (
-          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-rose-300 text-white shadow-sm">
+          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-rose-400/90 text-white shadow-sm">
             <HiOutlineCheck className="size-4" />
           </span>
         )}

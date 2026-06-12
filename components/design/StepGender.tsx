@@ -1,9 +1,9 @@
-import { HiOutlineUser, HiOutlineUsers } from "react-icons/hi2";
 import { LuShirt } from "react-icons/lu";
 import { GENDER_OPTIONS, GARMENT_TYPES } from "@/constants/design-options";
 import type { Gender } from "@/types/design";
 import { GarmentIcon } from "./GarmentIcon";
 import { OptionCard } from "./OptionCard";
+import { GiFemale, GiMale } from "react-icons/gi";
 
 interface StepGenderProps {
   gender: Gender | null;
@@ -29,9 +29,9 @@ export function StepGender({ gender, garmentTypeId, onSelectGender, onSelectGarm
               onClick={() => onSelectGender(option.id)}
               icon={
                 option.id === "women" ? (
-                  <HiOutlineUsers className="size-6" />
+                  <GiFemale className="size-6" />
                 ) : (
-                  <HiOutlineUser className="size-6" />
+                  <GiMale className="size-6" />
                 )
               }
               className="!rounded-2xl !p-5 !shadow-sm hover:!shadow-md transition-all duration-200"
