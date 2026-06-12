@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 250 12% 18%;
+    --border: 300 24% 88%;
+    --input: 300 24% 88%;
+    --ring: 300 33% 71%;
+    --primary: 300 33% 71%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 300 20% 96%;
+    --muted-foreground: 260 8% 44%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-white font-vazir text-foreground antialiased;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply border border-white/70 bg-white/60 shadow-glass backdrop-blur-2xl;
+  }
+
+  .glass-chip {
+    @apply border border-white/70 bg-white/55 backdrop-blur-xl transition-all duration-300;
+  }
+
+  .hide-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

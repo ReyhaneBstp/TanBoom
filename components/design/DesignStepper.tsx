@@ -1,0 +1,131 @@
+"use client";
+
+import { HiOutlineArrowLeft, HiOutlineArrowRight, HiOutlineSparkles } from "react-icons/hi2";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDesignLogic } from "@/hooks/useDesignLogic";
+import { StepFabric } from "./StepFabric";
+import { StepGender } from "./StepGender";
+import { StepIndicator } from "./StepIndicator";
+import { StepProcessing } from "./StepProcessing";
+import { StepResult } from "./StepResult";
+import { StepSketch } from "./StepSketch";
+
+const stepCopy = {
+  1: {
+    eyebrow: "شروع طراحی",
+    title: "نوع لباس را انتخاب کنید",
+    description: "ابتدا جنسیت و سپس مدل لباس را تعیین کنید تا مسیر طراحی دقیق‌تر شود."
+  },
+  2: {
+    eyebrow: "انتخاب متریال",
+    title: "پارچه‌های دلخواه را اضافه کنید",
+    description: "رنگ‌های ساده و طرح‌های پارچه‌ای می‌توانند هم‌زمان در طراحی نهایی استفاده شوند."
+  },
+  3: {
+    eyebrow: "اسکچ و جزئیات",
+    title: "طرح پایه و توضیح کامل را وارد کنید",
+    description: "اسکچ دستی و توضیحات شما مبنای پرامپت دقیق تولید تصویر قرار می‌گیرد."
+  },
+  4: {
+    eyebrow: "پردازش هوشمند",
+    title: "ساخت پرامپت و شبیه‌سازی تولید تصویر",
+    description: "فرانت‌اند داده‌ها را به پرامپت قابل ارسال به Image Generation API تبدیل می‌کند."
+  },
+  5: {
+    eyebrow: "تحویل نهایی",
+    title: "خروجی چندنما برای خیاط آماده است",
+    description: "نماهای روبه‌رو، پشت و کنار برای بررسی فرم و جزئیات دوخت نمایش داده می‌شوند."
+  }
+} as const;
+
+export function DesignStepper() {
+  const logic = useDesignLogic();
+  const copy = stepCopy[logic.currentStep as keyof typeof stepCopy];
+
+  return (
+    <div className="mx-auto w-full max-w-5xl">
+      <div className="mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-end">
+        <div className="max-w-2xl">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/55 px-3 py-1.5 text-xs font-semibold text-lilac-600 backdrop-blur-xl">
+            <HiOutlineSparkles className="size-4" />
+            طراحی لباس سفارشی
+          </div>
+          <h1 className="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">آتلیه مینیمال طراحی لباس</h1>
+          <p className="mt-4 max-w-xl text-sm leading-8 text-muted-foreground">
+            یک مسیر پنج‌مرحله‌ای شفاف برای تبدیل ایده، پارچه و اسکچ اولیه به خروجی تصویری چندنما.
+          </p>
+        </div>
+
+        <div className="w-full lg:w-[28rem]">
+          <StepIndicator currentStep={logic.currentStep} completedSteps={logic.completedSteps} />
+        </div>
+      </div>
+
+      <Card className="overflow-hidden">
+        <CardHeader className="border-b border-white/60 bg-white/35">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold text-lilac-600">{copy.eyebrow}</p>
+              <CardTitle className="mt-2">{copy.title}</CardTitle>
+              <CardDescription>{copy.description}</CardDescription>
+            </div>
+            <span className="w-fit rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+              مرحله {logic.currentStep} از ۵
+            </span>
+          </div>
+        </CardHeader>
+
+        <CardContent className="min-h-[28rem] pt-5 sm:pt-6">
+          {logic.currentStep === 1 ? (
+            <StepGender
+              gender={logic.formState.gender}
+              garmentTypeId={logic.formState.garmentTypeId}
+              onSelectGender={logic.selectGender}
+              onSelectGarment={logic.selectGarment}
+            />
+          ) : null}
+
+          {logic.currentStep === 2 ? (
+            <StepFabric
+              activeFabricKind={logic.activeFabricKind}
+              selectedFabricIds={logic.formState.selectedFabricIds}
+              onChangeKind={logic.setActiveFabricKind}
+              onToggleFabric={logic.toggleFabric}
+            />
+          ) : null}
+
+          {logic.currentStep === 3 ? (
+            <StepSketch
+              previewUrl={logic.formState.sketch.previewUrl}
+              description={logic.formState.sketch.description}
+              onFileChange={logic.updateSketchFile}
+              onDescriptionChange={logic.updateDescription}
+            />
+          ) : null}
+
+          {logic.currentStep === 4 ? <StepProcessing enhancedPrompt={logic.enhancedPrompt} isGenerating={logic.isGenerating} /> : null}
+
+          {logic.currentStep === 5 ? (
+            <StepResult images={logic.generatedImages} enhancedPrompt={logic.enhancedPrompt} onRestart={logic.restart} />
+          ) : null}
+        </CardContent>
+
+        {logic.currentStep < 4 ? (
+          <div className="flex flex-col-reverse gap-3 border-t border-white/60 bg-white/35 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+            <Button type="button" variant="ghost" onClick={logic.goBack} disabled={!logic.canGoBack}>
+              <HiOutlineArrowRight className="size-4" />
+              بازگشت
+            </Button>
+
+            <Button type="button" onClick={logic.goNext} disabled={!logic.canGoNext || logic.isGenerating}>
+              {logic.currentStep === 3 ? "ساخت پرامپت" : "ادامه"}
+              <HiOutlineArrowLeft className="size-4" />
+            </Button>
+          </div>
+        ) : null}
+      </Card>
+    </div>
+  );
+}
