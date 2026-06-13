@@ -52,4 +52,5 @@ export interface EnhancedPromptPayload {
   selectedFabrics: FabricOption[];
   description: string;
   sketchPreviewUrl: string | null;
+  fabricAssignments: Record<string, string>; // جدید
 }

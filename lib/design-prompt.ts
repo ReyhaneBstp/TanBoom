@@ -1,9 +1,14 @@
-import type { EnhancedPromptPayload, FabricOption, GeneratedDesignImage, PatternedFabric, SolidFabric } from "@/types/design";
+import type {
+  EnhancedPromptPayload,
+  GeneratedDesignImage,
+  SolidFabric,
+  PatternedFabric,
+} from "@/types/design";
 
 const angleMap = [
   { id: "front", title: "نمای روبه‌رو", angle: "front view" },
   { id: "back", title: "نمای پشت", angle: "back view" },
-  { id: "side", title: "نمای کنار", angle: "side view" }
+  { id: "side", title: "نمای کنار", angle: "side view" },
 ] as const;
 
 const createResultSvg = (title: string, accent: string, garmentLabel: string) => {
@@ -35,44 +40,70 @@ const createResultSvg = (title: string, accent: string, garmentLabel: string) =>
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 };
 
-const isSolidFabric = (fabric: FabricOption): fabric is SolidFabric => fabric.kind === "solid";
-
-const isPatternedFabric = (fabric: FabricOption): fabric is PatternedFabric => fabric.kind === "patterned";
-
 export function buildEnhancedPrompt(payload: EnhancedPromptPayload) {
-  const solidFabrics = payload.selectedFabrics.filter(isSolidFabric);
-  const patternedFabrics = payload.selectedFabrics.filter(isPatternedFabric);
-  const solidPrompt = solidFabrics
-    .map((fabric) => `${fabric.label} با کد رنگ ${fabric.hex}`)
-    .join("، ");
-  const patternedPrompt = patternedFabrics
-    .map((fabric) => `${fabric.label}: ${fabric.imageData}`)
-    .join(" | ");
+  const solidFabrics = payload.selectedFabrics.filter(
+    (f) => f.kind === "solid"
+  ) as SolidFabric[];
+  const patternedFabrics = payload.selectedFabrics.filter(
+    (f) => f.kind === "patterned"
+  ) as PatternedFabric[];
 
-  return [
+  const solidPrompt = solidFabrics
+    .map((fabric) => `${fabric.label} (${fabric.hex})`)
+    .join("، ");
+
+  const assignmentLines = payload.selectedFabrics
+    .map((fabric) => {
+      const part = payload.fabricAssignments?.[fabric.id]?.trim();
+      if (!part) return null;
+      if (fabric.kind === "solid") {
+        const solid = fabric as SolidFabric;
+        return `Use solid color ${solid.hex} for ${part}.`;
+      } else {
+        return `Use pattern image file '${fabric.id}' for ${part}.`;
+      }
+    })
+    .filter(Boolean);
+
+  const basePrompt = [
     "Image Generation API prompt:",
     `Create a minimal, elegant custom clothing design for ${payload.genderLabel}.`,
     `Garment type: ${payload.garmentType.label}.`,
     `User design details: ${payload.description}.`,
-    solidPrompt ? `Use solid fabric colors exactly as hex values: ${solidPrompt}.` : "",
-    patternedPrompt ? `Use these patterned fabric image data references: ${patternedPrompt}.` : "",
-    payload.sketchPreviewUrl ? "Use the uploaded hand-drawn sketch as the base silhouette and construction reference." : "",
+    solidPrompt ? `Use solid fabric colors exactly as: ${solidPrompt}.` : "",
+    payload.sketchPreviewUrl
+      ? "Use the uploaded hand-drawn sketch as the base silhouette and construction reference."
+      : "",
     "Generate multiple angles for a tailor: front, back, and side views.",
     "Style: clean atelier technical fashion board, soft rose glassmorphism mood, white background, high-detail seams, collar, cuffs, fabric placement, and construction clarity.",
-    "Avoid mannequins, faces, logos, busy backgrounds, and unrelated accessories."
+    "Avoid mannequins, faces, logos, busy backgrounds, and unrelated accessories.",
   ]
     .filter(Boolean)
     .join("\n");
+
+  if (assignmentLines.length > 0) {
+    return [
+      basePrompt,
+      "Specific fabric placement instructions:",
+      ...assignmentLines,
+    ].join("\n");
+  }
+
+  return basePrompt;
 }
 
-export function createMockResultImages(payload: EnhancedPromptPayload): GeneratedDesignImage[] {
-  const firstSolid = payload.selectedFabrics.find(isSolidFabric);
+export function createMockResultImages(
+  payload: EnhancedPromptPayload
+): GeneratedDesignImage[] {
+  const firstSolid = payload.selectedFabrics.find(
+    (f) => f.kind === "solid"
+  ) as SolidFabric | undefined;
   const accent = firstSolid?.hex ?? "#C8A2C8";
 
   return angleMap.map((item) => ({
     id: item.id,
     angle: item.angle,
     title: item.title,
-    src: createResultSvg(item.title, accent, payload.garmentType.label)
+    src: createResultSvg(item.title, accent, payload.garmentType.label),
   }));
 }

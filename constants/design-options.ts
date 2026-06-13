@@ -1,21 +1,6 @@
-import type { FabricOption, GarmentType, Gender } from "@/types/design";
-
-const createPatternSvg = (primary: string, secondary: string, motif: "waves" | "dots" | "grid" | "floral") => {
-  const motifMarkup = {
-    waves: `<path d="M0 44 C28 20 52 68 80 44 S132 20 160 44" fill="none" stroke="${secondary}" stroke-width="10" stroke-linecap="round" opacity=".82"/><path d="M0 92 C28 68 52 116 80 92 S132 68 160 92" fill="none" stroke="${secondary}" stroke-width="8" stroke-linecap="round" opacity=".52"/>`,
-    dots: `<g fill="${secondary}" opacity=".78"><circle cx="28" cy="28" r="9"/><circle cx="78" cy="58" r="6"/><circle cx="126" cy="30" r="8"/><circle cx="42" cy="112" r="7"/><circle cx="118" cy="108" r="10"/></g>`,
-    grid: `<g stroke="${secondary}" stroke-width="6" opacity=".48"><path d="M40 0v160M88 0v160M136 0v160M0 40h160M0 88h160M0 136h160"/></g>`,
-    floral: `<g fill="${secondary}" opacity=".72"><path d="M76 44c12-24 34-12 20 8 24-12 34 12 8 20 22 14 6 34-12 16-8 26-34 18-22-6-24 12-34-12-8-20-22-14-6-34 14-18Z"/><path d="M28 102c9-18 26-9 15 6 18-9 26 9 6 15 17 11 5 26-9 12-6 20-26 14-17-5-18 9-26-9-6-15-17-11-5-26 11-14Z"/></g>`
-  }[motif];
-
-  return `data:image/svg+xml;utf8,${encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><rect width="160" height="160" rx="32" fill="${primary}"/><circle cx="132" cy="18" r="52" fill="#fff" opacity=".2"/>${motifMarkup}</svg>`
-  )}`;
-};
-
-export const GENDER_OPTIONS: Array<{ id: Gender; label: string; description: string }> = [
-  { id: "women", label: "زنانه", description: "فرم‌های لطیف، ظریف و آزاد" },
-  { id: "men", label: "مردانه", description: "فرم‌های تمیز، مینیمال و کاربردی" }
+export const GENDER_OPTIONS = [
+  { id: "women" as const, label: "زنانه", description: "پوشاک بانوان" },
+  { id: "men" as const, label: "مردانه", description: "پوشاک آقایان" },
 ];
 
 export const GARMENT_TYPES: GarmentType[] = [
@@ -31,43 +16,79 @@ export const GARMENT_TYPES: GarmentType[] = [
   { id: "men-hat", gender: "men", label: "کلاه", icon: "hat" }
 ];
 
-export const FABRIC_OPTIONS: FabricOption[] = [
-  { id: "solid-rose", kind: "solid", label: "یاسی", hex: "#C8A2C8" },
-  { id: "solid-ivory", kind: "solid", label: "استخوانی", hex: "#F8F4EC" },
-  { id: "solid-sage", kind: "solid", label: "مریم‌گلی", hex: "#BFCAB5" },
-  { id: "solid-rose", kind: "solid", label: "رز ملایم", hex: "#EBC6CF" },
-  { id: "solid-sky", kind: "solid", label: "آبی مه‌آلود", hex: "#C9DDF2" },
-  { id: "solid-charcoal", kind: "solid", label: "زغالی", hex: "#3D3A40" },
-  {
-    id: "pattern-waves",
-    kind: "patterned",
-    label: "موج یاسی",
-    imageData: createPatternSvg("#F6EAF7", "#B47AB4", "waves")
-  },
+export const STEPPER_STEPS = [
+  { id: 1, title: "انتخاب نوع" },
+  { id: 2, title: "انتخاب پارچه" },
+  { id: 3, title: "اسکچ و توضیح" },
+  { id: 4, title: "پردازش" },
+  { id: 5, title: "نتیجه" },
+];
+
+import type { GarmentType, PatternedFabric } from "@/types/design";
+
+const createDotsSvg = () => `
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect width="200" height="200" fill="#fdf2f8"/>
+  <circle cx="30" cy="30" r="12" fill="#db2777" opacity="0.6"/>
+  <circle cx="100" cy="60" r="14" fill="#db2777" opacity="0.7"/>
+  <circle cx="70" cy="140" r="12" fill="#db2777" opacity="0.5"/>
+  <circle cx="150" cy="30" r="16" fill="#db2777" opacity="0.55"/>
+  <circle cx="160" cy="150" r="13" fill="#db2777" opacity="0.65"/>
+  <circle cx="30" cy="180" r="14" fill="#db2777" opacity="0.7"/>
+</svg>`;
+
+const createStripesSvg = () => `
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect width="200" height="200" fill="#fef2f2"/>
+  <line x1="0" y1="20" x2="200" y2="20" stroke="#b91c1c" stroke-width="12" opacity="0.6"/>
+  <line x1="0" y1="70" x2="200" y2="70" stroke="#b91c1c" stroke-width="14" opacity="0.5"/>
+  <line x1="0" y1="120" x2="200" y2="120" stroke="#b91c1c" stroke-width="16" opacity="0.55"/>
+  <line x1="0" y1="170" x2="200" y2="170" stroke="#b91c1c" stroke-width="12" opacity="0.5"/>
+</svg>`;
+
+const createFloralSvg = () => `
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect width="200" height="200" fill="#ecfdf5"/>
+  <circle cx="50" cy="50" r="20" fill="#10b981" opacity="0.45"/>
+  <circle cx="50" cy="50" r="8" fill="#facc15" opacity="0.7"/>
+  <circle cx="140" cy="70" r="18" fill="#10b981" opacity="0.4"/>
+  <circle cx="140" cy="70" r="7" fill="#facc15" opacity="0.65"/>
+  <circle cx="90" cy="140" r="22" fill="#10b981" opacity="0.45"/>
+  <circle cx="90" cy="140" r="9" fill="#facc15" opacity="0.7"/>
+</svg>`;
+
+const createPlaidSvg = () => `
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect width="200" height="200" fill="#f1f5f9"/>
+  <line x1="0" y1="0" x2="200" y2="200" stroke="#475569" stroke-width="6" opacity="0.3"/>
+  <line x1="200" y1="0" x2="0" y2="200" stroke="#475569" stroke-width="6" opacity="0.3"/>
+  <line x1="50" y1="0" x2="50" y2="200" stroke="#3b82f6" stroke-width="10" opacity="0.25"/>
+  <line x1="0" y1="80" x2="200" y2="80" stroke="#3b82f6" stroke-width="10" opacity="0.25"/>
+</svg>`;
+
+export const MOCK_PATTERNED_FABRICS: PatternedFabric[] = [
   {
     id: "pattern-dots",
     kind: "patterned",
-    label: "خال‌دار نرم",
-    imageData: createPatternSvg("#FFF7F1", "#D79CB8", "dots")
+    label: "خال‌خالی",
+    imageData: `data:image/svg+xml;utf8,${encodeURIComponent(createDotsSvg())}`,
   },
   {
-    id: "pattern-grid",
+    id: "pattern-stripes",
     kind: "patterned",
-    label: "چهارخانه روشن",
-    imageData: createPatternSvg("#EFF5FF", "#9EB1D9", "grid")
+    label: "راه‌راه",
+    imageData: `data:image/svg+xml;utf8,${encodeURIComponent(createStripesSvg())}`,
   },
   {
     id: "pattern-floral",
     kind: "patterned",
-    label: "گل‌ریز",
-    imageData: createPatternSvg("#F8F7EE", "#AEBB91", "floral")
-  }
+    label: "گل‌دار",
+    imageData: `data:image/svg+xml;utf8,${encodeURIComponent(createFloralSvg())}`,
+  },
+  {
+    id: "pattern-plaid",
+    kind: "patterned",
+    label: "چهارخانه",
+    imageData: `data:image/svg+xml;utf8,${encodeURIComponent(createPlaidSvg())}`,
+  },
 ];
-
-export const STEPPER_STEPS = [
-  { id: 1, title: "نوع لباس", caption: "جنسیت و مدل" },
-  { id: 2, title: "پارچه", caption: "رنگ یا طرح" },
-  { id: 3, title: "طرح اولیه", caption: "اسکچ و توضیح" },
-  { id: 4, title: "پردازش", caption: "پرامپت هوشمند" },
-  { id: 5, title: "خروجی", caption: "نماهای خیاطی" }
-] as const;

@@ -4,7 +4,6 @@ import {
   HiOutlineArrowLeft,
   HiOutlineArrowRight,
 } from "react-icons/hi2";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,39 +19,8 @@ import { StepIndicator } from "./StepIndicator";
 import { StepProcessing } from "./StepProcessing";
 import { StepResult } from "./StepResult";
 import { StepSketch } from "./StepSketch";
+import { stepsInfo } from "@/constants/design-steps";
 
-const stepCopy = {
-  1: {
-    eyebrow: "شروع انتخاب",
-    title: "نوع لباس را انتخاب کنید",
-    description:
-      "ابتدا جنسیت و سپس نوع لباس را تعیین کنید تا مسیر طراحی دقیق‌تر شود.",
-  },
-  2: {
-    eyebrow: "انتخاب متریال",
-    title: "پارچه‌های دلخواه را اضافه کنید",
-    description:
-      "رنگ‌های ساده و طرح‌های پارچه‌ای می‌توانند هم‌زمان در طراحی نهایی استفاده شوند.",
-  },
-  3: {
-    eyebrow: "اسکچ و جزئیات",
-    title: "طرح پایه و توضیح کامل را وارد کنید",
-    description:
-      "اسکچ دستی و توضیحات شما مبنای پرامپت دقیق تولید تصویر قرار می‌گیرد.",
-  },
-  4: {
-    eyebrow: "پردازش هوشمند",
-    title: "ساخت پرامپت و شبیه‌سازی تولید تصویر",
-    description:
-      "فرانت‌اند داده‌ها را به پرامپت قابل ارسال به Image Generation API تبدیل می‌کند.",
-  },
-  5: {
-    eyebrow: "تحویل نهایی",
-    title: "خروجی چندنما برای خیاط آماده است",
-    description:
-      "نماهای روبه‌رو، پشت و کنار برای بررسی فرم و جزئیات دوخت نمایش داده می‌شوند.",
-  },
-} as const;
 
 export function DesignStepper() {
   const currentStep = useDesignStore((s) => s.currentStep);
@@ -76,7 +44,7 @@ export function DesignStepper() {
   const canGoNext = currentStep < 4 && completedSteps[currentStep - 1];
   const canGoBack = currentStep > 1 && !isGenerating;
 
-  const copy = stepCopy[currentStep as keyof typeof stepCopy];
+  const copy = stepsInfo[currentStep as keyof typeof stepsInfo];
 
   return (
     <div className="mx-auto w-full max-w-5xl">
