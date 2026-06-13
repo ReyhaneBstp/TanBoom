@@ -1,12 +1,23 @@
 import { STEPPER_STEPS } from "@/constants/design-options";
 import { cn } from "@/lib/utils";
+import { useDesignStore } from "@/store/useDesignStore";
 
-interface StepIndicatorProps {
-  currentStep: number;
-  completedSteps: boolean[];
-}
+export function StepIndicator() {
+  const currentStep = useDesignStore((s) => s.currentStep);
+  const gender = useDesignStore((s) => s.gender);
+  const garmentTypeId = useDesignStore((s) => s.garmentTypeId);
+  const selectedFabricIds = useDesignStore((s) => s.selectedFabricIds);
+  const sketch = useDesignStore((s) => s.sketch);
+  const generatedImages = useDesignStore((s) => s.generatedImages);
 
-export function StepIndicator({ currentStep, completedSteps }: StepIndicatorProps) {
+  const completedSteps = [
+    Boolean(gender && garmentTypeId),
+    selectedFabricIds.length > 0,
+    Boolean(sketch.file && sketch.description.trim().length > 8),
+    generatedImages.length > 0,
+    generatedImages.length > 0,
+  ];
+
   return (
     <div className="grid grid-cols-5 gap-2 rounded-[1.5rem] border border-white/70 bg-white/45 p-2 backdrop-blur-2xl">
       {STEPPER_STEPS.map((step, index) => {
@@ -31,7 +42,9 @@ export function StepIndicator({ currentStep, completedSteps }: StepIndicatorProp
             >
               {step.id}
             </div>
-            <p className="truncate text-[11px] font-semibold text-foreground mt-1">{step.title}</p>
+            <p className="truncate text-[11px] font-semibold text-foreground mt-1">
+              {step.title}
+            </p>
           </div>
         );
       })}

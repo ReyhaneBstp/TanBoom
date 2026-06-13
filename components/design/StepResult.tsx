@@ -1,25 +1,31 @@
 /* eslint-disable @next/next/no-img-element */
 import { HiOutlineArrowDownTray, HiOutlineSparkles } from "react-icons/hi2";
-
 import { Button } from "@/components/ui/button";
-import type { GeneratedDesignImage } from "@/types/design";
+import { useDesignStore } from "@/store/useDesignStore";
 
-interface StepResultProps {
-  images: GeneratedDesignImage[];
-  enhancedPrompt: string;
-  onRestart: () => void;
-}
+export function StepResult() {
+  const generatedImages = useDesignStore((s) => s.generatedImages);
+  const generatedAiPrompt = useDesignStore((s) => s.generatedAiPrompt);
+  const restart = useDesignStore((s) => s.restart);
 
-export function StepResult({ images, enhancedPrompt, onRestart }: StepResultProps) {
   return (
     <div className="space-y-5">
       <div className="grid gap-4 md:grid-cols-3">
-        {images.map((image) => (
-          <article key={image.id} className="overflow-hidden rounded-[2rem] border border-white/80 bg-white/55 p-3 shadow-soft-rose backdrop-blur-xl">
-            <img src={image.src} alt={image.title} className="aspect-[4/5] w-full rounded-[1.55rem] object-cover" />
+        {generatedImages.map((image) => (
+          <article
+            key={image.id}
+            className="overflow-hidden rounded-[2rem] border border-white/80 bg-white/55 p-3 shadow-soft-rose backdrop-blur-xl"
+          >
+            <img
+              src={image.src}
+              alt={image.title}
+              className="aspect-[4/5] w-full rounded-[1.55rem] object-cover"
+            />
             <div className="flex items-center justify-between px-2 py-3">
               <div>
-                <h3 className="text-sm font-semibold text-foreground">{image.title}</h3>
+                <h3 className="text-sm font-semibold text-foreground">
+                  {image.title}
+                </h3>
                 <p className="mt-1 text-[10px] text-muted-foreground" dir="ltr">
                   {image.angle}
                 </p>
@@ -45,17 +51,23 @@ export function StepResult({ images, enhancedPrompt, onRestart }: StepResultProp
               خروجی آماده تحویل به خیاط
             </h3>
             <p className="mt-1 text-xs leading-6 text-muted-foreground">
-              سه نمای اصلی تولید شده‌اند و پرامپت نهایی برای اتصال به API آماده است.
+              سه نمای اصلی تولید شده‌اند و پرامپت نهایی برای اتصال به API آماده
+              است.
             </p>
           </div>
-          <Button type="button" variant="glass" onClick={onRestart}>
+          <Button type="button" variant="glass" onClick={restart}>
             طراحی جدید
           </Button>
         </div>
         <details className="mt-4 rounded-[1.4rem] bg-white/55 p-4 text-xs text-muted-foreground">
-          <summary className="cursor-pointer font-semibold text-foreground">مشاهده پرامپت نهایی</summary>
-          <pre className="mt-3 whitespace-pre-wrap text-left leading-6" dir="ltr">
-            {enhancedPrompt}
+          <summary className="cursor-pointer font-semibold text-foreground">
+            مشاهده پرامپت نهایی
+          </summary>
+          <pre
+            className="mt-3 whitespace-pre-wrap text-left leading-6"
+            dir="ltr"
+          >
+            {generatedAiPrompt}
           </pre>
         </details>
       </div>

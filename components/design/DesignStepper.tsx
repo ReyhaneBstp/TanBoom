@@ -3,7 +3,6 @@
 import {
   HiOutlineArrowLeft,
   HiOutlineArrowRight,
-  HiOutlineSparkles,
 } from "react-icons/hi2";
 
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useDesignLogic } from "@/hooks/useDesignLogic";
+import { useDesignStore } from "@/store/useDesignStore";
 import { StepFabric } from "./StepFabric";
 import { StepGender } from "./StepGender";
 import { StepIndicator } from "./StepIndicator";
@@ -56,8 +55,28 @@ const stepCopy = {
 } as const;
 
 export function DesignStepper() {
-  const logic = useDesignLogic();
-  const copy = stepCopy[logic.currentStep as keyof typeof stepCopy];
+  const currentStep = useDesignStore((s) => s.currentStep);
+  const goBack = useDesignStore((s) => s.goBack);
+  const goNext = useDesignStore((s) => s.goNext);
+  const isGenerating = useDesignStore((s) => s.isGenerating);
+  const gender = useDesignStore((s) => s.gender);
+  const garmentTypeId = useDesignStore((s) => s.garmentTypeId);
+  const selectedFabricIds = useDesignStore((s) => s.selectedFabricIds);
+  const sketch = useDesignStore((s) => s.sketch);
+  const generatedImages = useDesignStore((s) => s.generatedImages);
+
+  const completedSteps = [
+    Boolean(gender && garmentTypeId),
+    selectedFabricIds.length > 0,
+    Boolean(sketch.file && sketch.description.trim().length > 8),
+    generatedImages.length > 0,
+    generatedImages.length > 0,
+  ];
+
+  const canGoNext = currentStep < 4 && completedSteps[currentStep - 1];
+  const canGoBack = currentStep > 1 && !isGenerating;
+
+  const copy = stepCopy[currentStep as keyof typeof stepCopy];
 
   return (
     <div className="mx-auto w-full max-w-5xl">
@@ -72,10 +91,7 @@ export function DesignStepper() {
         </div>
 
         <div className="w-full lg:w-[28rem]">
-          <StepIndicator
-            currentStep={logic.currentStep}
-            completedSteps={logic.completedSteps}
-          />
+          <StepIndicator />
         </div>
       </div>
 
@@ -85,11 +101,9 @@ export function DesignStepper() {
             <p className="text-xs font-semibold text-rose-600 whitespace-nowrap">
               {copy.eyebrow}
             </p>
-
             <div className="flex-1 mx-3 h-px bg-rose-200/40 rounded-full" />
-
             <span className="w-fit rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground whitespace-nowrap">
-              مرحله {logic.currentStep} از ۵
+              مرحله {currentStep} از ۵
             </span>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -101,56 +115,20 @@ export function DesignStepper() {
         </CardHeader>
 
         <CardContent className="min-h-[28rem] pt-5 sm:pt-6">
-          {logic.currentStep === 1 ? (
-            <StepGender
-              gender={logic.formState.gender}
-              garmentTypeId={logic.formState.garmentTypeId}
-              onSelectGender={logic.selectGender}
-              onSelectGarment={logic.selectGarment}
-            />
-          ) : null}
-
-          {logic.currentStep === 2 ? (
-            <StepFabric
-              activeFabricKind={logic.activeFabricKind}
-              selectedFabricIds={logic.formState.selectedFabricIds}
-              onChangeKind={logic.setActiveFabricKind}
-              onToggleFabric={logic.toggleFabric}
-            />
-          ) : null}
-
-          {logic.currentStep === 3 ? (
-            <StepSketch
-              previewUrl={logic.formState.sketch.previewUrl}
-              description={logic.formState.sketch.description}
-              onFileChange={logic.updateSketchFile}
-              onDescriptionChange={logic.updateDescription}
-            />
-          ) : null}
-
-          {logic.currentStep === 4 ? (
-            <StepProcessing
-              enhancedPrompt={logic.enhancedPrompt}
-              isGenerating={logic.isGenerating}
-            />
-          ) : null}
-
-          {logic.currentStep === 5 ? (
-            <StepResult
-              images={logic.generatedImages}
-              enhancedPrompt={logic.enhancedPrompt}
-              onRestart={logic.restart}
-            />
-          ) : null}
+          {currentStep === 1 && <StepGender />}
+          {currentStep === 2 && <StepFabric />}
+          {currentStep === 3 && <StepSketch />}
+          {currentStep === 4 && <StepProcessing />}
+          {currentStep === 5 && <StepResult />}
         </CardContent>
 
-        {logic.currentStep < 4 ? (
+        {currentStep < 4 && (
           <div className="flex flex-col-reverse gap-3 border-t border-white/60 bg-white/35 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
             <Button
               type="button"
               variant="ghost"
-              onClick={logic.goBack}
-              disabled={!logic.canGoBack}
+              onClick={goBack}
+              disabled={!canGoBack}
             >
               <HiOutlineArrowRight className="size-4" />
               بازگشت
@@ -158,14 +136,14 @@ export function DesignStepper() {
 
             <Button
               type="button"
-              onClick={logic.goNext}
-              disabled={!logic.canGoNext || logic.isGenerating}
+              onClick={goNext}
+              disabled={!canGoNext || isGenerating}
             >
-              {logic.currentStep === 3 ? "ساخت پرامپت" : "ادامه"}
+              {currentStep === 3 ? "ساخت پرامپت" : "ادامه"}
               <HiOutlineArrowLeft className="size-4" />
             </Button>
           </div>
-        ) : null}
+        )}
       </Card>
     </div>
   );
