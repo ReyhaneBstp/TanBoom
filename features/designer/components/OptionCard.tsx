@@ -28,7 +28,7 @@ export function OptionCard({
       className={cn(
         "group relative flex w-full flex-col items-start justify-start overflow-hidden rounded-[1.5rem] border border-primary-100/70 bg-white p-4 text-right transition-all duration-200",
         "hover:-translate-y-0.5 hover:border-primary-200/60 hover:shadow-md",
-        selected && "border-primary-200/80 bg-primary-50/70 shadow-sm",
+        selected && "border-primary-100/80 bg-primary-50/30 shadow-sm",
         className
       )}
     >

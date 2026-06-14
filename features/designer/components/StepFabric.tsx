@@ -2,17 +2,27 @@
 
 import { useState } from "react";
 import { HiOutlineCheck, HiOutlinePlus } from "react-icons/hi2";
+import { LuPalette, LuGrid3X3 } from "react-icons/lu";
 import { cn } from "@/shared/utils/utils";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import { OptionCard } from "./OptionCard";
 import type { SolidFabric, PatternedFabric } from "@/features/designer/types/design";
 
-const TABS = [
-  { id: "solid" as const, label: "پارچه‌های ساده" },
-  { id: "patterned" as const, label: "پارچه‌های طرح‌دار" },
+const FABRIC_CATEGORIES = [
+  {
+    id: "solid" as const,
+    label: "پارچه ساده",
+    description: "رنگ‌های یکدست و ساده",
+  },
+  {
+    id: "patterned" as const,
+    label: "پارچه طرح‌دار",
+    description: "طرح‌ها و نقش‌های متنوع",
+  },
 ];
 
 export function StepFabric() {
-  const [activeTab, setActiveTab] = useState<"solid" | "patterned">("solid");
+  const [category, setCategory] = useState<"solid" | "patterned">("solid");
   const customFabrics = useDesignStore((s) => s.customFabrics) as SolidFabric[];
   const patternedFabrics = useDesignStore(
     (s) => s.patternedFabrics
@@ -29,28 +39,36 @@ export function StepFabric() {
   };
 
   return (
-    <div className="space-y-5">
-      <div className="flex w-fit gap-1 rounded-full border border-white/60 bg-white/40 p-1">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setActiveTab(tab.id)}
-            className={cn(
-              "rounded-full px-4 py-2 text-xs font-semibold transition-all",
-              activeTab === tab.id
-                ? "bg-white text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
+    <div className="flex flex-col gap-8 min-h-[22rem]">
+      <div>
+        <h3 className="mb-4 text-sm font-medium text-foreground/80">
+          نوع پارچه
+        </h3>
+        <div className="grid gap-6 sm:grid-cols-2">
+          {FABRIC_CATEGORIES.map((option) => (
+            <OptionCard
+              key={option.id}
+              title={option.label}
+              description={option.description}
+              selected={category === option.id}
+              onClick={() => setCategory(option.id)}
+              icon={
+                option.id === "solid" ? (
+                  <LuPalette className="size-6" />
+                ) : (
+                  <LuGrid3X3 className="size-6" />
+                )
+              }
+              className="!rounded-2xl !p-3 !shadow-sm hover:!shadow-md transition-all duration-200"
+            />
+          ))}
+        </div>
       </div>
 
-      {activeTab === "solid" && (
-        <>
-          <div className="flex items-end gap-3">
+      {/* محتوای پارچه‌های ساده */}
+      {category === "solid" && (
+        <div className="flex-1">
+          <div className="flex flex-wrap items-end gap-3 mb-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-medium text-foreground/80">
                 رنگ پارچه
@@ -81,8 +99,9 @@ export function StepFabric() {
           </div>
 
           {customFabrics.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-primary-200/70 bg-white/30 px-6 py-10 text-center backdrop-blur-xl">
-              <p className="text-sm text-muted-foreground">
+            <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-primary-200/70 bg-white/30 px-6 py-10 text-center backdrop-blur-xl">
+              <LuPalette className="size-10 text-primary-300 animate-pulse" />
+              <p className="text-sm text-muted-foreground max-w-xs">
                 هنوز پارچه‌ای اضافه نشده. یک رنگ انتخاب و اضافه کنید.
               </p>
             </div>
@@ -123,14 +142,15 @@ export function StepFabric() {
               })}
             </div>
           )}
-        </>
+        </div>
       )}
 
-      {activeTab === "patterned" && (
-        <>
+      {category === "patterned" && (
+        <div className="flex-1">
           {patternedFabrics.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-primary-200/70 bg-white/30 px-6 py-10 text-center backdrop-blur-xl">
-              <p className="text-sm text-muted-foreground">
+            <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-primary-200/70 bg-white/30 px-6 py-10 text-center backdrop-blur-xl">
+              <LuGrid3X3 className="size-10 text-primary-300 animate-pulse" />
+              <p className="text-sm text-muted-foreground max-w-xs">
                 پارچه‌ای طرح‌دار موجود نیست.
               </p>
             </div>
@@ -167,10 +187,10 @@ export function StepFabric() {
               })}
             </div>
           )}
-        </>
+        </div>
       )}
-      <p className="rounded-[1.3rem] border border-white/70 bg-white/40 px-4 py-3 text-xs leading-6 text-muted-foreground backdrop-blur-xl">
-        {activeTab === "solid"
+      <p className="rounded-2xl border border-white/70 bg-white/40 px-4 py-3 text-xs leading-6 text-muted-foreground backdrop-blur-xl">
+        {category === "solid"
           ? "رنگ‌های دلخواه را به لیست اولیه اضافه کنید و سپس با کلیک روی آنها انتخاب‌شان کنید. می‌توانید چند رنگ را هم‌زمان برای طراحی نهایی داشته باشید."
           : "پارچه‌های طرح‌دار را با کلیک انتخاب کنید. این طرح‌ها به همراه رنگ‌های ساده در طراحی استفاده می‌شوند."}
       </p>
