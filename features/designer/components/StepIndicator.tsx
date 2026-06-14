@@ -1,4 +1,4 @@
-import { STEPPER_STEPS } from "@/features/designer/constants/design-options";
+import { STEPPER_STEPS } from "../constants/design-steps";
 import { cn } from "@/shared/utils/utils";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
 

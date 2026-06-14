@@ -30,3 +30,12 @@ export const stepsInfo = {
         "نماهای روبه‌رو، پشت و کنار برای بررسی فرم و جزئیات دوخت نمایش داده می‌شوند.",
     },
   } as const;
+
+  export const STEPPER_STEPS = [
+    { id: 1, title: "انتخاب نوع" },
+    { id: 2, title: "انتخاب پارچه" },
+    { id: 3, title: "طراحی" },
+    { id: 4, title: "پردازش" },
+    { id: 5, title: "نتیجه" },
+  ];
+  

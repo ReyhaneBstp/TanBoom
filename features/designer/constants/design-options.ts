@@ -1,3 +1,5 @@
+import type { GarmentType, PatternedFabric } from "@/features/designer/types/design";
+
 export const GENDER_OPTIONS = [
   { id: "women" as const, label: "زنانه", description: "پوشاک بانوان" },
   { id: "men" as const, label: "مردانه", description: "پوشاک آقایان" },
@@ -16,15 +18,6 @@ export const GARMENT_TYPES: GarmentType[] = [
   { id: "men-hat", gender: "men", label: "کلاه", icon: "hat" }
 ];
 
-export const STEPPER_STEPS = [
-  { id: 1, title: "انتخاب نوع" },
-  { id: 2, title: "انتخاب پارچه" },
-  { id: 3, title: "اسکچ و توضیح" },
-  { id: 4, title: "پردازش" },
-  { id: 5, title: "نتیجه" },
-];
-
-import type { GarmentType, PatternedFabric } from "@/features/designer/types/design";
 
 const createDotsSvg = () => `
 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
