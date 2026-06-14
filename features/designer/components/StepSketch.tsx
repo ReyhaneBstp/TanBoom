@@ -45,14 +45,14 @@ export function StepSketch() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+    <div className="flex flex-col gap-6">
+      <div className="grid gap-4 lg:grid-cols-[1fr_1fr] lg:gap-6">
         <label
           onDragOver={(event) => event.preventDefault()}
           onDrop={handleDrop}
           className={cn(
-            "group flex min-h-72 cursor-pointer flex-col items-center justify-center rounded-[2rem] border border-dashed border-primary-200 bg-white/45 p-5 text-center backdrop-blur-xl transition-all hover:border-primary-300 hover:bg-white/75 hover:shadow-soft-primary",
-            previewUrl && "border-solid border-primary-300 bg-white/70"
+            "group flex h-64 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-rose-200 bg-white/45 p-4 text-center backdrop-blur-xl transition-all hover:border-rose-300 hover:bg-white/75",
+            previewUrl && "border-solid border-rose-300 bg-white/70"
           )}
         >
           <input
@@ -64,71 +64,68 @@ export function StepSketch() {
             }
           />
           {previewUrl ? (
-            <img
-              src={previewUrl}
-              alt="پیش‌نمایش اسکچ بارگذاری‌شده"
-              className="h-56 w-full rounded-[1.5rem] object-cover"
-            />
+            <>
+              <img
+                src={previewUrl}
+                alt="پیش‌نمایش اسکچ بارگذاری‌شده"
+                className="h-44 w-full rounded-xl object-cover"
+              />
+              <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-muted-foreground">
+                <HiOutlinePhoto className="size-3.5" />
+                تغییر تصویر
+              </span>
+            </>
           ) : (
             <>
-              <span className="mb-4 flex size-14 items-center justify-center rounded-full bg-primary-100 text-primary-500 transition group-hover:scale-105">
-                <HiOutlineArrowUpTray className="size-7" />
+              <span className="mb-3 flex size-12 items-center justify-center rounded-full bg-rose-100 text-rose-500 transition group-hover:scale-105">
+                <HiOutlineArrowUpTray className="size-6 animate-pulse" />
               </span>
-              <span className="text-sm font-semibold text-foreground">
+              <span className="text-sm font-medium text-foreground">
                 اسکچ دستی را اینجا رها کنید
               </span>
-              <span className="mt-2 max-w-xs text-xs leading-6 text-muted-foreground">
-                یا برای انتخاب فایل کلیک کنید. فرمت‌های تصویری رایج پشتیبانی می‌شوند.
+              <span className="mt-1 max-w-xs text-xs leading-5 text-muted-foreground">
+                یا برای انتخاب فایل کلیک کنید
               </span>
             </>
           )}
-          {previewUrl ? (
-            <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1.5 text-xs font-medium text-muted-foreground">
-              <HiOutlinePhoto className="size-4" />
-              تغییر تصویر
-            </span>
-          ) : null}
         </label>
-
-        <div className="space-y-3">
-          <div>
-            <h3 className="text-sm font-semibold text-foreground">
+        <div className="flex flex-col">
+          <div className="mb-2">
+            <h3 className="text-sm font-medium text-foreground/80">
               توضیحات طراحی
             </h3>
-            <p className="mt-1 text-xs leading-6 text-muted-foreground">
-              جزئیات دوخت، یقه، آستین، محل استفاده پارچه‌ها و حس کلی لباس را
-              بنویسید.
+            <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
+              جزئیات دوخت، یقه، آستین و حس کلی لباس را بنویسید.
             </p>
           </div>
           <Textarea
             value={description}
             onChange={(event) => updateDescription(event.target.value)}
-            placeholder="مثلاً: یقه کار شده با تور، آستین آزاد، پارچه طرح‌دار فقط برای سرآستین و قسمت پشت استفاده شود."
-            className="min-h-56"
+            placeholder="مثلاً: یقه کار شده با تور، آستین آزاد، پارچه طرح‌دار فقط برای سرآستین..."
+            className="min-h-44 flex-1"
           />
         </div>
       </div>
-
       {selectedFabricsData.length > 0 && (
-        <div className="rounded-2xl border border-white/70 bg-white/45 p-4 backdrop-blur-xl">
-          <h3 className="mb-1 text-sm font-semibold text-foreground">
+        <div className="rounded-2xl border border-white/70 bg-white/45 p-3 backdrop-blur-xl">
+          <h3 className="text-sm font-medium text-foreground/80">
             پارچه‌های انتخاب‌شده و محل استفاده
           </h3>
-          <p className="mb-4 text-xs text-muted-foreground">
-            برای هر پارچه توضیح دهید در کدام قسمت لباس (مانند یقه، آستین، دامن) استفاده می‌شود.
+          <p className="mt-0.5 mb-3 text-xs text-muted-foreground">
+            برای هر پارچه محل استفاده در لباس را مشخص کنید.
           </p>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {selectedFabricsData.map((fabric) => {
               const isSolid = fabric?.kind === "solid";
               return (
                 <div
                   key={fabric!.id}
-                  className="flex items-start gap-3 rounded-xl bg-white/50 p-3"
+                  className="flex items-start gap-2.5 rounded-xl bg-white/50 p-2"
                 >
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 pt-0.5">
                     {isSolid ? (
                       <span
-                        className="flex size-10 items-center justify-center rounded-full border border-white/70 shadow-inner"
+                        className="flex size-8 items-center justify-center rounded-full border border-white/70 shadow-inner"
                         style={{
                           backgroundColor: (fabric as SolidFabric).hex,
                         }}
@@ -137,12 +134,12 @@ export function StepSketch() {
                       <img
                         src={(fabric as PatternedFabric).imageData}
                         alt={fabric!.label}
-                        className="size-10 rounded-lg object-cover"
+                        className="size-8 rounded-lg object-cover"
                       />
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <span className="block truncate text-xs font-semibold">
+                    <span className="block truncate text-xs font-semibold text-foreground">
                       {fabric!.label}
                     </span>
                     <input
@@ -152,7 +149,7 @@ export function StepSketch() {
                         setFabricAssignment(fabric!.id, e.target.value)
                       }
                       placeholder="مثلاً: یقه"
-                      className="mt-1 w-full rounded-md border border-primary-100/70 bg-white/60 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
+                      className="mt-1 w-full rounded-md border border-rose-100/70 bg-white/60 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
                     />
                   </div>
                 </div>
