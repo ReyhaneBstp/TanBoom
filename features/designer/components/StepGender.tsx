@@ -19,7 +19,7 @@ export function StepGender() {
     <div className="flex flex-col gap-8 min-h-[22rem]">
       <div>
         <h3 className="mb-4 text-sm font-medium text-foreground/80">جنسیت</h3>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2">
           {GENDER_OPTIONS.map((option) => (
             <OptionCard
               key={option.id}
@@ -34,7 +34,7 @@ export function StepGender() {
                   <GiMale className="size-6" />
                 )
               }
-              className="!rounded-2xl !p-5 !shadow-sm hover:!shadow-md transition-all duration-200"
+              className="!rounded-2xl !p-3 !shadow-sm hover:!shadow-md transition-all duration-200"
             />
           ))}
         </div>

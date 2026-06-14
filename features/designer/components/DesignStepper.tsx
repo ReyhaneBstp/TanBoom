@@ -50,7 +50,7 @@ export function DesignStepper() {
     <div className="mx-auto w-full max-w-5xl">
       <div className="mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-end">
         <div className="max-w-2xl">
-          <h1 className="text-2xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">
+          <h1 className="text-2xl font-semibold tracking-[-0.04em] text-primary-300 sm:text-5xl">
             طراحی لباسی نو؛{" "}
           </h1>
           <p className="mt-4 text-2xl leading-2 text-muted-foreground">
@@ -69,7 +69,7 @@ export function DesignStepper() {
             <p className="text-xs font-semibold text-primary-600 whitespace-nowrap">
               {copy.eyebrow}
             </p>
-            <div className="flex-1 mx-3 h-px bg-primary-200/40 rounded-full" />
+            <div className="flex-1 mx-3 h-px bg-primary-100/40 rounded-full" />
             <span className="w-fit rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground whitespace-nowrap">
               مرحله {currentStep} از ۵
             </span>

@@ -1,8 +1,8 @@
 import type { GarmentType, PatternedFabric } from "@/features/designer/types/design";
 
 export const GENDER_OPTIONS = [
-  { id: "women" as const, label: "زنانه", description: "پوشاک بانوان" },
-  { id: "men" as const, label: "مردانه", description: "پوشاک آقایان" },
+  { id: "women" as const, label: "زنانه", description: "برای مشاهده انواع پوشاک بانوان کلیک کنید!" },
+  { id: "men" as const, label: "مردانه", description: "برای مشاهده انواع پوشاک آقاان کلیک کنید!" },
 ];
 
 export const GARMENT_TYPES: GarmentType[] = [
