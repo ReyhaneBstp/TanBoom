@@ -14,7 +14,7 @@ export function StepResult() {
         {generatedImages.map((image) => (
           <article
             key={image.id}
-            className="overflow-hidden rounded-[2rem] border border-white/80 bg-white/55 p-3 shadow-soft-rose backdrop-blur-xl"
+            className="overflow-hidden rounded-[2rem] border border-white/80 bg-white/55 p-3 shadow-soft-primary backdrop-blur-xl"
           >
             <img
               src={image.src}
@@ -33,7 +33,7 @@ export function StepResult() {
               <a
                 href={image.src}
                 download={`${image.id}-custom-design.svg`}
-                className="flex size-9 items-center justify-center rounded-full bg-white/80 text-rose-500 transition hover:bg-rose-100"
+                className="flex size-9 items-center justify-center rounded-full bg-white/80 text-primary-500 transition hover:bg-primary-100"
                 aria-label={`دانلود ${image.title}`}
               >
                 <HiOutlineArrowDownTray className="size-5" />
@@ -47,7 +47,7 @@ export function StepResult() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <HiOutlineSparkles className="size-5 text-rose-500" />
+              <HiOutlineSparkles className="size-5 text-primary-500" />
               خروجی آماده تحویل به خیاط
             </h3>
             <p className="mt-1 text-xs leading-6 text-muted-foreground">

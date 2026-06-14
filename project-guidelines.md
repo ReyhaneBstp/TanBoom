@@ -4,15 +4,15 @@
 
 - رنگ غالب: سفید خالص `#FFFFFF` و سفید شفاف برای سطح‌های شیشه‌ای.
 - رنگ پس‌زمینه فرعی: خاکستری بسیار روشن و گرادیان‌های محو یاسی.
-- رنگ اصلی/اکسنت: یاسی `#C8A2C8` با طیف‌های `rose-100` تا `rose-600`.
+- رنگ اصلی/اکسنت: یاسی `#C8A2C8` با طیف‌های `primary-100` تا `primary-600`.
 - فونت اصلی: `Vazirmatn` از پکیج `@fontsource/vazirmatn`.
 - مسیر تنظیمات: `tailwind.config.ts`.
 - کلیدهای مهم Tailwind:
-  - `colors.rose.300 = #C8A2C8`
+  - `colors.primary.300 = #C8A2C8`
   - `fontFamily.vazir`
   - `boxShadow.glass`
-  - `boxShadow.soft-rose`
-  - `backgroundImage.rose-mesh`
+  - `boxShadow.soft-primary`
+  - `backgroundImage.primary-mesh`
 
 ## قوانین طراحی Glassmorphism
 
@@ -23,7 +23,7 @@
   - `bg-white/45` تا `bg-white/60`
   - `backdrop-blur-xl` یا `backdrop-blur-2xl`
   - `shadow-glass` برای کارت‌های اصلی
-  - `shadow-soft-rose` برای حالت انتخاب‌شده یا hover
+  - `shadow-soft-primary` برای حالت انتخاب‌شده یا hover
 - گوشه‌ها باید نرم و بزرگ باشند: `rounded-[1.5rem]` تا `rounded-[2rem]`.
 - چیدمان باید خلوت، کم‌تراکم، راست‌به‌چپ و دارای فضای سفید کافی باشد.
 - از رنگ‌های تند و پس‌زمینه‌های شلوغ استفاده نشود.

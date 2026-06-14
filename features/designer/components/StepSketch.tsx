@@ -51,8 +51,8 @@ export function StepSketch() {
           onDragOver={(event) => event.preventDefault()}
           onDrop={handleDrop}
           className={cn(
-            "group flex min-h-72 cursor-pointer flex-col items-center justify-center rounded-[2rem] border border-dashed border-rose-200 bg-white/45 p-5 text-center backdrop-blur-xl transition-all hover:border-rose-300 hover:bg-white/75 hover:shadow-soft-rose",
-            previewUrl && "border-solid border-rose-300 bg-white/70"
+            "group flex min-h-72 cursor-pointer flex-col items-center justify-center rounded-[2rem] border border-dashed border-primary-200 bg-white/45 p-5 text-center backdrop-blur-xl transition-all hover:border-primary-300 hover:bg-white/75 hover:shadow-soft-primary",
+            previewUrl && "border-solid border-primary-300 bg-white/70"
           )}
         >
           <input
@@ -71,7 +71,7 @@ export function StepSketch() {
             />
           ) : (
             <>
-              <span className="mb-4 flex size-14 items-center justify-center rounded-full bg-rose-100 text-rose-500 transition group-hover:scale-105">
+              <span className="mb-4 flex size-14 items-center justify-center rounded-full bg-primary-100 text-primary-500 transition group-hover:scale-105">
                 <HiOutlineArrowUpTray className="size-7" />
               </span>
               <span className="text-sm font-semibold text-foreground">
@@ -152,7 +152,7 @@ export function StepSketch() {
                         setFabricAssignment(fabric!.id, e.target.value)
                       }
                       placeholder="مثلاً: یقه"
-                      className="mt-1 w-full rounded-md border border-rose-100/70 bg-white/60 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
+                      className="mt-1 w-full rounded-md border border-primary-100/70 bg-white/60 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
                     />
                   </div>
                 </div>

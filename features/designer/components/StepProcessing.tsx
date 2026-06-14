@@ -8,8 +8,8 @@ export function StepProcessing() {
   return (
     <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
       <div className="flex min-h-72 flex-col items-center justify-center rounded-[2rem] border border-white/80 bg-white/45 p-6 text-center backdrop-blur-xl">
-        <div className="relative mb-5 flex size-20 items-center justify-center rounded-full bg-rose-100 text-rose-500">
-          <span className="absolute inset-0 animate-ping rounded-full bg-rose-300/25" />
+        <div className="relative mb-5 flex size-20 items-center justify-center rounded-full bg-primary-100 text-primary-500">
+          <span className="absolute inset-0 animate-ping rounded-full bg-primary-300/25" />
           {isGenerating ? (
             <HiOutlineCpuChip className="relative size-9 animate-pulse" />
           ) : (
@@ -27,7 +27,7 @@ export function StepProcessing() {
         </p>
         {isGenerating ? (
           <div className="mt-6 h-2 w-full max-w-xs overflow-hidden rounded-full bg-white/70">
-            <div className="h-full w-2/3 animate-pulse rounded-full bg-rose-300" />
+            <div className="h-full w-2/3 animate-pulse rounded-full bg-primary-300" />
           </div>
         ) : null}
       </div>
@@ -37,7 +37,7 @@ export function StepProcessing() {
           <h3 className="text-sm font-semibold text-foreground">
             پرامپت بهینه‌شده
           </h3>
-          <span className="rounded-full bg-rose-100 px-3 py-1 text-[10px] font-semibold text-rose-600">
+          <span className="rounded-full bg-primary-100 px-3 py-1 text-[10px] font-semibold text-primary-600">
             Image API
           </span>
         </div>

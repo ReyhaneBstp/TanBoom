@@ -29,15 +29,15 @@ export function StepIndicator() {
             key={step.id}
             className={cn(
               "rounded-[1.15rem] px-2.5 py-2.5 text-center transition-all",
-              isActive && "bg-white shadow-soft-rose",
-              isCompleted && !isActive && "bg-rose-100/70"
+              isActive && "bg-white shadow-soft-primary",
+              isCompleted && !isActive && "bg-primary-100/70"
             )}
           >
             <div
               className={cn(
                 "mx-auto mb-1 flex size-7 items-center justify-center rounded-full text-xs font-semibold",
-                isActive ? "bg-rose-300 text-white" : "bg-white/70 text-muted-foreground",
-                isCompleted && !isActive && "bg-rose-300/80 text-white"
+                isActive ? "bg-primary-300 text-white" : "bg-white/70 text-muted-foreground",
+                isCompleted && !isActive && "bg-primary-300/80 text-white"
               )}
             >
               {step.id}

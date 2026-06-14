@@ -66,10 +66,10 @@ export function DesignStepper() {
       <Card className="overflow-hidden">
         <CardHeader className="border-b border-white/60 bg-white/35">
           <div className="flex items-center w-full">
-            <p className="text-xs font-semibold text-rose-600 whitespace-nowrap">
+            <p className="text-xs font-semibold text-primary-600 whitespace-nowrap">
               {copy.eyebrow}
             </p>
-            <div className="flex-1 mx-3 h-px bg-rose-200/40 rounded-full" />
+            <div className="flex-1 mx-3 h-px bg-primary-200/40 rounded-full" />
             <span className="w-fit rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground whitespace-nowrap">
               مرحله {currentStep} از ۵
             </span>

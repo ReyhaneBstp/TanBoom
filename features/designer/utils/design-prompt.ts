@@ -75,7 +75,7 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload) {
       ? "Use the uploaded hand-drawn sketch as the base silhouette and construction reference."
       : "",
     "Generate multiple angles for a tailor: front, back, and side views.",
-    "Style: clean atelier technical fashion board, soft rose glassmorphism mood, white background, high-detail seams, collar, cuffs, fabric placement, and construction clarity.",
+    "Style: clean atelier technical fashion board, soft primary glassmorphism mood, white background, high-detail seams, collar, cuffs, fabric placement, and construction clarity.",
     "Avoid mannequins, faces, logos, busy backgrounds, and unrelated accessories.",
   ]
     .filter(Boolean)
