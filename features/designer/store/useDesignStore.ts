@@ -3,18 +3,18 @@ import {
   GARMENT_TYPES,
   GENDER_OPTIONS,
   MOCK_PATTERNED_FABRICS,
-} from "@/constants/design-options";
+} from "@/features/designer/constants/design-options";
 import {
   buildEnhancedPrompt,
   createMockResultImages,
-} from "@/lib/design-prompt";
+} from "@/features/designer/utils/design-prompt";
 import type {
   Gender,
   SolidFabric,
   PatternedFabric,
   GeneratedDesignImage,
   EnhancedPromptPayload,
-} from "@/types/design";
+} from "@/features/designer/types/design";
 
 interface DesignStore {
   gender: Gender | null;

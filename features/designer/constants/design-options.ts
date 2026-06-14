@@ -24,7 +24,7 @@ export const STEPPER_STEPS = [
   { id: 5, title: "نتیجه" },
 ];
 
-import type { GarmentType, PatternedFabric } from "@/types/design";
+import type { GarmentType, PatternedFabric } from "@/features/designer/types/design";
 
 const createDotsSvg = () => `
 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">

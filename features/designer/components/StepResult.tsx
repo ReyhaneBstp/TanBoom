@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { HiOutlineArrowDownTray, HiOutlineSparkles } from "react-icons/hi2";
-import { Button } from "@/components/ui/button";
-import { useDesignStore } from "@/store/useDesignStore";
+import { Button } from "@/shared/components/button";
+import { useDesignStore } from "@/features/designer/store/useDesignStore";
 
 export function StepResult() {
   const generatedImages = useDesignStore((s) => s.generatedImages);

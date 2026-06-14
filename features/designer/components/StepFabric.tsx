@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { HiOutlineCheck, HiOutlinePlus } from "react-icons/hi2";
-import { cn } from "@/lib/utils";
-import { useDesignStore } from "@/store/useDesignStore";
-import type { SolidFabric, PatternedFabric } from "@/types/design";
+import { cn } from "@/shared/utils/utils";
+import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import type { SolidFabric, PatternedFabric } from "@/features/designer/types/design";
 
 const TABS = [
   { id: "solid" as const, label: "پارچه‌های ساده" },

@@ -4,22 +4,22 @@ import {
   HiOutlineArrowLeft,
   HiOutlineArrowRight,
 } from "react-icons/hi2";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { useDesignStore } from "@/store/useDesignStore";
+} from "@/shared/components/card";
+import { useDesignStore } from "@/features/designer/store/useDesignStore";
 import { StepFabric } from "./StepFabric";
 import { StepGender } from "./StepGender";
 import { StepIndicator } from "./StepIndicator";
 import { StepProcessing } from "./StepProcessing";
 import { StepResult } from "./StepResult";
 import { StepSketch } from "./StepSketch";
-import { stepsInfo } from "@/constants/design-steps";
+import { stepsInfo } from "@/features/designer/constants/design-steps";
 
 
 export function DesignStepper() {

@@ -1,5 +1,5 @@
 import { HiOutlineCpuChip, HiOutlineSparkles } from "react-icons/hi2";
-import { useDesignStore } from "@/store/useDesignStore";
+import { useDesignStore } from "@/features/designer/store/useDesignStore";
 
 export function StepProcessing() {
   const generatedAiPrompt = useDesignStore((s) => s.generatedAiPrompt);

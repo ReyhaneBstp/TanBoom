@@ -3,7 +3,7 @@ import type {
   GeneratedDesignImage,
   SolidFabric,
   PatternedFabric,
-} from "@/types/design";
+} from "@/features/designer/types/design";
 
 const angleMap = [
   { id: "front", title: "نمای روبه‌رو", angle: "front view" },

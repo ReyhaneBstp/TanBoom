@@ -4,10 +4,10 @@
 import type { DragEvent } from "react";
 import { useMemo } from "react";
 import { HiOutlineArrowUpTray, HiOutlinePhoto } from "react-icons/hi2";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { useDesignStore } from "@/store/useDesignStore";
-import type { SolidFabric, PatternedFabric } from "@/types/design";
+import { Textarea } from "@/shared/components/textarea";
+import { cn } from "@/shared/utils/utils";
+import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import type { SolidFabric, PatternedFabric } from "@/features/designer/types/design";
 
 export function StepSketch() {
   const previewUrl = useDesignStore((s) => s.sketch.previewUrl);
