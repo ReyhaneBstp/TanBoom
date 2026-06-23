@@ -4,10 +4,7 @@ import {
   GENDER_OPTIONS,
   MOCK_PATTERNED_FABRICS,
 } from "@/features/designer/constants/design-options";
-import {
-  buildEnhancedPrompt,
-  createMockResultImages,
-} from "@/features/designer/utils/design-prompt";
+import { buildEnhancedPrompt } from "@/features/designer/utils/design-prompt";
 import type {
   Gender,
   SolidFabric,
@@ -46,6 +43,15 @@ interface DesignStore {
 }
 
 let fabricIdCounter = 0;
+
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+};
 
 const computePrompt = (state: DesignStore): string => {
   const {
@@ -201,31 +207,49 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
       };
     }),
 
-  goNext: () => {
-    const { currentStep } = get();
-    const nextStep = Math.min(5, currentStep + 1);
+  goNext: async () => {
+    const state = get();
+    const nextStep = Math.min(5, state.currentStep + 1);
     set({ currentStep: nextStep });
 
-    if (nextStep === 4 && get().generatedImages.length === 0) {
+    if (nextStep === 4 && state.generatedImages.length === 0) {
       set({ isGenerating: true });
-      setTimeout(() => {
-        const state = get();
-        const promptPayload: EnhancedPromptPayload = {
-          gender: state.gender!,
-          genderLabel:
-            GENDER_OPTIONS.find((g) => g.id === state.gender)?.label ?? "",
-          garmentType: GARMENT_TYPES.find((g) => g.id === state.garmentTypeId)!,
-          selectedFabrics: [
-            ...state.customFabrics,
-            ...state.patternedFabrics,
-          ].filter((f) => state.selectedFabricIds.includes(f.id)),
-          description: state.sketch.description.trim(),
-          sketchPreviewUrl: state.sketch.previewUrl,
-          fabricAssignments: state.fabricAssignments,
-        };
-        const images = createMockResultImages(promptPayload);
-        set({ generatedImages: images, isGenerating: false, currentStep: 5 });
-      }, 2200);
+
+      try {
+        let sketchBase64 = null;
+        if (state.sketch.file) {
+          sketchBase64 = await fileToBase64(state.sketch.file);
+        }
+
+        const selectedPatternedFabrics = state.patternedFabrics
+          .filter(f => state.selectedFabricIds.includes(f.id))
+          .map(f => f.imageData);
+
+        const response = await fetch("/api/design", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            basePrompt: state.generatedAiPrompt,
+            sketchBase64,
+            patternedFabricsBase64: selectedPatternedFabrics,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to generate design");
+        }
+
+        const data = await response.json();
+        
+        set({
+          generatedImages: data.images,
+          isGenerating: false,
+          currentStep: 5,
+        });
+      } catch (error) {
+        console.error(error);
+        set({ isGenerating: false });
+      }
     }
   },
 
