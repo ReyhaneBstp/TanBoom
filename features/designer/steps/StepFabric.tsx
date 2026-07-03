@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { HiOutlineCheck, HiOutlinePlus } from "react-icons/hi2";
+import { HiOutlineCheck, HiOutlinePlus, HiOutlineXMark } from "react-icons/hi2";
 import { LuPalette, LuGrid3X3 } from "react-icons/lu";
-import { cn } from "@/shared/utils/utils";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
-import { OptionCard } from "./OptionCard";
+import { OptionCard } from "../components/OptionCard";
 import type { SolidFabric, PatternedFabric } from "@/features/designer/types/design";
+import { cn } from "@/shared/utils/mergeClasses";
 
 const FABRIC_CATEGORIES = [
   {
@@ -29,6 +29,7 @@ export function StepFabric() {
   ) as PatternedFabric[];
   const selectedFabricIds = useDesignStore((s) => s.selectedFabricIds);
   const addCustomFabric = useDesignStore((s) => s.addCustomFabric);
+  const removeCustomFabric = useDesignStore((s) => s.removeCustomFabric);
   const toggleFabric = useDesignStore((s) => s.toggleFabric);
 
   const [colorHex, setColorHex] = useState("#C8A2C8");
@@ -64,8 +65,6 @@ export function StepFabric() {
           ))}
         </div>
       </div>
-
-      {/* محتوای پارچه‌های ساده */}
       {category === "solid" && (
         <div className="flex-1">
           <div className="flex flex-wrap items-end gap-3 mb-4">
@@ -115,11 +114,23 @@ export function StepFabric() {
                     type="button"
                     onClick={() => toggleFabric(fabric.id)}
                     className={cn(
-                      "group rounded-[1.5rem] border border-white/80 bg-white/45 p-3 text-center backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:bg-white/75 hover:shadow-soft-primary",
+                      "group relative rounded-[1.5rem] border border-white/80 bg-white/45 p-3 text-center backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:bg-white/75 hover:shadow-soft-primary",
                       selected &&
                         "border-primary-300 bg-white shadow-soft-primary ring-4 ring-primary-200/35"
                     )}
                   >
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeCustomFabric(fabric.id);
+                      }}
+                      className="absolute top-1.5 right-1.5 flex size-5 items-center justify-center rounded-full bg-white/70 text-muted-foreground shadow-sm hover:bg-red-100 hover:text-red-500 transition"
+                      title="حذف پارچه"
+                    >
+                      <HiOutlineXMark className="size-3" />
+                    </button>
+
                     <span
                       className="mx-auto flex size-12 items-center justify-center rounded-full border border-white/70 shadow-inner"
                       style={{ backgroundColor: fabric.hex }}
@@ -144,7 +155,6 @@ export function StepFabric() {
           )}
         </div>
       )}
-
       {category === "patterned" && (
         <div className="flex-1">
           {patternedFabrics.length === 0 ? (
@@ -191,7 +201,7 @@ export function StepFabric() {
       )}
       <p className="rounded-2xl border border-white/70 bg-white/40 px-4 py-3 text-xs leading-6 text-muted-foreground backdrop-blur-xl">
         {category === "solid"
-          ? "رنگ‌های دلخواه را به لیست اولیه اضافه کنید و سپس با کلیک روی آنها انتخاب‌شان کنید. می‌توانید چند رنگ را هم‌زمان برای طراحی نهایی داشته باشید."
+          ? "با کلیک روی دکمه «افزودن»، رنگ هم اضافه و هم انتخاب می‌شود. برای حذف کامل یک رنگ، روی ضربدر کلیک کنید."
           : "پارچه‌های طرح‌دار را با کلیک انتخاب کنید. این طرح‌ها به همراه رنگ‌های ساده در طراحی استفاده می‌شوند."}
       </p>
     </div>

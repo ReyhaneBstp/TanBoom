@@ -1,6 +1,5 @@
-
-import DesignerPage from "@/features/designer";
+import { DesignStepper } from "@/features/designer/DesignStepper";
 
 export default function DesignerRoute() {
-  return <DesignerPage />;
+  return <DesignStepper />;
 }

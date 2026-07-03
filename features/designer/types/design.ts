@@ -6,7 +6,7 @@ export interface GarmentType {
   id: string;
   gender: Gender;
   label: string;
-  icon: "shirt" | "pants" | "skirt" | "hat" | "coat" | "dress";
+  icon: "shirt" | "pants" | "skirt" | "hat" | "coat" | "dress" | "shomiz" | "manto" | "mensShirt";
 }
 
 export interface SolidFabric {

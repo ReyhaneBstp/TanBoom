@@ -1,6 +1,6 @@
+import { cn } from "@/shared/utils/mergeClasses";
 import type { ReactNode } from "react";
 import { HiOutlineCheck } from "react-icons/hi2";
-import { cn } from "@/shared/utils/utils";
 
 interface OptionCardProps {
   title: string;
