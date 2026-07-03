@@ -1,16 +1,26 @@
 /* eslint-disable @next/next/no-img-element */
-import { HiOutlineArrowDownTray, HiOutlineSparkles } from "react-icons/hi2";
+
+import {
+  HiOutlineArrowDownTray,
+  HiOutlineSparkles,
+  HiOutlineArrowPath,
+} from "react-icons/hi2";
 import { Button } from "@/shared/components/button";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
 
 export function StepResult() {
   const generatedImages = useDesignStore((s) => s.generatedImages);
   const generatedAiPrompt = useDesignStore((s) => s.generatedAiPrompt);
+  const isGeneratingBack = useDesignStore((s) => s.isGeneratingBack);
+  const isGenerating = useDesignStore((s) => s.isGenerating);
+  const generateBackView = useDesignStore((s) => s.generateBackView);
   const restart = useDesignStore((s) => s.restart);
 
+  const hasBack = generatedImages.some((img) => img.id === "back");
+
   return (
-    <div className="space-y-5">
-      <div className="grid gap-4 md:grid-cols-3">
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-2">
         {generatedImages.map((image) => (
           <article
             key={image.id}
@@ -32,7 +42,7 @@ export function StepResult() {
               </div>
               <a
                 href={image.src}
-                download={`${image.id}-custom-design.svg`}
+                download={`${image.id}-design.png`}
                 className="flex size-9 items-center justify-center rounded-full bg-white/80 text-primary-500 transition hover:bg-primary-100"
                 aria-label={`دانلود ${image.title}`}
               >
@@ -41,24 +51,56 @@ export function StepResult() {
             </div>
           </article>
         ))}
-      </div>
 
+        {generatedImages.length === 1 && !hasBack && (
+          <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-rose-200 bg-white/45 p-6 text-center backdrop-blur-xl">
+            <HiOutlineSparkles className="size-8 text-rose-400 mb-3" />
+            <h3 className="text-sm font-semibold text-foreground">
+              نمای پشت لباس
+            </h3>
+            <p className="mt-1 max-w-[200px] text-xs text-muted-foreground">
+              بر اساس نمای جلو و توضیحات شما، پشت لباس طراحی شود.
+            </p>
+            <Button
+              type="button"
+              variant="glass"
+              onClick={generateBackView}
+              disabled={isGeneratingBack || isGenerating}
+              className="mt-5 gap-2"
+            >
+              {isGeneratingBack ? (
+                <>
+                  <HiOutlineArrowPath className="size-4 animate-spin" />
+                  در حال تولید...
+                </>
+              ) : (
+                <>
+                  <HiOutlineSparkles className="size-4" />
+                  تولید نمای پشت
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+      </div>
       <div className="rounded-[2rem] border border-white/80 bg-white/45 p-4 backdrop-blur-xl">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <HiOutlineSparkles className="size-5 text-primary-500" />
-              خروجی آماده تحویل به خیاط
+              خروجی نهایی
             </h3>
             <p className="mt-1 text-xs leading-6 text-muted-foreground">
-              سه نمای اصلی تولید شده‌اند و پرامپت نهایی برای اتصال به API آماده
-              است.
+              {hasBack
+                ? "نمای جلو و پشت لباس آماده است."
+                : "نمای جلو تولید شد. می‌توانید نمای پشت را نیز دریافت کنید."}
             </p>
           </div>
           <Button type="button" variant="glass" onClick={restart}>
             طراحی جدید
           </Button>
         </div>
+
         <details className="mt-4 rounded-[1.4rem] bg-white/55 p-4 text-xs text-muted-foreground">
           <summary className="cursor-pointer font-semibold text-foreground">
             مشاهده پرامپت نهایی

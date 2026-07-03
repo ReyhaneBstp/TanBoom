@@ -1,94 +1,77 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import { toFile } from "openai/uploads";
 
 const client = new OpenAI({
   baseURL: "https://api.gapgpt.app/v1",
   apiKey: process.env.GAPGPT_API_KEY,
 });
 
-const ANGLES = [
-  { id: "front", title: "نمای روبه‌رو", promptSuffix: "Generate EXACTLY a Front View." },
-];
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const basePrompt = body.basePrompt || body.prompt; 
-    
-    console.log("Received Prompt:", basePrompt);
+    const prompt = body.prompt as string;
+    const imageBase64 = body.imageBase64 as string | undefined;
 
-    const generatedImages = [];
+    if (!prompt) {
+      return NextResponse.json(
+        { error: "پرامپت الزامی است" },
+        { status: 400 }
+      );
+    }
 
-    for (const angle of ANGLES) {
-      const finalPrompt = `${basePrompt}\n\n${angle.promptSuffix}`;
-      console.log("Final Prompt:", finalPrompt);
+    let imageSrc: string | null = null;
 
-      const response = await client.images.generate({
-        model: "gpt-image-2",
-        prompt: finalPrompt,
-        size: "1024x1024",
+    if (imageBase64) {
+      const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+      const imageBuffer = Buffer.from(base64Data, "base64");
+      const imageFile = await toFile(imageBuffer, "sketch.png", {
+        type: "image/png",
       });
 
-      console.log("STRUCTURE:", JSON.stringify(response, (key, value) => {
-        if (typeof value === 'string' && value.length > 100) {
-          return value.substring(0, 30) + '... [طولانی بود حذف شد]';
-        }
-        return value;
-      }, 2));
-      
-      const res: any = response;
+      const response = await client.images.edit({
+        model: "gpt-image-2",
+        image: imageFile,
+        prompt: prompt,
+        size: "1024x1024",
+        response_format: "b64_json",
+      });
 
-      if (res.data && res.data.length > 0 && res.data[0].b64_json) {
-        const base64Data = res.data[0].b64_json;
-
-        const imageSrc = base64Data.startsWith('data:image') 
-          ? base64Data 
-          : `data:image/png;base64,${base64Data}`;
-        
-        generatedImages.push({
-          id: angle.id,
-          title: angle.title,
-          angle: angle.id,
-          src: imageSrc
-        });
-        console.log("Image successfully generated from data[0].b64_json!");
+      const imageData = (response as any).data?.[0];
+      if (imageData?.b64_json) {
+        imageSrc = `data:image/png;base64,${imageData.b64_json}`;
+      } else if (imageData?.url) {
+        imageSrc = imageData.url;
       }
+    } else {
+      const response = await client.images.generate({
+        model: "gpt-image-2",
+        prompt: prompt,
+        size: "1024x1024",
+        response_format: "b64_json",
+      });
 
-      else if (res.choices && res.choices.length > 0 && res.choices[0].message?.content) {
-        const base64Data = res.choices[0].message.content;
-        const imageSrc = base64Data.startsWith('data:image') 
-          ? base64Data 
-          : `data:image/png;base64,${base64Data}`;
-        
-        generatedImages.push({
-          id: angle.id,
-          title: angle.title,
-          angle: angle.id,
-          src: imageSrc
-        });
-        console.log("Image successfully generated from choices[0].message.content!");
-      } 
-
-      else if (res.data && res.data.length > 0 && res.data[0].url) {
-        generatedImages.push({
-          id: angle.id,
-          title: angle.title,
-          angle: angle.id,
-          src: res.data[0].url
-        });
-        console.log("Image successfully generated from URL!");
-      } 
-      else {
-        console.log("Could not find image data in response");
+      const imageData = (response as any).data?.[0];
+      if (imageData?.b64_json) {
+        imageSrc = `data:image/png;base64,${imageData.b64_json}`;
+      } else if (imageData?.url) {
+        imageSrc = imageData.url;
       }
     }
 
-    return NextResponse.json({ images: generatedImages });
+    if (!imageSrc) {
+      console.error("تصویری در پاسخ یافت نشد");
+      return NextResponse.json(
+        { error: "تصویری دریافت نشد" },
+        { status: 500 }
+      );
+    }
 
-  } catch (error) {
-    console.error("Error in generating image with GapGPT:", error);
+    return NextResponse.json({ image: imageSrc });
+  } catch (error: any) {
+    console.error("خطا در API طراحی:", error?.message || error);
     return NextResponse.json(
-      { error: "خطا در برقراری ارتباط با GapGPT و تولید تصویر" },
+      { error: "خطا در ارتباط با API تولید تصویر" },
       { status: 500 }
     );
   }

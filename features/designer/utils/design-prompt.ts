@@ -4,7 +4,7 @@ import type {
   PatternedFabric,
 } from "@/features/designer/types/design";
 
-export function buildEnhancedPrompt(payload: EnhancedPromptPayload) {
+export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
   const solidFabrics = payload.selectedFabrics.filter(
     (f) => f.kind === "solid"
   ) as SolidFabric[];
@@ -53,4 +53,20 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload) {
   }
 
   return basePrompt;
+}
+
+/**
+ * Build a prompt for generating the back view of the garment,
+ * given the original description and the front view image.
+ */
+export function buildBackViewPrompt(originalPrompt: string): string {
+  return [
+    originalPrompt,
+    "\n--- NEW INSTRUCTION ---",
+    "Now generate the BACK VIEW of the same garment.",
+    "The back view must be 100% consistent in style, colors, fabric textures, and design details with the front view.",
+    "Show the garment from behind on a plain white background.",
+    "Do NOT show any mannequin face or front details. Only the back of the garment.",
+    "Maintain the same realistic rendering quality and lighting.",
+  ].join("\n");
 }

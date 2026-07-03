@@ -4,13 +4,15 @@ import {
   GENDER_OPTIONS,
   MOCK_PATTERNED_FABRICS,
 } from "@/features/designer/constants/design-options";
-import { buildEnhancedPrompt } from "@/features/designer/utils/design-prompt";
+import {
+  buildEnhancedPrompt,
+  buildBackViewPrompt,
+} from "@/features/designer/utils/design-prompt";
 import type {
   Gender,
   SolidFabric,
   PatternedFabric,
   GeneratedDesignImage,
-  EnhancedPromptPayload,
 } from "@/features/designer/types/design";
 
 interface DesignStore {
@@ -27,6 +29,7 @@ interface DesignStore {
   };
   currentStep: number;
   isGenerating: boolean;
+  isGeneratingBack: boolean; 
   generatedImages: GeneratedDesignImage[];
   generatedAiPrompt: string;
 
@@ -39,6 +42,7 @@ interface DesignStore {
   updateDescription: (description: string) => void;
   goNext: () => void;
   goBack: () => void;
+  generateBackView: () => Promise<void>;
   restart: () => void;
 }
 
@@ -68,8 +72,7 @@ const computePrompt = (state: DesignStore): string => {
   const selectedFabrics = allFabrics.filter((f) =>
     selectedFabricIds.includes(f.id)
   );
-  const genderLabel =
-    GENDER_OPTIONS.find((g) => g.id === gender)?.label ?? "";
+  const genderLabel = GENDER_OPTIONS.find((g) => g.id === gender)?.label ?? "";
 
   if (
     !gender ||
@@ -101,6 +104,7 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
   sketch: { file: null, previewUrl: null, description: "" },
   currentStep: 1,
   isGenerating: false,
+  isGeneratingBack: false,
   generatedImages: [],
   generatedAiPrompt: "",
 
@@ -185,25 +189,19 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
         URL.revokeObjectURL(state.sketch.previewUrl);
       }
       const previewUrl = file ? URL.createObjectURL(file) : null;
-      const newSketch = {
-        file,
-        previewUrl,
-        description: state.sketch.description,
-      };
-      const newState = { sketch: newSketch };
+      const newSketch = { file, previewUrl, description: state.sketch.description };
       return {
-        ...newState,
-        generatedAiPrompt: computePrompt({ ...state, ...newState } as DesignStore),
+        sketch: newSketch,
+        generatedAiPrompt: computePrompt({ ...state, sketch: newSketch } as DesignStore),
       };
     }),
 
   updateDescription: (description) =>
     set((state) => {
       const newSketch = { ...state.sketch, description };
-      const newState = { sketch: newSketch };
       return {
-        ...newState,
-        generatedAiPrompt: computePrompt({ ...state, ...newState } as DesignStore),
+        sketch: newSketch,
+        generatedAiPrompt: computePrompt({ ...state, sketch: newSketch } as DesignStore),
       };
     }),
 
@@ -216,33 +214,34 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
       set({ isGenerating: true });
 
       try {
-        let sketchBase64 = null;
+        let sketchBase64: string | undefined = undefined;
         if (state.sketch.file) {
           sketchBase64 = await fileToBase64(state.sketch.file);
         }
-
-        const selectedPatternedFabrics = state.patternedFabrics
-          .filter(f => state.selectedFabricIds.includes(f.id))
-          .map(f => f.imageData);
 
         const response = await fetch("/api/design", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            basePrompt: state.generatedAiPrompt,
-            sketchBase64,
-            patternedFabricsBase64: selectedPatternedFabrics,
+            prompt: state.generatedAiPrompt,
+            imageBase64: sketchBase64,
           }),
         });
 
         if (!response.ok) {
-          throw new Error("Failed to generate design");
+          throw new Error("Front image generation failed");
         }
 
         const data = await response.json();
-        
+        const frontImage: GeneratedDesignImage = {
+          id: "front",
+          title: "نمای روبه‌رو",
+          angle: "front",
+          src: data.image,
+        };
+
         set({
-          generatedImages: data.images,
+          generatedImages: [frontImage],
           isGenerating: false,
           currentStep: 5,
         });
@@ -258,11 +257,49 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
       currentStep: Math.max(1, state.currentStep - 1),
     })),
 
+  generateBackView: async () => {
+    const state = get();
+    if (state.generatedImages.length === 0) return;
+
+    set({ isGeneratingBack: true, isGenerating: true });
+
+    try {
+      const frontImageSrc = state.generatedImages[0].src;
+      const backPrompt = buildBackViewPrompt(state.generatedAiPrompt);
+
+      const response = await fetch("/api/design", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: backPrompt,
+          imageBase64: frontImageSrc, 
+        }),
+      });
+
+      if (!response.ok) throw new Error("Back view generation failed");
+
+      const data = await response.json();
+      const backImage: GeneratedDesignImage = {
+        id: "back",
+        title: "نمای پشت",
+        angle: "back",
+        src: data.image,
+      };
+
+      set((prev) => ({
+        generatedImages: [...prev.generatedImages, backImage],
+        isGeneratingBack: false,
+        isGenerating: false,
+      }));
+    } catch (error) {
+      console.error(error);
+      set({ isGeneratingBack: false, isGenerating: false });
+    }
+  },
+
   restart: () => {
     const { sketch } = get();
-    if (sketch.previewUrl) {
-      URL.revokeObjectURL(sketch.previewUrl);
-    }
+    if (sketch.previewUrl) URL.revokeObjectURL(sketch.previewUrl);
     fabricIdCounter = 0;
     set({
       gender: null,
@@ -274,6 +311,7 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
       sketch: { file: null, previewUrl: null, description: "" },
       currentStep: 1,
       isGenerating: false,
+      isGeneratingBack: false,
       generatedImages: [],
       generatedAiPrompt: "",
     });
