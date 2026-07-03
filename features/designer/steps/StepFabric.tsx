@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { HiOutlineCheck, HiOutlinePlus } from "react-icons/hi2";
 import { LuPalette, LuGrid3X3 } from "react-icons/lu";
-import { cn } from "@/shared/utils/utils";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
 import { OptionCard } from "../components/OptionCard";
 import type { SolidFabric, PatternedFabric } from "@/features/designer/types/design";
+import { cn } from "@/shared/utils/mergeClasses";
 
 const FABRIC_CATEGORIES = [
   {

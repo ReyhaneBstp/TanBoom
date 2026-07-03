@@ -7,7 +7,8 @@ import {
   HiOutlineExclamationCircle,
 } from "react-icons/hi2";
 import { useGlobalStore } from "../store/useGlobalStore";
-import { cn } from "@/shared/utils/utils";
+import { cn } from "../utils/mergeClasses";
+
 
 export function GlobalSnackbar() {
   const snackbar = useGlobalStore((s) => s.snackbar);

@@ -1,54 +1,88 @@
 "use client";
 
+import { useMemo } from "react";
+import { stepsInfo, STEPPER_STEPS } from "@/features/designer/definitions/design-steps";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
-import { stepsInfo } from "@/features/designer/definitions/design-steps";
+import { useGenerateDesign } from "./useGenerateDesign";
 
 export function useDesignStepper() {
   const currentStep = useDesignStore((s) => s.currentStep);
-  const goBack = useDesignStore((s) => s.goBack);
-  const goNext = useDesignStore((s) => s.goNext);
-
-  const isFrontGenerating = useDesignStore((s) => s.isFrontGenerating);
-  const isGeneratingBack = useDesignStore((s) => s.isGeneratingBack);
-
-
   const gender = useDesignStore((s) => s.gender);
   const garmentTypeId = useDesignStore((s) => s.garmentTypeId);
   const selectedFabricIds = useDesignStore((s) => s.selectedFabricIds);
   const sketch = useDesignStore((s) => s.sketch);
   const generatedImages = useDesignStore((s) => s.generatedImages);
 
-  const completedSteps = [
-    Boolean(gender && garmentTypeId),                    
-    selectedFabricIds.length > 0,                      
-    Boolean(sketch.file && sketch.description.trim().length > 8), 
-    generatedImages.length > 0,                        
-  ] as const;
+  const { generateFront } = useGenerateDesign();
 
-  const canGoNext = currentStep < 4 && completedSteps[currentStep - 1];
-  const canGoBack = currentStep > 1 && !isFrontGenerating && !isGeneratingBack;
+  const completedSteps = useMemo(
+    () =>
+      [
+        Boolean(gender && garmentTypeId),
+        selectedFabricIds.length > 0,
+        Boolean(sketch.file && sketch.description.trim().length > 8),
+        generatedImages.length > 0,
+      ] as const,
+    [
+      gender,
+      garmentTypeId,
+      selectedFabricIds,
+      sketch.file,
+      sketch.description,
+      generatedImages,
+    ]
+  );
 
-  const currentStepInfo = stepsInfo[currentStep as keyof typeof stepsInfo];
+  const steps = useMemo(
+    () =>
+      STEPPER_STEPS.map((step, index) => ({
+        ...step,
+        isActive: currentStep === index + 1,
+        isCompleted: completedSteps[index],
+      })),
+    [currentStep, completedSteps]
+  );
 
-  const isLastStep = currentStep === 4;
+  const canGoNext =
+    currentStep < STEPPER_STEPS.length &&
+    completedSteps[currentStep - 1];
 
-  const handleGoNext = () => {
-    if (canGoNext) goNext();
+  const canGoBack = currentStep > 1;
+
+  const isLastStep = currentStep === STEPPER_STEPS.length;
+
+  const currentStepInfo =
+    stepsInfo[currentStep as keyof typeof stepsInfo];
+
+  const handleGoNext = async () => {
+    if (!canGoNext) return;
+
+    if (currentStep === 3) {
+      await generateFront();
+      return;
+    }
+
+    useDesignStore.setState((state) => ({
+      currentStep: state.currentStep + 1,
+    }));
   };
 
   const handleGoBack = () => {
-    if (canGoBack) goBack();
+    if (!canGoBack) return;
+
+    useDesignStore.setState((state) => ({
+      currentStep: state.currentStep - 1,
+    }));
   };
 
   return {
     currentStep,
-    isLastStep,
+    currentStepInfo,
+    steps,
     canGoNext,
     canGoBack,
-    completedSteps,
-    currentStepInfo,
+    isLastStep,
     handleGoNext,
     handleGoBack,
-    isGenerating: isFrontGenerating || isGeneratingBack,
   };
 }

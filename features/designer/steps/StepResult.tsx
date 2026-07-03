@@ -5,14 +5,14 @@ import {
   HiOutlineSparkles,
   HiOutlineArrowPath,
 } from "react-icons/hi2";
-import { Button } from "@/shared/components/button";
+import { Button } from "@/shared/components/Button";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import { useGenerateDesign } from "../hooks/useGenerateDesign";
 
 export function StepResult() {
   const generatedImages = useDesignStore((s) => s.generatedImages);
   const generatedAiPrompt = useDesignStore((s) => s.generatedAiPrompt);
-  const isGeneratingBack = useDesignStore((s) => s.isGeneratingBack);
-  const generateBackView = useDesignStore((s) => s.generateBackView);
+  const { generateBackView, isGeneratingBack } = useGenerateDesign();
   const restart = useDesignStore((s) => s.restart);
 
   const hasBack = generatedImages.some((img) => img.id === "back");

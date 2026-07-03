@@ -4,20 +4,15 @@ import {
   GENDER_OPTIONS,
   MOCK_PATTERNED_FABRICS,
 } from "@/features/designer/definitions/design-options";
-import {
-  buildEnhancedPrompt,
-  buildBackViewPrompt,
-} from "@/features/designer/utils/design-prompt";
+import { buildEnhancedPrompt } from "@/features/designer/utils/design-prompt";
 import type {
   Gender,
   SolidFabric,
   PatternedFabric,
   GeneratedDesignImage,
 } from "@/features/designer/types/design";
-import { useGlobalStore } from "@/shared/store/useGlobalStore";
 
-
-interface DesignStore {
+interface DesignState {
   gender: Gender | null;
   garmentTypeId: string | null;
   customFabrics: SolidFabric[];
@@ -30,11 +25,14 @@ interface DesignStore {
     description: string;
   };
   currentStep: number;
-  isFrontGenerating: boolean;
-  isGeneratingBack: boolean;
   generatedImages: GeneratedDesignImage[];
   generatedAiPrompt: string;
 
+  isFrontGenerating: boolean;
+  isGeneratingBack: boolean;
+}
+
+interface DesignActions {
   setGender: (gender: Gender) => void;
   setGarment: (garmentTypeId: string) => void;
   addCustomFabric: (hex: string) => void;
@@ -42,9 +40,11 @@ interface DesignStore {
   setFabricAssignment: (fabricId: string, part: string) => void;
   updateSketchFile: (file: File | null) => void;
   updateDescription: (description: string) => void;
-  goNext: () => Promise<void>;
-  goBack: () => void;
-  generateBackView: () => Promise<void>;
+  setGeneratedImages: (images: GeneratedDesignImage[]) => void;
+  addGeneratedImage: (image: GeneratedDesignImage) => void;
+  setCurrentStep: (step: number) => void;
+  setIsFrontGenerating: (value: boolean) => void;
+  setIsGeneratingBack: (value: boolean) => void;
   restart: () => void;
 }
 
@@ -59,7 +59,7 @@ const fileToBase64 = (file: File): Promise<string> => {
   });
 };
 
-const computePrompt = (state: DesignStore): string => {
+const computePrompt = (state: DesignState): string => {
   const {
     gender,
     garmentTypeId,
@@ -69,19 +69,14 @@ const computePrompt = (state: DesignStore): string => {
     sketch,
     fabricAssignments,
   } = state;
+
   const selectedGarment = GARMENT_TYPES.find((g) => g.id === garmentTypeId) ?? null;
   const allFabrics = [...customFabrics, ...patternedFabrics];
-  const selectedFabrics = allFabrics.filter((f) =>
-    selectedFabricIds.includes(f.id)
-  );
+  const selectedFabrics = allFabrics.filter((f) => selectedFabricIds.includes(f.id));
+
   const genderLabel = GENDER_OPTIONS.find((g) => g.id === gender)?.label ?? "";
 
-  if (
-    !gender ||
-    !selectedGarment ||
-    selectedFabrics.length === 0 ||
-    !sketch.description.trim()
-  ) {
+  if (!gender || !selectedGarment || selectedFabrics.length === 0 || !sketch.description.trim()) {
     return "";
   }
 
@@ -96,7 +91,7 @@ const computePrompt = (state: DesignStore): string => {
   });
 };
 
-export const useDesignStore = create<DesignStore>((set, get) => ({
+export const useDesignStore = create<DesignState & DesignActions>((set, get) => ({
   gender: null,
   garmentTypeId: null,
   customFabrics: [],
@@ -105,54 +100,43 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
   fabricAssignments: {},
   sketch: { file: null, previewUrl: null, description: "" },
   currentStep: 1,
-  isFrontGenerating: false,
-  isGeneratingBack: false,
   generatedImages: [],
   generatedAiPrompt: "",
 
+  isFrontGenerating: false,
+  isGeneratingBack: false,
+
   setGender: (gender) =>
     set((state) => {
-      const newState: Partial<DesignStore> = {
-        gender,
-        garmentTypeId: state.gender === gender ? state.garmentTypeId : null,
-      };
+      const newState = { gender, garmentTypeId: state.gender === gender ? state.garmentTypeId : null };
       return {
         ...newState,
-        generatedAiPrompt: computePrompt({ ...state, ...newState } as DesignStore),
+        generatedAiPrompt: computePrompt({ ...state, ...newState } as DesignState),
       };
     }),
 
   setGarment: (garmentTypeId) =>
-    set((state) => {
-      const newState = { garmentTypeId };
-      return {
-        ...newState,
-        generatedAiPrompt: computePrompt({ ...state, ...newState } as DesignStore),
-      };
-    }),
+    set((state) => ({
+      garmentTypeId,
+      generatedAiPrompt: computePrompt({ ...state, garmentTypeId } as DesignState),
+    })),
 
   addCustomFabric: (hex) =>
     set((state) => {
       const id = `custom-${++fabricIdCounter}-${Date.now()}`;
-      const newFabric: SolidFabric = {
-        id,
-        kind: "solid",
-        hex,
-        label: hex,
-      };
+      const newFabric: SolidFabric = { id, kind: "solid", hex, label: hex };
+      const newCustomFabrics = [...state.customFabrics, newFabric];
+
       return {
-        customFabrics: [...state.customFabrics, newFabric],
-        generatedAiPrompt: computePrompt({
-          ...state,
-          customFabrics: [...state.customFabrics, newFabric],
-        } as DesignStore),
+        customFabrics: newCustomFabrics,
+        generatedAiPrompt: computePrompt({ ...state, customFabrics: newCustomFabrics } as DesignState),
       };
     }),
 
   toggleFabric: (fabricId) =>
     set((state) => {
       const exists = state.selectedFabricIds.includes(fabricId);
-      const newFabricIds = exists
+      const newSelectedIds = exists
         ? state.selectedFabricIds.filter((id) => id !== fabricId)
         : [...state.selectedFabricIds, fabricId];
 
@@ -160,41 +144,34 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
       if (exists) delete newAssignments[fabricId];
 
       return {
-        selectedFabricIds: newFabricIds,
+        selectedFabricIds: newSelectedIds,
         fabricAssignments: newAssignments,
         generatedAiPrompt: computePrompt({
           ...state,
-          selectedFabricIds: newFabricIds,
+          selectedFabricIds: newSelectedIds,
           fabricAssignments: newAssignments,
-        } as DesignStore),
+        } as DesignState),
       };
     }),
 
   setFabricAssignment: (fabricId, part) =>
     set((state) => {
-      const newAssignments = {
-        ...state.fabricAssignments,
-        [fabricId]: part,
-      };
+      const newAssignments = { ...state.fabricAssignments, [fabricId]: part };
       return {
         fabricAssignments: newAssignments,
-        generatedAiPrompt: computePrompt({
-          ...state,
-          fabricAssignments: newAssignments,
-        } as DesignStore),
+        generatedAiPrompt: computePrompt({ ...state, fabricAssignments: newAssignments } as DesignState),
       };
     }),
 
   updateSketchFile: (file) =>
     set((state) => {
-      if (state.sketch.previewUrl) {
-        URL.revokeObjectURL(state.sketch.previewUrl);
-      }
+      if (state.sketch.previewUrl) URL.revokeObjectURL(state.sketch.previewUrl);
       const previewUrl = file ? URL.createObjectURL(file) : null;
       const newSketch = { file, previewUrl, description: state.sketch.description };
+
       return {
         sketch: newSketch,
-        generatedAiPrompt: computePrompt({ ...state, sketch: newSketch } as DesignStore),
+        generatedAiPrompt: computePrompt({ ...state, sketch: newSketch } as DesignState),
       };
     }),
 
@@ -203,120 +180,22 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
       const newSketch = { ...state.sketch, description };
       return {
         sketch: newSketch,
-        generatedAiPrompt: computePrompt({ ...state, sketch: newSketch } as DesignStore),
+        generatedAiPrompt: computePrompt({ ...state, sketch: newSketch } as DesignState),
       };
     }),
 
-  goNext: async () => {
-    const state = get();
-    if (state.currentStep < 3) {
-      set({ currentStep: state.currentStep + 1 });
-      return;
-    }
-    if (state.currentStep === 3 && state.generatedImages.length === 0) {
-      const { showLoading, hideLoading, showSnackbar } =
-        useGlobalStore.getState();
+  setGeneratedImages: (images) => set({ generatedImages: images }),
+  addGeneratedImage: (image) => set((state) => ({ generatedImages: [...state.generatedImages, image] })),
+  setCurrentStep: (step) => set({ currentStep: step }),
 
-      set({ isFrontGenerating: true });
-      showLoading("در حال تولید تصویر");
-
-      try {
-        let sketchBase64: string | undefined = undefined;
-        if (state.sketch.file) {
-          sketchBase64 = await fileToBase64(state.sketch.file);
-        }
-
-        const response = await fetch("/api/design", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt: state.generatedAiPrompt,
-            imageBase64: sketchBase64,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Front image generation failed");
-        }
-
-        const data = await response.json();
-        const frontImage: GeneratedDesignImage = {
-          id: "front",
-          title: "نمای روبه‌رو",
-          angle: "front",
-          src: data.image,
-        };
-
-        set({
-          generatedImages: [frontImage],
-          isFrontGenerating: false,
-          currentStep: 4, 
-        });
-      } catch (error) {
-        console.error(error);
-        showSnackbar("خطا در تولید تصویر. لطفاً دوباره تلاش کنید.", "error");
-        set({ isFrontGenerating: false });
-      } finally {
-        hideLoading();
-      }
-    }
-  },
-
-  goBack: () =>
-    set((state) => ({
-      currentStep: Math.max(1, state.currentStep - 1),
-    })),
-
-  generateBackView: async () => {
-    const state = get();
-    if (state.generatedImages.length === 0) return;
-
-    const { showLoading, hideLoading, showSnackbar } =
-      useGlobalStore.getState();
-
-    set({ isGeneratingBack: true });
-    showLoading("در حال تولید نمای پشت...");
-
-    try {
-      const frontImageSrc = state.generatedImages[0].src;
-      const backPrompt = buildBackViewPrompt(state.generatedAiPrompt);
-
-      const response = await fetch("/api/design", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: backPrompt,
-          imageBase64: frontImageSrc,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Back view generation failed");
-
-      const data = await response.json();
-      const backImage: GeneratedDesignImage = {
-        id: "back",
-        title: "نمای پشت",
-        angle: "back",
-        src: data.image,
-      };
-
-      set((prev) => ({
-        generatedImages: [...prev.generatedImages, backImage],
-        isGeneratingBack: false,
-      }));
-    } catch (error) {
-      console.error(error);
-      showSnackbar("خطا در تولید نمای پشت.", "error");
-      set({ isGeneratingBack: false });
-    } finally {
-      hideLoading();
-    }
-  },
+  setIsFrontGenerating: (value) => set({ isFrontGenerating: value }),
+  setIsGeneratingBack: (value) => set({ isGeneratingBack: value }),
 
   restart: () => {
     const { sketch } = get();
     if (sketch.previewUrl) URL.revokeObjectURL(sketch.previewUrl);
     fabricIdCounter = 0;
+
     set({
       gender: null,
       garmentTypeId: null,
@@ -326,10 +205,10 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
       fabricAssignments: {},
       sketch: { file: null, previewUrl: null, description: "" },
       currentStep: 1,
-      isFrontGenerating: false,
-      isGeneratingBack: false,
       generatedImages: [],
       generatedAiPrompt: "",
+      isFrontGenerating: false,
+      isGeneratingBack: false,
     });
   },
 }));

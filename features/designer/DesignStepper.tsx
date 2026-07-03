@@ -1,21 +1,15 @@
 "use client";
 
 import { HiOutlineArrowLeft, HiOutlineArrowRight } from "react-icons/hi2";
-import { Button } from "@/shared/components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/card";
-
 import { useDesignStepper } from "@/features/designer/hooks/useDesignStepper";
 import { StepFabric } from "./steps/StepFabric";
 import { StepGender } from "./steps/StepGender";
 import { StepIndicator } from "./components/StepIndicator";
 import { StepResult } from "./steps/StepResult";
 import { StepSketch } from "./steps/StepSketch";
+import { useGenerateDesign } from "./hooks/useGenerateDesign";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/Card";
+import { Button } from "@/shared/components/Button";
 
 export function DesignStepper() {
   const {
@@ -26,8 +20,11 @@ export function DesignStepper() {
     currentStepInfo,
     handleGoNext,
     handleGoBack,
-    isGenerating,
   } = useDesignStepper();
+  
+  const { isGeneratingFront, isGeneratingBack } = useGenerateDesign();
+  
+  const isGenerating = isGeneratingFront || isGeneratingBack;
 
   return (
     <div className="mx-auto w-full max-w-5xl">
