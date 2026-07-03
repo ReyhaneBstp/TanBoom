@@ -12,7 +12,6 @@ export function StepResult() {
   const generatedImages = useDesignStore((s) => s.generatedImages);
   const generatedAiPrompt = useDesignStore((s) => s.generatedAiPrompt);
   const isGeneratingBack = useDesignStore((s) => s.isGeneratingBack);
-  const isGenerating = useDesignStore((s) => s.isGenerating);
   const generateBackView = useDesignStore((s) => s.generateBackView);
   const restart = useDesignStore((s) => s.restart);
 
@@ -65,7 +64,7 @@ export function StepResult() {
               type="button"
               variant="glass"
               onClick={generateBackView}
-              disabled={isGeneratingBack || isGenerating}
+              disabled={isGeneratingBack}
               className="mt-5 gap-2"
             >
               {isGeneratingBack ? (

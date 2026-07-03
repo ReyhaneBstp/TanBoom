@@ -15,11 +15,10 @@ export function StepIndicator() {
     selectedFabricIds.length > 0,
     Boolean(sketch.file && sketch.description.trim().length > 8),
     generatedImages.length > 0,
-    generatedImages.length > 0,
   ];
 
   return (
-    <div className="grid grid-cols-5 gap-2 rounded-[1.5rem] border border-white/70 bg-white/45 p-2 backdrop-blur-2xl">
+    <div className="grid grid-cols-4 gap-2 rounded-[1.5rem] border border-white/70 bg-white/45 p-2 backdrop-blur-2xl">
       {STEPPER_STEPS.map((step, index) => {
         const isActive = currentStep === index + 1;
         const isCompleted = completedSteps[index];
@@ -36,13 +35,15 @@ export function StepIndicator() {
             <div
               className={cn(
                 "mx-auto mb-1 flex size-7 items-center justify-center rounded-full text-xs font-semibold",
-                isActive ? "bg-primary-300 text-white" : "bg-white/70 text-muted-foreground",
+                isActive
+                  ? "bg-primary-300 text-white"
+                  : "bg-white/70 text-muted-foreground",
                 isCompleted && !isActive && "bg-primary-300/80 text-white"
               )}
             >
               {step.id}
             </div>
-            <p className="truncate text-[11px] font-semibold text-foreground mt-1">
+            <p className="mt-1 truncate text-[11px] font-semibold text-foreground">
               {step.title}
             </p>
           </div>

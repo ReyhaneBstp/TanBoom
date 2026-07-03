@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
-import type { ReactNode } from "react";
+import { GlobalLoading } from "@/shared/components/GlobalLoading";
+import { GlobalSnackbar } from "@/shared/components/GlobalSnackbar";
+import { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,13 +9,17 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children
-}: Readonly<{
-  children: ReactNode;
-}>) {
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="fa" dir="rtl">
-      <body>{children}</body>
+      <body className="...">
+        {children}
+        <GlobalLoading />
+        <GlobalSnackbar />
+      </body>
     </html>
   );
 }

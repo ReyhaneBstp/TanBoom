@@ -65,7 +65,6 @@ export function StepFabric() {
         </div>
       </div>
 
-      {/* محتوای پارچه‌های ساده */}
       {category === "solid" && (
         <div className="flex-1">
           <div className="flex flex-wrap items-end gap-3 mb-4">

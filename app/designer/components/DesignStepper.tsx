@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  HiOutlineArrowLeft,
-  HiOutlineArrowRight,
-} from "react-icons/hi2";
+import { HiOutlineArrowLeft, HiOutlineArrowRight } from "react-icons/hi2";
 import { Button } from "@/shared/components/button";
 import {
   Card,
@@ -16,17 +13,16 @@ import { useDesignStore } from "@/app/designer/store/useDesignStore";
 import { StepFabric } from "./StepFabric";
 import { StepGender } from "./StepGender";
 import { StepIndicator } from "./StepIndicator";
-import { StepProcessing } from "./StepProcessing";
 import { StepResult } from "./StepResult";
 import { StepSketch } from "./StepSketch";
 import { stepsInfo } from "@/app/designer/constants/design-steps";
-
 
 export function DesignStepper() {
   const currentStep = useDesignStore((s) => s.currentStep);
   const goBack = useDesignStore((s) => s.goBack);
   const goNext = useDesignStore((s) => s.goNext);
-  const isGenerating = useDesignStore((s) => s.isGenerating);
+  const isFrontGenerating = useDesignStore((s) => s.isFrontGenerating);
+  const isGeneratingBack = useDesignStore((s) => s.isGeneratingBack);
   const gender = useDesignStore((s) => s.gender);
   const garmentTypeId = useDesignStore((s) => s.garmentTypeId);
   const selectedFabricIds = useDesignStore((s) => s.selectedFabricIds);
@@ -38,11 +34,10 @@ export function DesignStepper() {
     selectedFabricIds.length > 0,
     Boolean(sketch.file && sketch.description.trim().length > 8),
     generatedImages.length > 0,
-    generatedImages.length > 0,
   ];
 
   const canGoNext = currentStep < 4 && completedSteps[currentStep - 1];
-  const canGoBack = currentStep > 1 && !isGenerating;
+  const canGoBack = currentStep > 1 && !isFrontGenerating && !isGeneratingBack;
 
   const copy = stepsInfo[currentStep as keyof typeof stepsInfo];
 
@@ -57,7 +52,6 @@ export function DesignStepper() {
             با روایتی از سمت تو ...
           </p>
         </div>
-
         <div className="w-full lg:w-[28rem]">
           <StepIndicator />
         </div>
@@ -65,13 +59,13 @@ export function DesignStepper() {
 
       <Card className="overflow-hidden">
         <CardHeader className="border-b border-white/60 bg-white/35">
-          <div className="flex items-center w-full">
-            <p className="text-xs font-semibold text-primary-600 whitespace-nowrap">
+          <div className="flex w-full items-center">
+            <p className="whitespace-nowrap text-xs font-semibold text-primary-600">
               {copy.eyebrow}
             </p>
-            <div className="flex-1 mx-3 h-px bg-primary-100/40 rounded-full" />
-            <span className="w-fit rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground whitespace-nowrap">
-              مرحله {currentStep} از ۵
+            <div className="mx-3 h-px flex-1 rounded-full bg-primary-100/40" />
+            <span className="w-fit whitespace-nowrap rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+              مرحله {currentStep} از ۴
             </span>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -86,8 +80,7 @@ export function DesignStepper() {
           {currentStep === 1 && <StepGender />}
           {currentStep === 2 && <StepFabric />}
           {currentStep === 3 && <StepSketch />}
-          {currentStep === 4 && <StepProcessing />}
-          {currentStep === 5 && <StepResult />}
+          {currentStep === 4 && <StepResult />}
         </CardContent>
 
         {currentStep < 4 && (
@@ -105,9 +98,9 @@ export function DesignStepper() {
             <Button
               type="button"
               onClick={goNext}
-              disabled={!canGoNext || isGenerating}
+              disabled={!canGoNext || isFrontGenerating || isGeneratingBack}
             >
-              {currentStep === 3 ? "ساخت پرامپت" : "ادامه"}
+              {currentStep === 3 ? "تولید تصویر" : "ادامه"}
               <HiOutlineArrowLeft className="size-4" />
             </Button>
           </div>

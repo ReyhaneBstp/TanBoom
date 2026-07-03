@@ -14,6 +14,8 @@ import type {
   PatternedFabric,
   GeneratedDesignImage,
 } from "@/app/designer/types/design";
+import { useGlobalStore } from "@/shared/store/useGlobalStore";
+
 
 interface DesignStore {
   gender: Gender | null;
@@ -28,8 +30,8 @@ interface DesignStore {
     description: string;
   };
   currentStep: number;
-  isGenerating: boolean;
-  isGeneratingBack: boolean; 
+  isFrontGenerating: boolean;
+  isGeneratingBack: boolean;
   generatedImages: GeneratedDesignImage[];
   generatedAiPrompt: string;
 
@@ -40,7 +42,7 @@ interface DesignStore {
   setFabricAssignment: (fabricId: string, part: string) => void;
   updateSketchFile: (file: File | null) => void;
   updateDescription: (description: string) => void;
-  goNext: () => void;
+  goNext: () => Promise<void>;
   goBack: () => void;
   generateBackView: () => Promise<void>;
   restart: () => void;
@@ -103,7 +105,7 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
   fabricAssignments: {},
   sketch: { file: null, previewUrl: null, description: "" },
   currentStep: 1,
-  isGenerating: false,
+  isFrontGenerating: false,
   isGeneratingBack: false,
   generatedImages: [],
   generatedAiPrompt: "",
@@ -207,11 +209,16 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
 
   goNext: async () => {
     const state = get();
-    const nextStep = Math.min(5, state.currentStep + 1);
-    set({ currentStep: nextStep });
+    if (state.currentStep < 3) {
+      set({ currentStep: state.currentStep + 1 });
+      return;
+    }
+    if (state.currentStep === 3 && state.generatedImages.length === 0) {
+      const { showLoading, hideLoading, showSnackbar } =
+        useGlobalStore.getState();
 
-    if (nextStep === 4 && state.generatedImages.length === 0) {
-      set({ isGenerating: true });
+      set({ isFrontGenerating: true });
+      showLoading("در حال تولید تصویر");
 
       try {
         let sketchBase64: string | undefined = undefined;
@@ -242,12 +249,15 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
 
         set({
           generatedImages: [frontImage],
-          isGenerating: false,
-          currentStep: 5,
+          isFrontGenerating: false,
+          currentStep: 4, 
         });
       } catch (error) {
         console.error(error);
-        set({ isGenerating: false });
+        showSnackbar("خطا در تولید تصویر. لطفاً دوباره تلاش کنید.", "error");
+        set({ isFrontGenerating: false });
+      } finally {
+        hideLoading();
       }
     }
   },
@@ -261,7 +271,11 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
     const state = get();
     if (state.generatedImages.length === 0) return;
 
-    set({ isGeneratingBack: true, isGenerating: true });
+    const { showLoading, hideLoading, showSnackbar } =
+      useGlobalStore.getState();
+
+    set({ isGeneratingBack: true });
+    showLoading("در حال تولید نمای پشت...");
 
     try {
       const frontImageSrc = state.generatedImages[0].src;
@@ -272,7 +286,7 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           prompt: backPrompt,
-          imageBase64: frontImageSrc, 
+          imageBase64: frontImageSrc,
         }),
       });
 
@@ -289,11 +303,13 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
       set((prev) => ({
         generatedImages: [...prev.generatedImages, backImage],
         isGeneratingBack: false,
-        isGenerating: false,
       }));
     } catch (error) {
       console.error(error);
-      set({ isGeneratingBack: false, isGenerating: false });
+      showSnackbar("خطا در تولید نمای پشت.", "error");
+      set({ isGeneratingBack: false });
+    } finally {
+      hideLoading();
     }
   },
 
@@ -310,7 +326,7 @@ export const useDesignStore = create<DesignStore>((set, get) => ({
       fabricAssignments: {},
       sketch: { file: null, previewUrl: null, description: "" },
       currentStep: 1,
-      isGenerating: false,
+      isFrontGenerating: false,
       isGeneratingBack: false,
       generatedImages: [],
       generatedAiPrompt: "",
