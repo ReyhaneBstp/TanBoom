@@ -36,6 +36,7 @@ interface DesignActions {
   setGender: (gender: Gender) => void;
   setGarment: (garmentTypeId: string) => void;
   addCustomFabric: (hex: string) => void;
+  removeCustomFabric: (fabricId: string) => void;
   toggleFabric: (fabricId: string) => void;
   setFabricAssignment: (fabricId: string, part: string) => void;
   updateSketchFile: (file: File | null) => void;
@@ -127,9 +128,40 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
       const newFabric: SolidFabric = { id, kind: "solid", hex, label: hex };
       const newCustomFabrics = [...state.customFabrics, newFabric];
 
+      const newSelectedIds = [...state.selectedFabricIds, id];
+
       return {
         customFabrics: newCustomFabrics,
-        generatedAiPrompt: computePrompt({ ...state, customFabrics: newCustomFabrics } as DesignState),
+        selectedFabricIds: newSelectedIds,
+        generatedAiPrompt: computePrompt({
+          ...state,
+          customFabrics: newCustomFabrics,
+          selectedFabricIds: newSelectedIds,
+        } as DesignState),
+      };
+    }),
+
+  removeCustomFabric: (fabricId) =>
+    set((state) => {
+      const newCustomFabrics = state.customFabrics.filter(
+        (f) => f.id !== fabricId
+      );
+      const newSelectedIds = state.selectedFabricIds.filter(
+        (id) => id !== fabricId
+      );
+      const newAssignments = { ...state.fabricAssignments };
+      delete newAssignments[fabricId];
+
+      return {
+        customFabrics: newCustomFabrics,
+        selectedFabricIds: newSelectedIds,
+        fabricAssignments: newAssignments,
+        generatedAiPrompt: computePrompt({
+          ...state,
+          customFabrics: newCustomFabrics,
+          selectedFabricIds: newSelectedIds,
+          fabricAssignments: newAssignments,
+        } as DesignState),
       };
     }),
 
