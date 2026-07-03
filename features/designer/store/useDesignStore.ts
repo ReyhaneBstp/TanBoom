@@ -3,17 +3,17 @@ import {
   GARMENT_TYPES,
   GENDER_OPTIONS,
   MOCK_PATTERNED_FABRICS,
-} from "@/app/designer/constants/design-options";
+} from "@/features/designer/definitions/design-options";
 import {
   buildEnhancedPrompt,
   buildBackViewPrompt,
-} from "@/app/designer/utils/design-prompt";
+} from "@/features/designer/utils/design-prompt";
 import type {
   Gender,
   SolidFabric,
   PatternedFabric,
   GeneratedDesignImage,
-} from "@/app/designer/types/design";
+} from "@/features/designer/types/design";
 import { useGlobalStore } from "@/shared/store/useGlobalStore";
 
 

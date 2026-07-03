@@ -8,7 +8,7 @@ const config: Config = {
     "./constants/**/*.{ts,tsx}",
     "./hooks/**/*.{ts,tsx}",
     "./lib/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
+    "./features/**/*.{ts,tsx}",
     "./shared/**/*.{ts,tsx}",
   ],
   theme: {

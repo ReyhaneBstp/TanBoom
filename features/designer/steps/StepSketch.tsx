@@ -6,8 +6,8 @@ import { useMemo } from "react";
 import { HiOutlineArrowUpTray, HiOutlinePhoto } from "react-icons/hi2";
 import { Textarea } from "@/shared/components/textarea";
 import { cn } from "@/shared/utils/utils";
-import { useDesignStore } from "@/app/designer/store/useDesignStore";
-import type { SolidFabric, PatternedFabric } from "@/app/designer/types/design";
+import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import type { SolidFabric, PatternedFabric } from "@/features/designer/types/design";
 
 export function StepSketch() {
   const previewUrl = useDesignStore((s) => s.sketch.previewUrl);

@@ -9,13 +9,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/card";
-import { useDesignStore } from "@/app/designer/store/useDesignStore";
-import { StepFabric } from "./StepFabric";
-import { StepGender } from "./StepGender";
-import { StepIndicator } from "./StepIndicator";
-import { StepResult } from "./StepResult";
-import { StepSketch } from "./StepSketch";
-import { stepsInfo } from "@/app/designer/constants/design-steps";
+import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import { StepFabric } from "./steps/StepFabric";
+import { StepGender } from "./steps/StepGender";
+import { StepIndicator } from "./components/StepIndicator";
+import { StepResult } from "./steps/StepResult";
+import { StepSketch } from "./steps/StepSketch";
+import { stepsInfo } from "@/features/designer/definitions/design-steps";
 
 export function DesignStepper() {
   const currentStep = useDesignStore((s) => s.currentStep);
