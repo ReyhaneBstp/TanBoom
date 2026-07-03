@@ -1,6 +1,6 @@
 import { LuShirt } from "react-icons/lu";
-import { GENDER_OPTIONS, GARMENT_TYPES } from "@/features/designer/constants/design-options";
-import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import { GENDER_OPTIONS, GARMENT_TYPES } from "@/app/designer/constants/design-options";
+import { useDesignStore } from "@/app/designer/store/useDesignStore";
 import { GarmentIcon } from "./GarmentIcon";
 import { OptionCard } from "./OptionCard";
 import { GiFemale, GiMale } from "react-icons/gi";

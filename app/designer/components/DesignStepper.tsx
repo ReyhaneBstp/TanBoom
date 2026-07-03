@@ -12,14 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/card";
-import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import { useDesignStore } from "@/app/designer/store/useDesignStore";
 import { StepFabric } from "./StepFabric";
 import { StepGender } from "./StepGender";
 import { StepIndicator } from "./StepIndicator";
 import { StepProcessing } from "./StepProcessing";
 import { StepResult } from "./StepResult";
 import { StepSketch } from "./StepSketch";
-import { stepsInfo } from "@/features/designer/constants/design-steps";
+import { stepsInfo } from "@/app/designer/constants/design-steps";
 
 
 export function DesignStepper() {

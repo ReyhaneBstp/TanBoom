@@ -6,7 +6,7 @@ import {
   HiOutlineArrowPath,
 } from "react-icons/hi2";
 import { Button } from "@/shared/components/button";
-import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import { useDesignStore } from "@/app/designer/store/useDesignStore";
 
 export function StepResult() {
   const generatedImages = useDesignStore((s) => s.generatedImages);

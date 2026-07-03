@@ -1,8 +1,5 @@
-import type {
-  EnhancedPromptPayload,
-  SolidFabric,
-  PatternedFabric,
-} from "@/features/designer/types/design";
+import { EnhancedPromptPayload, PatternedFabric, SolidFabric } from "../types/design";
+
 
 export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
   const solidFabrics = payload.selectedFabrics.filter(

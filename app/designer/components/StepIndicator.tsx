@@ -1,6 +1,6 @@
 import { STEPPER_STEPS } from "../constants/design-steps";
 import { cn } from "@/shared/utils/utils";
-import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import { useDesignStore } from "@/app/designer/store/useDesignStore";
 
 export function StepIndicator() {
   const currentStep = useDesignStore((s) => s.currentStep);

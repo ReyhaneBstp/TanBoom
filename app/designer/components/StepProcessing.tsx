@@ -3,7 +3,7 @@ import {
   HiOutlineSparkles,
   HiOutlineArrowPath,
 } from "react-icons/hi2";
-import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import { useDesignStore } from "@/app/designer/store/useDesignStore";
 
 export function StepProcessing() {
   const generatedAiPrompt = useDesignStore((s) => s.generatedAiPrompt);
