@@ -1,5 +1,5 @@
-import * as React from "react";
 import { cn } from "@/shared/utils/mergeClasses"; 
+import React from "react";
 
 export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {}
 

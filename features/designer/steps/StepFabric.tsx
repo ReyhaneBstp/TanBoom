@@ -12,6 +12,7 @@ import { FABRIC_MATERIALS } from "../definitions/design-options";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
 import type { SolidFabric } from "@/features/designer/types/design";
 import { cn } from "@/shared/utils/mergeClasses";
+import { Button } from "@/shared/components/Button";
 
 export function StepFabric() {
   const customFabrics = useDesignStore((s) => s.customFabrics) as SolidFabric[];
@@ -84,9 +85,9 @@ export function StepFabric() {
 
   return (
     <div className="flex flex-col gap-6 min-h-[22rem]">
-      {/* ───── بخش افزودن پارچه ───── */}
+
       <div className="flex items-end gap-3 flex-wrap">
-        {/* انتخاب‌گر رنگ دایره‌ای */}
+
         <div className="flex flex-col items-center gap-1.5">
           <span className="text-[10px] font-medium text-muted-foreground">
             رنگ
@@ -163,20 +164,16 @@ export function StepFabric() {
           )}
         </div>
 
-        <button
+        <Button
           type="button"
           onClick={handleAdd}
           disabled={!canAdd}
-          className={cn(
-            "flex h-10 shrink-0 items-center gap-2 rounded-xl px-5 text-xs font-semibold transition-all duration-200",
-            canAdd
-              ? "bg-primary-300 text-white shadow-md shadow-primary-300/25 hover:bg-primary-400 hover:shadow-lg hover:shadow-primary-300/35 active:scale-[0.97]"
-              : "bg-white/30 text-muted-foreground cursor-not-allowed border border-white/40"
-          )}
+          variant={canAdd ? "outline" : "ghost"}
+          size={"sm"}
         >
           <HiOutlinePlus className="size-4" />
-          <span className="hidden sm:inline">افزودن پارچه</span>
-        </button>
+          <span className="hidden sm:inline">افزودن </span>
+        </Button>
       </div>
 
       <div className="h-px bg-gradient-to-l from-transparent via-white/40 to-transparent" />
