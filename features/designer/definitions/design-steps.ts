@@ -1,33 +1,46 @@
-export const STEPPER_STEPS = [
-  { id: 1, title: "انتخاب نوع" },
-  { id: 2, title: "انتخاب پارچه" },
-  { id: 3, title: "طراحی" },
-  { id: 4, title: "نتیجه" },
-];
-
-export const stepsInfo = {
-  1: {
-    eyebrow: "شروع انتخاب",
-    title: "نوع لباس را انتخاب کنید",
-    description:
-      "ابتدا جنسیت و سپس نوع لباس را تعیین کنید تا مسیر طراحی دقیق‌تر شود.",
-  },
-  2: {
-    eyebrow: "انتخاب متریال",
-    title: "پارچه‌های دلخواه را اضافه کنید",
-    description:
-      "رنگ‌های ساده و طرح‌های پارچه‌ای می‌توانند هم‌زمان در طراحی نهایی استفاده شوند.",
-  },
-  3: {
-    eyebrow: "طراحی اولیه",
-    title: "طرح پایه و توضیح کامل را وارد کنید",
-    description:
-      "اسکچ دستی و توضیحات شما مبنای پرامپت دقیق تولید تصویر قرار می‌گیرد.",
-  },
-  4: {
-    eyebrow: "تحویل نهایی",
-    title: "خروجی چندنما برای خیاط آماده است",
-    description:
-      "نماهای روبه‌رو، پشت و کنار برای بررسی فرم و جزئیات دوخت نمایش داده می‌شوند.",
-  },
+export const STEP_IDS = {
+  GENDER: "gender",
+  FABRIC: "fabric",
+  SKETCH: "sketch",
+  MEASUREMENTS: "measurements",
+  RESULT: "result",
 } as const;
+
+export type StepId = (typeof STEP_IDS)[keyof typeof STEP_IDS];
+
+export const STEPPER_STEPS = [
+  { id: STEP_IDS.GENDER, label: "انتخاب نوع" },
+  { id: STEP_IDS.FABRIC, label: "انتخاب پارچه" },
+  { id: STEP_IDS.SKETCH, label: "طراحی" },
+  { id: STEP_IDS.MEASUREMENTS, label: "سایزبندی" },
+  { id: STEP_IDS.RESULT, label: "نتیجه" },
+] as const;
+
+export const stepsInfo: Record<StepId, { eyebrow: string; title: string; description: string }> = {
+  [STEP_IDS.GENDER]: {
+    eyebrow: "شروع انتخاب",
+    title: "چه لباسی مد نظرته؟",
+    description: "جنسیت و نوع لباس رو مشخص کن تا مسر طراحی دقیق‌تر بشه..",
+  },
+  [STEP_IDS.FABRIC]: {
+    eyebrow: "انتخاب متریال",
+    title: "پارچه‌های لباست رو انتخاب کن",
+    description:
+      "در این مرحله، پارچه‌های تشکیل‌دهنده‌ی لباست رو مشخص کن.",
+  },
+  [STEP_IDS.SKETCH]: {
+    eyebrow: "طراحی اولیه",
+    title: "طرح لباست رو روی کاغذ بکش",
+    description: "اسکچ دستی و توضیحات شما مبنای تولید تصویر قرار می‌گیره. پس بهتره جزئیات طراحیت رو دقیق برامون توصیف کنی",
+  },
+  [STEP_IDS.MEASUREMENTS]: {
+    eyebrow: "سایز و اندازه",
+    title: "قد و اندازه‌های بدن",
+    description: "قد دلخواه لباس و سایزبندیش رو مشخص کن تا اندازه لباس دقیق‌تر بشه.",
+  },
+  [STEP_IDS.RESULT]: {
+    eyebrow: "نتیجه",
+    title: "تصویر طراحی شده",
+    description: "نتیجه نهایی طراحی بر اساس اطلاعاتت.",
+  },
+};

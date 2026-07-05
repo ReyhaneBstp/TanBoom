@@ -5,8 +5,8 @@ export function StepIndicator() {
   const { steps } = useDesignStepper();
 
   return (
-    <div className="grid grid-cols-4 gap-2 rounded-[1.5rem] border border-white/70 bg-white/45 p-2 backdrop-blur-2xl">
-      {steps.map((step) => (
+    <div className="grid grid-cols-5 gap-2 rounded-[1.5rem] border border-white/70 bg-white/45 p-2 backdrop-blur-2xl">
+      {steps.map((step, index) => (
         <div
           key={step.id}
           className={cn(
@@ -28,11 +28,11 @@ export function StepIndicator() {
                 "bg-primary-300/80 text-white"
             )}
           >
-            {step.id}
+            {index + 1}
           </div>
 
           <p className="mt-1 truncate text-[11px] font-semibold text-foreground">
-            {step.title}
+            {step.label}
           </p>
         </div>
       ))}

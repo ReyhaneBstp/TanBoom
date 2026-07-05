@@ -1,22 +1,13 @@
 import { create } from "zustand";
-import {
-  GARMENT_TYPES,
-  GENDER_OPTIONS,
-  MOCK_PATTERNED_FABRICS,
-} from "@/features/designer/definitions/design-options";
+import { GARMENT_TYPES, GENDER_OPTIONS } from "@/features/designer/definitions/design-options";
 import { buildEnhancedPrompt } from "@/features/designer/utils/design-prompt";
-import type {
-  Gender,
-  SolidFabric,
-  PatternedFabric,
-  GeneratedDesignImage,
-} from "@/features/designer/types/design";
+import type { Gender, SolidFabric, GeneratedDesignImage, BodyMeasurements } from "@/features/designer/types/design";
+import { STEP_IDS, type StepId } from "@/features/designer/definitions/design-steps";
 
 interface DesignState {
   gender: Gender | null;
   garmentTypeId: string | null;
   customFabrics: SolidFabric[];
-  patternedFabrics: PatternedFabric[];
   selectedFabricIds: string[];
   fabricAssignments: Record<string, string>;
   sketch: {
@@ -24,9 +15,10 @@ interface DesignState {
     previewUrl: string | null;
     description: string;
   };
-  currentStep: number;
+  currentStepId: StepId;
   generatedImages: GeneratedDesignImage[];
   generatedAiPrompt: string;
+  measurements: BodyMeasurements;
 
   isFrontGenerating: boolean;
   isGeneratingBack: boolean;
@@ -35,7 +27,7 @@ interface DesignState {
 interface DesignActions {
   setGender: (gender: Gender) => void;
   setGarment: (garmentTypeId: string) => void;
-  addCustomFabric: (hex: string) => void;
+  addCustomFabric: (hex: string, material: string) => void;
   removeCustomFabric: (fabricId: string) => void;
   toggleFabric: (fabricId: string) => void;
   setFabricAssignment: (fabricId: string, part: string) => void;
@@ -43,22 +35,14 @@ interface DesignActions {
   updateDescription: (description: string) => void;
   setGeneratedImages: (images: GeneratedDesignImage[]) => void;
   addGeneratedImage: (image: GeneratedDesignImage) => void;
-  setCurrentStep: (step: number) => void;
+  setCurrentStepId: (stepId: StepId) => void;
   setIsFrontGenerating: (value: boolean) => void;
   setIsGeneratingBack: (value: boolean) => void;
+  setMeasurements: (measurements: BodyMeasurements) => void;
   restart: () => void;
 }
 
 let fabricIdCounter = 0;
-
-const fileToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
 
 const computePrompt = (state: DesignState): string => {
   const {
@@ -66,15 +50,13 @@ const computePrompt = (state: DesignState): string => {
     garmentTypeId,
     selectedFabricIds,
     customFabrics,
-    patternedFabrics,
     sketch,
     fabricAssignments,
+    measurements,
   } = state;
 
   const selectedGarment = GARMENT_TYPES.find((g) => g.id === garmentTypeId) ?? null;
-  const allFabrics = [...customFabrics, ...patternedFabrics];
-  const selectedFabrics = allFabrics.filter((f) => selectedFabricIds.includes(f.id));
-
+  const selectedFabrics = customFabrics.filter((f) => selectedFabricIds.includes(f.id));
   const genderLabel = GENDER_OPTIONS.find((g) => g.id === gender)?.label ?? "";
 
   if (!gender || !selectedGarment || selectedFabrics.length === 0 || !sketch.description.trim()) {
@@ -89,6 +71,7 @@ const computePrompt = (state: DesignState): string => {
     description: sketch.description.trim(),
     sketchPreviewUrl: sketch.previewUrl,
     fabricAssignments,
+    measurements,
   });
 };
 
@@ -96,13 +79,13 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
   gender: null,
   garmentTypeId: null,
   customFabrics: [],
-  patternedFabrics: MOCK_PATTERNED_FABRICS,
   selectedFabricIds: [],
   fabricAssignments: {},
   sketch: { file: null, previewUrl: null, description: "" },
-  currentStep: 1,
+  currentStepId: STEP_IDS.GENDER,
   generatedImages: [],
   generatedAiPrompt: "",
+  measurements: {},
 
   isFrontGenerating: false,
   isGeneratingBack: false,
@@ -122,12 +105,12 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
       generatedAiPrompt: computePrompt({ ...state, garmentTypeId } as DesignState),
     })),
 
-  addCustomFabric: (hex) =>
+  addCustomFabric: (hex, material) =>
     set((state) => {
       const id = `custom-${++fabricIdCounter}-${Date.now()}`;
-      const newFabric: SolidFabric = { id, kind: "solid", hex, label: hex };
+      const label = `${material} (${hex})`;
+      const newFabric: SolidFabric = { id, kind: "solid", hex, material, label };
       const newCustomFabrics = [...state.customFabrics, newFabric];
-
       const newSelectedIds = [...state.selectedFabricIds, id];
 
       return {
@@ -143,12 +126,8 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
 
   removeCustomFabric: (fabricId) =>
     set((state) => {
-      const newCustomFabrics = state.customFabrics.filter(
-        (f) => f.id !== fabricId
-      );
-      const newSelectedIds = state.selectedFabricIds.filter(
-        (id) => id !== fabricId
-      );
+      const newCustomFabrics = state.customFabrics.filter((f) => f.id !== fabricId);
+      const newSelectedIds = state.selectedFabricIds.filter((id) => id !== fabricId);
       const newAssignments = { ...state.fabricAssignments };
       delete newAssignments[fabricId];
 
@@ -217,11 +196,17 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
     }),
 
   setGeneratedImages: (images) => set({ generatedImages: images }),
-  addGeneratedImage: (image) => set((state) => ({ generatedImages: [...state.generatedImages, image] })),
-  setCurrentStep: (step) => set({ currentStep: step }),
-
+  addGeneratedImage: (image) =>
+    set((state) => ({ generatedImages: [...state.generatedImages, image] })),
+  setCurrentStepId: (stepId) => set({ currentStepId: stepId }),
   setIsFrontGenerating: (value) => set({ isFrontGenerating: value }),
   setIsGeneratingBack: (value) => set({ isGeneratingBack: value }),
+
+  setMeasurements: (measurements) =>
+    set((state) => ({
+      measurements,
+      generatedAiPrompt: computePrompt({ ...state, measurements } as DesignState),
+    })),
 
   restart: () => {
     const { sketch } = get();
@@ -232,13 +217,13 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
       gender: null,
       garmentTypeId: null,
       customFabrics: [],
-      patternedFabrics: MOCK_PATTERNED_FABRICS,
       selectedFabricIds: [],
       fabricAssignments: {},
       sketch: { file: null, previewUrl: null, description: "" },
-      currentStep: 1,
+      currentStepId: STEP_IDS.GENDER,
       generatedImages: [],
       generatedAiPrompt: "",
+      measurements: {},
       isFrontGenerating: false,
       isGeneratingBack: false,
     });

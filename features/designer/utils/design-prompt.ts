@@ -1,37 +1,37 @@
-import { EnhancedPromptPayload, PatternedFabric, SolidFabric } from "../types/design";
-
+import { EnhancedPromptPayload, SolidFabric } from "../types/design";
 
 export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
-  const solidFabrics = payload.selectedFabrics.filter(
-    (f) => f.kind === "solid"
-  ) as SolidFabric[];
-  const patternedFabrics = payload.selectedFabrics.filter(
-    (f) => f.kind === "patterned"
-  ) as PatternedFabric[];
+  const solidFabrics = payload.selectedFabrics as SolidFabric[];
 
   const solidPrompt = solidFabrics
-    .map((fabric) => `${fabric.label} (${fabric.hex})`)
+    .map((fabric) => `${fabric.material} (${fabric.hex})`)
     .join(", ");
 
   const assignmentLines = payload.selectedFabrics
     .map((fabric) => {
       const part = payload.fabricAssignments?.[fabric.id]?.trim();
       if (!part) return null;
-      if (fabric.kind === "solid") {
-        const solid = fabric as SolidFabric;
-        return `- Use solid color ${solid.hex} SPECIFICALLY for the [${part}].`;
-      } else {
-        return `- Use the provided patterned texture/image SPECIFICALLY for the [${part}].`;
-      }
+      const solid = fabric as SolidFabric;
+      return `- Use ${solid.material} fabric in solid color ${solid.hex} SPECIFICALLY for the [${part}].`;
     })
     .filter(Boolean);
+
+  const measurementLines: string[] = [];
+  if (payload.measurements) {
+    const m = payload.measurements;
+    if (m.height_cm) measurementLines.push(`Garment length: ${m.height_cm} cm`);
+    if (m.chest_cm) measurementLines.push(`Chest circumference: ${m.chest_cm} cm`);
+    if (m.waist_cm) measurementLines.push(`Waist circumference: ${m.waist_cm} cm`);
+    if (m.hips_cm) measurementLines.push(`Hips circumference: ${m.hips_cm} cm`);
+    if (m.head_circumference_cm) measurementLines.push(`Head circumference: ${m.head_circumference_cm} cm`);
+  }
 
   const basePrompt = [
     "You are an expert technical fashion designer. Create a highly detailed, photorealistic image of a custom clothing design.",
     `1. Target Audience: ${payload.genderLabel}`,
     `2. Garment Type: ${payload.garmentType.label}`,
     `3. Core Description from User: "${payload.description}"`,
-    solidPrompt ? `4. Solid Color Palette: ${solidPrompt}` : "",
+    solidPrompt ? `4. Fabric & Color Palette: ${solidPrompt}` : "",
     payload.sketchPreviewUrl
       ? "5. IMPORTANT: Use the provided hand-drawn sketch strictly as the foundational silhouette and structural reference."
       : "",
@@ -41,21 +41,19 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
     .filter(Boolean)
     .join("\n");
 
-  if (assignmentLines.length > 0) {
-    return [
-      basePrompt,
-      "\nFABRIC PLACEMENT INSTRUCTIONS:",
-      ...assignmentLines,
-    ].join("\n");
-  }
+  const measurementBlock =
+    measurementLines.length > 0
+      ? ["\nMEASUREMENT & FIT REQUIREMENTS:", ...measurementLines].join("\n")
+      : "";
 
-  return basePrompt;
+  const assignmentBlock =
+    assignmentLines.length > 0
+      ? ["\nFABRIC PLACEMENT INSTRUCTIONS:", ...assignmentLines].join("\n")
+      : "";
+
+  return [basePrompt, measurementBlock, assignmentBlock].filter(Boolean).join("\n");
 }
 
-/**
- * Build a prompt for generating the back view of the garment,
- * given the original description and the front view image.
- */
 export function buildBackViewPrompt(originalPrompt: string): string {
   return [
     originalPrompt,

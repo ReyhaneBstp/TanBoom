@@ -6,7 +6,7 @@ import { useMemo } from "react";
 import { HiOutlineArrowUpTray, HiOutlinePhoto } from "react-icons/hi2";
 import { Textarea } from "@/shared/components/Textarea";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
-import type { SolidFabric, PatternedFabric } from "@/features/designer/types/design";
+import type { SolidFabric } from "@/features/designer/types/design";
 import { cn } from "@/shared/utils/mergeClasses";
 
 export function StepSketch() {
@@ -17,22 +17,13 @@ export function StepSketch() {
 
   const selectedFabricIds = useDesignStore((s) => s.selectedFabricIds);
   const customFabrics = useDesignStore((s) => s.customFabrics) as SolidFabric[];
-  const patternedFabrics = useDesignStore(
-    (s) => s.patternedFabrics
-  ) as PatternedFabric[];
   const fabricAssignments = useDesignStore((s) => s.fabricAssignments);
   const setFabricAssignment = useDesignStore((s) => s.setFabricAssignment);
 
-  const allFabrics = useMemo(
-    () => [...customFabrics, ...patternedFabrics],
-    [customFabrics, patternedFabrics]
-  );
+  const allFabrics = useMemo(() => [...customFabrics], [customFabrics]);
 
   const selectedFabricsData = useMemo(
-    () =>
-      selectedFabricIds
-        .map((id) => allFabrics.find((f) => f.id === id))
-        .filter(Boolean),
+    () => selectedFabricIds.map((id) => allFabrics.find((f) => f.id === id)).filter(Boolean),
     [allFabrics, selectedFabricIds]
   );
 
@@ -59,9 +50,7 @@ export function StepSketch() {
             type="file"
             accept="image/*"
             className="sr-only"
-            onChange={(event) =>
-              updateSketchFile(event.target.files?.[0] ?? null)
-            }
+            onChange={(event) => updateSketchFile(event.target.files?.[0] ?? null)}
           />
           {previewUrl ? (
             <>
@@ -101,7 +90,7 @@ export function StepSketch() {
           <Textarea
             value={description}
             onChange={(event) => updateDescription(event.target.value)}
-            placeholder="مثلاً: یقه کار شده با تور، آستین آزاد، پارچه طرح‌دار فقط برای سرآستین..."
+            placeholder="مثلاً: یقه کار شده با تور، آستین آزاد…"
             className="min-h-44 flex-1"
           />
         </div>
@@ -115,46 +104,31 @@ export function StepSketch() {
             برای هر پارچه محل استفاده در لباس را مشخص کنید.
           </p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {selectedFabricsData.map((fabric) => {
-              const isSolid = fabric?.kind === "solid";
-              return (
-                <div
-                  key={fabric!.id}
-                  className="flex items-start gap-2.5 rounded-xl bg-white/50 p-2"
-                >
-                  <div className="flex-shrink-0 pt-0.5">
-                    {isSolid ? (
-                      <span
-                        className="flex size-8 items-center justify-center rounded-full border border-white/70 shadow-inner"
-                        style={{
-                          backgroundColor: (fabric as SolidFabric).hex,
-                        }}
-                      />
-                    ) : (
-                      <img
-                        src={(fabric as PatternedFabric).imageData}
-                        alt={fabric!.label}
-                        className="size-8 rounded-lg object-cover"
-                      />
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <span className="block truncate text-xs font-semibold text-foreground">
-                      {fabric!.label}
-                    </span>
-                    <input
-                      type="text"
-                      value={fabricAssignments[fabric!.id] || ""}
-                      onChange={(e) =>
-                        setFabricAssignment(fabric!.id, e.target.value)
-                      }
-                      placeholder="مثلاً: یقه"
-                      className="mt-1 w-full rounded-md border border-rose-100/70 bg-white/60 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
-                    />
-                  </div>
+            {selectedFabricsData.map((fabric) => (
+              <div
+                key={fabric!.id}
+                className="flex items-start gap-2.5 rounded-xl bg-white/50 p-2"
+              >
+                <div className="flex-shrink-0 pt-0.5">
+                  <span
+                    className="flex size-8 items-center justify-center rounded-full border border-white/70 shadow-inner"
+                    style={{ backgroundColor: (fabric as SolidFabric).hex }}
+                  />
                 </div>
-              );
-            })}
+                <div className="min-w-0 flex-1">
+                  <span className="block truncate text-xs font-semibold text-foreground">
+                    {fabric!.label}
+                  </span>
+                  <input
+                    type="text"
+                    value={fabricAssignments[fabric!.id] || ""}
+                    onChange={(e) => setFabricAssignment(fabric!.id, e.target.value)}
+                    placeholder="مثلاً: یقه"
+                    className="mt-1 w-full rounded-md border border-rose-100/70 bg-white/60 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

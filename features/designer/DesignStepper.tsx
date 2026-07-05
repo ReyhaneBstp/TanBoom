@@ -7,13 +7,15 @@ import { StepGender } from "./steps/StepGender";
 import { StepIndicator } from "./components/StepIndicator";
 import { StepResult } from "./steps/StepResult";
 import { StepSketch } from "./steps/StepSketch";
+import { StepMeasurements } from "./steps/StepMeasurements";
 import { useGenerateDesign } from "./hooks/useGenerateDesign";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/Card";
 import { Button } from "@/shared/components/Button";
+import { STEP_IDS } from "@/features/designer/definitions/design-steps";
 
 export function DesignStepper() {
   const {
-    currentStep,
+    currentStepId,
     isLastStep,
     canGoNext,
     canGoBack,
@@ -21,9 +23,8 @@ export function DesignStepper() {
     handleGoNext,
     handleGoBack,
   } = useDesignStepper();
-  
+
   const { isGeneratingFront, isGeneratingBack } = useGenerateDesign();
-  
   const isGenerating = isGeneratingFront || isGeneratingBack;
 
   return (
@@ -50,7 +51,7 @@ export function DesignStepper() {
             </p>
             <div className="mx-3 h-px flex-1 rounded-full bg-primary-100/40" />
             <span className="w-fit whitespace-nowrap rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-              مرحله {currentStep} از ۴
+              مرحله {useDesignStepper().currentStepIndex + 1} از {5}
             </span>
           </div>
 
@@ -63,10 +64,11 @@ export function DesignStepper() {
         </CardHeader>
 
         <CardContent className="min-h-[28rem] pt-5 sm:pt-6">
-          {currentStep === 1 && <StepGender />}
-          {currentStep === 2 && <StepFabric />}
-          {currentStep === 3 && <StepSketch />}
-          {currentStep === 4 && <StepResult />}
+          {currentStepId === STEP_IDS.GENDER && <StepGender />}
+          {currentStepId === STEP_IDS.FABRIC && <StepFabric />}
+          {currentStepId === STEP_IDS.SKETCH && <StepSketch />}
+          {currentStepId === STEP_IDS.MEASUREMENTS && <StepMeasurements />}
+          {currentStepId === STEP_IDS.RESULT && <StepResult />}
         </CardContent>
 
         {!isLastStep && (
@@ -86,7 +88,7 @@ export function DesignStepper() {
               onClick={handleGoNext}
               disabled={!canGoNext || isGenerating}
             >
-              {currentStep === 3 ? "تولید تصویر" : "ادامه"}
+              {currentStepId === STEP_IDS.MEASUREMENTS ? "تولید تصویر" : "ادامه"}
               <HiOutlineArrowLeft className="size-4" />
             </Button>
           </div>

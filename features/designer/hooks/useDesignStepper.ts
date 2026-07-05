@@ -1,19 +1,47 @@
 "use client";
 
 import { useMemo } from "react";
-import { stepsInfo, STEPPER_STEPS } from "@/features/designer/definitions/design-steps";
+import { STEPPER_STEPS, stepsInfo, STEP_IDS } from "@/features/designer/definitions/design-steps";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
 import { useGenerateDesign } from "./useGenerateDesign";
+import { GARMENT_MEASUREMENT_CATEGORY } from "@/features/designer/definitions/design-options";
 
 export function useDesignStepper() {
-  const currentStep = useDesignStore((s) => s.currentStep);
+  const currentStepId = useDesignStore((s) => s.currentStepId);
   const gender = useDesignStore((s) => s.gender);
   const garmentTypeId = useDesignStore((s) => s.garmentTypeId);
   const selectedFabricIds = useDesignStore((s) => s.selectedFabricIds);
   const sketch = useDesignStore((s) => s.sketch);
   const generatedImages = useDesignStore((s) => s.generatedImages);
+  const measurements = useDesignStore((s) => s.measurements);
 
   const { generateFront } = useGenerateDesign();
+
+  const currentStepIndex = useMemo(
+    () => STEPPER_STEPS.findIndex((step) => step.id === currentStepId),
+    [currentStepId]
+  );
+
+  const isMeasurementsValid = useMemo(() => {
+    if (!garmentTypeId) return false;
+    const category = GARMENT_MEASUREMENT_CATEGORY[garmentTypeId];
+    if (!category) return false;
+
+
+    const m = measurements;
+    switch (category) {
+      case "head":
+        return Boolean(m.head_circumference_cm);
+      case "upper_body":
+        return Boolean(m.height_cm || m.chest_cm || m.waist_cm);
+      case "lower_body":
+        return Boolean(m.height_cm || m.waist_cm || m.hips_cm);
+      case "full_body":
+        return Boolean(m.height_cm || m.chest_cm || m.waist_cm || m.hips_cm);
+      default:
+        return false;
+    }
+  }, [garmentTypeId, measurements]);
 
   const completedSteps = useMemo(
     () =>
@@ -21,62 +49,55 @@ export function useDesignStepper() {
         Boolean(gender && garmentTypeId),
         selectedFabricIds.length > 0,
         Boolean(sketch.file && sketch.description.trim().length > 8),
+        isMeasurementsValid,
         generatedImages.length > 0,
       ] as const,
-    [
-      gender,
-      garmentTypeId,
-      selectedFabricIds,
-      sketch.file,
-      sketch.description,
-      generatedImages,
-    ]
+    [gender, garmentTypeId, selectedFabricIds, sketch.file, sketch.description, isMeasurementsValid, generatedImages]
   );
 
   const steps = useMemo(
     () =>
       STEPPER_STEPS.map((step, index) => ({
         ...step,
-        isActive: currentStep === index + 1,
+        isActive: currentStepId === step.id,
         isCompleted: completedSteps[index],
       })),
-    [currentStep, completedSteps]
+    [currentStepId, completedSteps]
   );
 
-  const canGoNext =
-    currentStep < STEPPER_STEPS.length &&
-    completedSteps[currentStep - 1];
+  const canGoNext = completedSteps[currentStepIndex];
 
-  const canGoBack = currentStep > 1;
+  const canGoBack = currentStepIndex > 0;
 
-  const isLastStep = currentStep === STEPPER_STEPS.length;
+  const isLastStep = currentStepId === STEP_IDS.RESULT;
 
-  const currentStepInfo =
-    stepsInfo[currentStep as keyof typeof stepsInfo];
+  const currentStepInfo = stepsInfo[currentStepId];
 
   const handleGoNext = async () => {
     if (!canGoNext) return;
 
-    if (currentStep === 3) {
+    if (currentStepId === STEP_IDS.MEASUREMENTS) {
       await generateFront();
       return;
     }
 
-    useDesignStore.setState((state) => ({
-      currentStep: state.currentStep + 1,
-    }));
+    const nextIndex = currentStepIndex + 1;
+    if (nextIndex < STEPPER_STEPS.length) {
+      useDesignStore.setState({ currentStepId: STEPPER_STEPS[nextIndex].id });
+    }
   };
 
   const handleGoBack = () => {
     if (!canGoBack) return;
-
-    useDesignStore.setState((state) => ({
-      currentStep: state.currentStep - 1,
-    }));
+    const prevIndex = currentStepIndex - 1;
+    if (prevIndex >= 0) {
+      useDesignStore.setState({ currentStepId: STEPPER_STEPS[prevIndex].id });
+    }
   };
 
   return {
-    currentStep,
+    currentStepId,
+    currentStepIndex,
     currentStepInfo,
     steps,
     canGoNext,
