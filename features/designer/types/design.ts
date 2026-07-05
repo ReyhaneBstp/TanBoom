@@ -1,7 +1,5 @@
 export type Gender = "men" | "women";
 
-export type FabricKind = "solid" | "patterned";
-
 export interface GarmentType {
   id: string;
   gender: Gender;
@@ -16,14 +14,7 @@ export interface SolidFabric {
   hex: string;
 }
 
-export interface PatternedFabric {
-  id: string;
-  kind: "patterned";
-  label: string;
-  imageData: string;
-}
-
-export type FabricOption = SolidFabric | PatternedFabric;
+export type FabricOption = SolidFabric;
 
 export interface SketchInput {
   file: File | null;
@@ -49,8 +40,8 @@ export interface EnhancedPromptPayload {
   gender: Gender;
   genderLabel: string;
   garmentType: GarmentType;
-  selectedFabrics: FabricOption[];
+  selectedFabrics: SolidFabric[];
   description: string;
   sketchPreviewUrl: string | null;
-  fabricAssignments: Record<string, string>; // جدید
+  fabricAssignments: Record<string, string>;
 }

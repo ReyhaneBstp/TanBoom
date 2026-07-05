@@ -1,13 +1,7 @@
-import { EnhancedPromptPayload, PatternedFabric, SolidFabric } from "../types/design";
-
+import { EnhancedPromptPayload, SolidFabric } from "../types/design";
 
 export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
-  const solidFabrics = payload.selectedFabrics.filter(
-    (f) => f.kind === "solid"
-  ) as SolidFabric[];
-  const patternedFabrics = payload.selectedFabrics.filter(
-    (f) => f.kind === "patterned"
-  ) as PatternedFabric[];
+  const solidFabrics = payload.selectedFabrics as SolidFabric[];
 
   const solidPrompt = solidFabrics
     .map((fabric) => `${fabric.label} (${fabric.hex})`)
@@ -17,12 +11,9 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
     .map((fabric) => {
       const part = payload.fabricAssignments?.[fabric.id]?.trim();
       if (!part) return null;
-      if (fabric.kind === "solid") {
-        const solid = fabric as SolidFabric;
-        return `- Use solid color ${solid.hex} SPECIFICALLY for the [${part}].`;
-      } else {
-        return `- Use the provided patterned texture/image SPECIFICALLY for the [${part}].`;
-      }
+      // all fabrics are solid
+      const solid = fabric as SolidFabric;
+      return `- Use solid color ${solid.hex} SPECIFICALLY for the [${part}].`;
     })
     .filter(Boolean);
 
@@ -52,10 +43,6 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
   return basePrompt;
 }
 
-/**
- * Build a prompt for generating the back view of the garment,
- * given the original description and the front view image.
- */
 export function buildBackViewPrompt(originalPrompt: string): string {
   return [
     originalPrompt,
