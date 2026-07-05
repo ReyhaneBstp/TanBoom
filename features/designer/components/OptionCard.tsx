@@ -26,27 +26,27 @@ export function OptionCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "group relative flex w-full flex-col items-start justify-start overflow-hidden rounded-[1.5rem] border border-primary-100/70 bg-white p-4 text-right transition-all duration-200",
-        "hover:-translate-y-0.5 hover:border-primary-200/60 hover:shadow-md",
-        selected && "border-primary-100/80 bg-primary-50/30 shadow-sm",
+        "group relative flex w-full flex-col items-start justify-start overflow-hidden rounded-xl border border-primary-300/50 bg-white p-4 text-right transition-all duration-200",
+        "hover:-translate-y-0.5 hover:shadow-md",
+        selected && "border-primary-300/80 bg-primary-50/60 shadow-md shadow-primary-200/20 ring-2 ring-primary-300/40",
         className
       )}
     >
       <div className="flex w-full items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
           <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            {icon && <span className="text-2xl text-primary-400">{icon}</span>}
+            {icon && <span className="text-2xl text-primary-600">{icon}</span>}
             {title}
           </span>
           {description && (
-            <span className="text-xs leading-6 text-muted-foreground">
+            <span className="text-sm leading-6 text-muted-foreground">
               {description}
             </span>
           )}
         </div>
 
         {selected && (
-          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary-400/90 text-white shadow-sm">
+          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary-600/80 text-white shadow-sm">
             <HiOutlineCheck className="size-4" />
           </span>
         )}

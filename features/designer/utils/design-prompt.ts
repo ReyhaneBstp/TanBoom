@@ -27,19 +27,30 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
   }
 
   const basePrompt = [
-    "You are an expert technical fashion designer. Create a highly detailed, photorealistic image of a custom clothing design.",
+    "You are an expert technical fashion illustrator specializing in precise translation of hand-drawn sketches to photorealistic garments.",
+    
     `1. Target Audience: ${payload.genderLabel}`,
     `2. Garment Type: ${payload.garmentType.label}`,
     `3. Core Description from User: "${payload.description}"`,
+    
     solidPrompt ? `4. Fabric & Color Palette: ${solidPrompt}` : "",
-    payload.sketchPreviewUrl
-      ? "5. IMPORTANT: Use the provided hand-drawn sketch strictly as the foundational silhouette and structural reference."
+    
+    payload.sketchPreviewUrl 
+      ? `5. CRITICAL REFERENCE: You are given a hand-drawn sketch. STRICTLY follow the provided sketch as the EXACT silhouette, proportions, seam lines, design details, placement of elements, neckline shape, sleeve style, hem length, and all structural features. Do not alter, simplify, or add any design elements not present in the sketch. Translate the sketch lines faithfully into realistic fabric and stitching.` 
       : "",
-    "6. Style: Professional atelier technical design, photorealistic, plain solid white background, highly detailed stitching, seams, and fabric textures.",
-    "7. DO NOT include mannequins with faces, texts, logos, or distractive backgrounds. Focus entirely on the clothing.",
+  
+    "6. Style: Highly detailed photorealistic rendering of the garment, professional atelier technical design, visible fabric texture and drape, precise stitching and seams, natural folds and wrinkles according to the sketch.",
+    
+    "7. STRICT RULES:",
+    "- Follow the sketch 100% for shape and details. Do not invent new patterns, decorations, buttons, pockets, or design features.",
+    "- Do not make it more 'fashionable' or add artistic interpretations unless explicitly in the sketch.",
+    "- Plain solid white background, no mannequin face, no head, no text, no logos, no shadows on background.",
+    "- Focus ONLY on the clothing item itself.",
+    
+    "8. Rendering: Photorealistic, high resolution, accurate fabric behavior based on the assigned materials."
   ]
-    .filter(Boolean)
-    .join("\n");
+  .filter(Boolean)
+  .join("\n");
 
   const measurementBlock =
     measurementLines.length > 0

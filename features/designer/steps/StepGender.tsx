@@ -26,7 +26,6 @@ export function StepGender() {
             <OptionCard
               key={option.id}
               title={option.label}
-              description={option.description}
               selected={gender === option.id}
               onClick={() => setGender(option.id)}
               icon={
@@ -36,7 +35,6 @@ export function StepGender() {
                   <GiMale className="size-6" />
                 )
               }
-              className="!rounded-2xl !p-3 !shadow-sm hover:!shadow-md transition-all duration-200"
             />
           ))}
         </div>
@@ -48,8 +46,8 @@ export function StepGender() {
         </h3>
 
         {!gender ? (
-          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-primary-200/70 bg-white/30 px-6 py-10 text-center backdrop-blur-xl">
-            <LuShirt className="size-10 text-primary-300 animate-bounce" />
+          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-primary-300/70 bg-white/30 px-6 py-10 text-center backdrop-blur-xl">
+            <LuShirt className="size-10 text-primary-600 animate-bounce" />
             <p className="text-sm text-muted-foreground max-w-xs">
               ابتدا یکی از گزینه‌های{" "}
               <span className="font-medium text-foreground/70">زنانه</span> یا{" "}
@@ -65,7 +63,6 @@ export function StepGender() {
                 title={garment.label}
                 selected={garmentTypeId === garment.id}
                 onClick={() => setGarment(garment.id)}
-                className="items-center text-center !rounded-xl !py-4 hover:!shadow-sm transition-all duration-200"
                 icon={<GarmentIcon icon={garment.icon} className="size-6" />}
               />
             ))}

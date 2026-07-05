@@ -7,18 +7,17 @@
     --background: 0 0% 100%;
     --foreground: 345 100% 10%;
 
-    /* طیف primary = rose */
-    --primary-50: 350 100% 96%;
-    --primary-100: 350 100% 93%;
-    --primary-200: 350 100% 88%;
-    --primary-300: 350 94% 78%;
-    --primary-400: 350 89% 68%;
-    --primary-500: 350 89% 60%;
-    --primary-600: 347 77% 47%;
-    --primary-700: 345 82% 37%;
-    --primary-800: 343 79% 27%;
-    --primary-900: 342 74% 20%;
-    --primary-950: 345 100% 10%;
+    --primary-50: 100 25% 97%;
+    --primary-100: 102 22% 94%;
+    --primary-200: 104 20% 89%;
+    --primary-300: 108 18% 80%;
+    --primary-400: 112 17% 68%;
+    --primary-500: 116 16% 56%;
+    --primary-600: 120 15% 45%;
+    --primary-700: 124 16% 35%;
+    --primary-800: 128 18% 26%;
+    --primary-900: 132 20% 19%;
+    --primary-950: 135 24% 12%;
 
     --primary-foreground: 0 0% 100%;
 

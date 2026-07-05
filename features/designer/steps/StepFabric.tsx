@@ -13,6 +13,7 @@ import { useDesignStore } from "@/features/designer/store/useDesignStore";
 import type { SolidFabric } from "@/features/designer/types/design";
 import { cn } from "@/shared/utils/mergeClasses";
 import { Button } from "@/shared/components/Button";
+import { Input } from "@/shared/components/Input";
 
 export function StepFabric() {
   const customFabrics = useDesignStore((s) => s.customFabrics) as SolidFabric[];
@@ -21,7 +22,7 @@ export function StepFabric() {
   const removeCustomFabric = useDesignStore((s) => s.removeCustomFabric);
   const toggleFabric = useDesignStore((s) => s.toggleFabric);
 
-  const [colorHex, setColorHex] = useState("#C8A2C8");
+  const [colorHex, setColorHex] = useState("#b3c6af");
   const [materialInput, setMaterialInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -78,7 +79,7 @@ export function StepFabric() {
   const handleAdd = () => {
     if (!canAdd) return;
     addCustomFabric(colorHex, materialInput.trim());
-    setColorHex("#C8A2C8");
+    setColorHex("#b3c6af");
     setMaterialInput("");
     setShowSuggestions(false);
   };
@@ -117,7 +118,7 @@ export function StepFabric() {
             جنس پارچه
           </label>
           <div className="relative">
-            <input
+            <Input
               type="text"
               value={materialInput}
               onChange={(e) => {
@@ -128,7 +129,6 @@ export function StepFabric() {
               onFocus={() => setShowSuggestions(true)}
               onKeyDown={handleKeyDown}
               placeholder="مثلاً پنبه، کتان، مخمل..."
-              className="h-10 w-full rounded-xl border border-white/60 bg-white/45 pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-200/50 transition-shadow"
             />
             <button
               type="button"

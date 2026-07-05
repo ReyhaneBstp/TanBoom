@@ -21,11 +21,11 @@ export function StepIndicator() {
             className={cn(
               "mx-auto mb-1 flex size-7 items-center justify-center rounded-full text-xs font-semibold",
               step.isActive
-                ? "bg-primary-300 text-white"
+                ? "bg-primary-400 text-white"
                 : "bg-white/70 text-muted-foreground",
               step.isCompleted &&
                 !step.isActive &&
-                "bg-primary-300/80 text-white"
+                "bg-primary-400/80 text-white"
             )}
           >
             {index + 1}

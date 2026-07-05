@@ -20,7 +20,7 @@ export const stepsInfo: Record<StepId, { eyebrow: string; title: string; descrip
   [STEP_IDS.GENDER]: {
     eyebrow: "شروع انتخاب",
     title: "چه لباسی مد نظرته؟",
-    description: "جنسیت و نوع لباس رو مشخص کن تا مسر طراحی دقیق‌تر بشه..",
+    description: "جنسیت و نوع لباس رو مشخص کن تا مسیر طراحی دقیق‌تر بشه..",
   },
   [STEP_IDS.FABRIC]: {
     eyebrow: "انتخاب متریال",

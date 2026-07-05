@@ -10,10 +10,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary-400 text-white shadow-soft-primary hover:bg-primary-300",
-        glass: "glass-chip text-foreground hover:border-primary-300/80 hover:bg-white/80 hover:shadow-soft-primary",
+        default: "bg-primary-600 text-white shadow-soft-primary hover:bg-primary-700",
+        glass: "glass-chip text-foreground hover:border-primary-600/80 hover:bg-white/80 hover:shadow-soft-primary",
         ghost: "text-muted-foreground hover:bg-white/70 hover:text-foreground",
-        outline: "border border-primary-200 bg-white/55 text-foreground hover:border-primary-300 hover:bg-white"
+        outline: "border border-primary-600 bg-white/55 text-foreground hover:border-primary-600 hover:bg-white"
       },
       size: {
         default: "h-11 px-5",

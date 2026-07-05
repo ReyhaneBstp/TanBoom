@@ -34,6 +34,7 @@ export const FABRIC_MATERIALS = [
   "فوتر",
   "حریر",
   "گیپور",
+  "تور"
 ];
 
 export type MeasurementCategory = "upper_body" | "lower_body" | "head" | "full_body";

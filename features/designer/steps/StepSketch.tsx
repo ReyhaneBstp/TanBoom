@@ -8,6 +8,7 @@ import { Textarea } from "@/shared/components/Textarea";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
 import type { SolidFabric } from "@/features/designer/types/design";
 import { cn } from "@/shared/utils/mergeClasses";
+import { Input } from "@/shared/components/Input";
 
 export function StepSketch() {
   const previewUrl = useDesignStore((s) => s.sketch.previewUrl);
@@ -42,8 +43,8 @@ export function StepSketch() {
           onDragOver={(event) => event.preventDefault()}
           onDrop={handleDrop}
           className={cn(
-            "group flex h-64 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-rose-200 bg-white/45 p-4 text-center backdrop-blur-xl transition-all hover:border-rose-300 hover:bg-white/75",
-            previewUrl && "border-solid border-rose-300 bg-white/70"
+            "group flex h-64 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-primary-200 bg-white/45 p-4 text-center backdrop-blur-xl transition-all hover:border-primary-300 hover:bg-white/75",
+            previewUrl && "border-solid border-primary-300 bg-white/70"
           )}
         >
           <input
@@ -66,7 +67,7 @@ export function StepSketch() {
             </>
           ) : (
             <>
-              <span className="mb-3 flex size-12 items-center justify-center rounded-full bg-rose-100 text-rose-500 transition group-hover:scale-105">
+              <span className="mb-3 flex size-12 items-center justify-center rounded-full bg-primary-100 text-primary-500 transition group-hover:scale-105">
                 <HiOutlineArrowUpTray className="size-6 animate-pulse" />
               </span>
               <span className="text-sm font-medium text-foreground">
@@ -84,7 +85,7 @@ export function StepSketch() {
               توضیحات طراحی
             </h3>
             <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
-              جزئیات دوخت، یقه، آستین و حس کلی لباس را بنویسید.
+              جزئیات دوخت، یقه، آستین و هرچیزی که برای شفاف‌تر شدن طرحت لازمه بدونیم رو بنویس.
             </p>
           </div>
           <Textarea
@@ -119,12 +120,12 @@ export function StepSketch() {
                   <span className="block truncate text-xs font-semibold text-foreground">
                     {fabric!.label}
                   </span>
-                  <input
+                  <Input
                     type="text"
                     value={fabricAssignments[fabric!.id] || ""}
                     onChange={(e) => setFabricAssignment(fabric!.id, e.target.value)}
                     placeholder="مثلاً: یقه"
-                    className="mt-1 w-full rounded-md border border-rose-100/70 bg-white/60 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
+                    className="mt-1 w-full rounded-md border border-primary-100/70 bg-white/60 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
                   />
                 </div>
               </div>

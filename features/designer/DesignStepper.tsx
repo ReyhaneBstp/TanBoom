@@ -31,10 +31,10 @@ export function DesignStepper() {
     <div className="mx-auto w-full max-w-5xl">
       <div className="mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-end">
         <div className="max-w-2xl">
-          <h1 className="text-2xl font-semibold tracking-[-0.04em] text-primary-300 sm:text-5xl">
+          <h1 className="md:text-[2.75rem] font-semibold tracking-[-0.03em] text-primary-500 text-5xl">
             طراحی لباسی نو؛{" "}
           </h1>
-          <p className="mt-4 text-2xl leading-2 text-muted-foreground">
+          <p className="mt-3 text-xl leading-2 text-primary-500 tracking-[-0.001em]">
             با روایتی از سمت تو ...
           </p>
         </div>
