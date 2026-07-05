@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { HiOutlineCheck, HiOutlinePlus, HiOutlineXMark, HiChevronDown } from "react-icons/hi2";
+import {
+  HiOutlineCheck,
+  HiOutlinePlus,
+  HiOutlineXMark,
+  HiChevronDown,
+} from "react-icons/hi2";
 import { LuPalette } from "react-icons/lu";
 import { FABRIC_MATERIALS } from "../definitions/design-options";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
@@ -21,6 +26,7 @@ export function StepFabric() {
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const colorInputRef = useRef<HTMLInputElement>(null);
 
   const filteredMaterials = FABRIC_MATERIALS.filter((m) =>
     m.includes(materialInput.trim())
@@ -28,7 +34,10 @@ export function StepFabric() {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target as Node)
+      ) {
         setShowSuggestions(false);
       }
     };
@@ -74,138 +83,177 @@ export function StepFabric() {
   };
 
   return (
-    <div className="flex flex-col gap-8 min-h-[22rem]">
-      <div className="flex-1">
-        <div className="flex flex-wrap items-end gap-3 mb-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-foreground/80">
-              رنگ پارچه
-            </label>
-            <input
-              type="color"
-              value={colorHex}
-              onChange={(e) => setColorHex(e.target.value)}
-              className="h-10 w-16 cursor-pointer rounded-lg border border-white/60 bg-white/45 p-1"
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5 relative" ref={wrapperRef}>
-            <label className="text-xs font-medium text-foreground/80">
-              جنس پارچه
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={materialInput}
-                onChange={(e) => {
-                  setMaterialInput(e.target.value);
-                  setShowSuggestions(true);
-                  setHighlightedIndex(-1);
-                }}
-                onFocus={() => setShowSuggestions(true)}
-                onKeyDown={handleKeyDown}
-                placeholder="مثلاً پنبه"
-                className="h-10 w-40 rounded-lg border border-white/60 bg-white/45 px-3 py-2 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary-200/50"
-              />
-              <span className="absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none">
-                <HiChevronDown className="size-4 text-muted-foreground" />
-              </span>
-            </div>
-
-            {showSuggestions && filteredMaterials.length > 0 && (
-              <ul className="absolute top-full mt-1 z-20 w-full rounded-xl border border-white/70 bg-white/80 backdrop-blur-xl shadow-lg overflow-hidden max-h-40 overflow-y-auto">
-                {filteredMaterials.map((material, idx) => (
-                  <li
-                    key={material}
-                    onMouseDown={() => selectMaterial(material)}
-                    className={cn(
-                      "cursor-pointer px-3 py-2 text-sm transition-colors",
-                      idx === highlightedIndex
-                        ? "bg-primary-100 text-primary-800"
-                        : "hover:bg-primary-50 text-foreground"
-                    )}
-                  >
-                    {material}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
+    <div className="flex flex-col gap-6 min-h-[22rem]">
+      {/* ───── بخش افزودن پارچه ───── */}
+      <div className="flex items-end gap-3 flex-wrap">
+        {/* انتخاب‌گر رنگ دایره‌ای */}
+        <div className="flex flex-col items-center gap-1.5">
+          <span className="text-[10px] font-medium text-muted-foreground">
+            رنگ
+          </span>
           <button
             type="button"
-            onClick={handleAdd}
-            disabled={!canAdd}
-            className={cn(
-              "flex h-10 items-center gap-2 rounded-full border border-white/80 px-5 text-xs font-semibold backdrop-blur-xl transition",
-              canAdd
-                ? "bg-white/45 hover:bg-primary-100 hover:text-primary-600"
-                : "bg-white/30 text-muted-foreground cursor-not-allowed"
-            )}
+            onClick={() => colorInputRef.current?.click()}
+            className="relative size-11 rounded-full border-2 border-white/80 shadow-md transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+            style={{ backgroundColor: colorHex }}
+            title="انتخاب رنگ پارچه"
           >
-            <HiOutlinePlus className="size-4" />
-            افزودن به لیست پارچه‌ها
+            <span className="absolute inset-0 rounded-full bg-gradient-to-b from-white/25 to-transparent pointer-events-none" />
           </button>
+          <input
+            ref={colorInputRef}
+            type="color"
+            value={colorHex}
+            onChange={(e) => setColorHex(e.target.value)}
+            className="sr-only"
+          />
         </div>
 
-        {customFabrics.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-primary-200/70 bg-white/30 px-6 py-10 text-center backdrop-blur-xl">
-            <LuPalette className="size-10 text-primary-300 animate-pulse" />
-            <p className="text-sm text-muted-foreground max-w-xs">
-              هنوز پارچه‌ای اضافه نشده. یک رنگ و جنس انتخاب و اضافه کنید.
-            </p>
+        <div className="h-10 w-px bg-white/50 self-center hidden sm:block" />
+
+        <div className="flex flex-col gap-1.5 relative flex-1 min-w-[160px]" ref={wrapperRef}>
+          <label className="text-xs font-medium text-foreground/80">
+            جنس پارچه
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              value={materialInput}
+              onChange={(e) => {
+                setMaterialInput(e.target.value);
+                setShowSuggestions(true);
+                setHighlightedIndex(-1);
+              }}
+              onFocus={() => setShowSuggestions(true)}
+              onKeyDown={handleKeyDown}
+              placeholder="مثلاً پنبه، کتان، مخمل..."
+              className="h-10 w-full rounded-xl border border-white/60 bg-white/45 pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-200/50 transition-shadow"
+            />
+            <button
+              type="button"
+              onClick={() => setShowSuggestions((prev) => !prev)}
+              className="absolute left-1.5 top-1/2 -translate-y-1/2 p-0.5 rounded-md hover:bg-white/50 transition-colors"
+            >
+              <HiChevronDown
+                className={cn(
+                  "size-4 text-muted-foreground transition-transform duration-200",
+                  showSuggestions && "rotate-180"
+                )}
+              />
+            </button>
           </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            {customFabrics.map((fabric) => {
-              const selected = selectedFabricIds.includes(fabric.id);
-              return (
-                <button
-                  key={fabric.id}
-                  type="button"
-                  onClick={() => toggleFabric(fabric.id)}
+
+          {showSuggestions && filteredMaterials.length > 0 && (
+            <ul className="absolute top-full mt-1.5 z-20 w-full rounded-xl border border-white/70 bg-white/85 backdrop-blur-xl shadow-lg overflow-hidden max-h-40 overflow-y-auto">
+              {filteredMaterials.map((material, idx) => (
+                <li
+                  key={material}
+                  onMouseDown={() => selectMaterial(material)}
                   className={cn(
-                    "group relative rounded-[1.5rem] border border-white/80 bg-white/45 p-3 text-center backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:bg-white/75 hover:shadow-soft-primary",
-                    selected &&
-                      "border-primary-300 bg-white shadow-soft-primary ring-4 ring-primary-200/35"
+                    "cursor-pointer px-3.5 py-2.5 text-sm transition-colors",
+                    idx === highlightedIndex
+                      ? "bg-primary-100 text-primary-800"
+                      : "hover:bg-primary-50 text-foreground"
                   )}
                 >
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeCustomFabric(fabric.id);
-                    }}
-                    className="absolute top-1.5 right-1.5 flex size-5 items-center justify-center rounded-full bg-white/70 text-muted-foreground shadow-sm hover:bg-red-100 hover:text-red-500 transition"
-                    title="حذف پارچه"
-                  >
-                    <HiOutlineXMark className="size-3" />
-                  </button>
+                  {material}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
-                  <span
-                    className="mx-auto flex size-12 items-center justify-center rounded-full border border-white/70 shadow-inner"
-                    style={{ backgroundColor: fabric.hex }}
-                  >
-                    {selected ? (
-                      <HiOutlineCheck className="size-5 text-white drop-shadow" />
-                    ) : null}
-                  </span>
-                  <span className="mt-2 block text-xs font-semibold text-foreground leading-tight">
-                    {fabric.label}
-                  </span>
-                  <span className="mt-1 block text-[10px] text-muted-foreground" dir="ltr">
-                    {fabric.hex}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        )}
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={!canAdd}
+          className={cn(
+            "flex h-10 shrink-0 items-center gap-2 rounded-xl px-5 text-xs font-semibold transition-all duration-200",
+            canAdd
+              ? "bg-primary-300 text-white shadow-md shadow-primary-300/25 hover:bg-primary-400 hover:shadow-lg hover:shadow-primary-300/35 active:scale-[0.97]"
+              : "bg-white/30 text-muted-foreground cursor-not-allowed border border-white/40"
+          )}
+        >
+          <HiOutlinePlus className="size-4" />
+          <span className="hidden sm:inline">افزودن پارچه</span>
+        </button>
       </div>
 
-      <p className="rounded-2xl border border-white/70 bg-white/40 px-4 py-3 text-xs leading-6 text-muted-foreground backdrop-blur-xl">
-        با کلیک روی دکمه «افزودن»، رنگ و جنس پارچه انتخاب می‌شود. برای حذف کامل یک پارچه، روی ضربدر کلیک کنید.
-      </p>
+      <div className="h-px bg-gradient-to-l from-transparent via-white/40 to-transparent" />
+
+      {customFabrics.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-primary-200/60 bg-white/25 px-8 py-14 text-center backdrop-blur-xl">
+          <div className="flex size-16 items-center justify-center rounded-2xl bg-primary-100/60">
+            <LuPalette className="size-8 text-primary-400" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-foreground/70">
+              هنوز پارچه‌ای اضافه نشده
+            </p>
+            <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">
+              یک رنگ و جنس انتخاب کنید، سپس روی دکمه «افزودن پارچه» بزنید.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {customFabrics.map((fabric) => {
+            const selected = selectedFabricIds.includes(fabric.id);
+            return (
+              <button
+                key={fabric.id}
+                type="button"
+                onClick={() => toggleFabric(fabric.id)}
+                className={cn(
+                  "group relative flex flex-col items-center gap-2.5 rounded-2xl border border-white/70 bg-white/40 px-4 py-5 text-center backdrop-blur-xl transition-all duration-200",
+                  "hover:-translate-y-1 hover:bg-white/65 hover:shadow-lg hover:shadow-primary-200/15",
+                  selected &&
+                    "border-primary-300/80 bg-primary-50/60 shadow-md shadow-primary-200/20 ring-2 ring-primary-300/40"
+                )}
+              >
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeCustomFabric(fabric.id);
+                  }}
+                  className={cn(
+                    "absolute top-2 right-2 flex size-5 items-center justify-center rounded-full bg-white/80 text-muted-foreground shadow-sm transition-all duration-200",
+                    "opacity-0 group-hover:opacity-100 hover:bg-red-100 hover:text-red-500 hover:scale-110"
+                  )}
+                  title="حذف پارچه"
+                >
+                  <HiOutlineXMark className="size-3" />
+                </button>
+
+                <span
+                  className="flex size-14 items-center justify-center rounded-full border-2 border-white/70 shadow-md transition-transform duration-200 group-hover:scale-105"
+                  style={{ backgroundColor: fabric.hex }}
+                >
+                  {selected && (
+                    <span className="flex size-7 items-center justify-center rounded-full bg-white/30 backdrop-blur-sm">
+                      <HiOutlineCheck className="size-4 text-white drop-shadow-md" />
+                    </span>
+                  )}
+                </span>
+
+                <div className="space-y-0.5">
+                  <span className="block text-sm font-semibold text-foreground leading-tight">
+                    {fabric.label}
+                  </span>
+                  <span
+                    className="block text-[10px] text-muted-foreground/70 font-mono tracking-wide"
+                    dir="ltr"
+                  >
+                    {fabric.hex}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
     </div>
   );
 }
