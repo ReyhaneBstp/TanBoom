@@ -1,3 +1,5 @@
+"use client";
+
 import { LuShirt } from "react-icons/lu";
 import { GENDER_OPTIONS, GARMENT_TYPES } from "@/features/designer/definitions/design-options";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";

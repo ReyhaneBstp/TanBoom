@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { GARMENT_TYPES, GENDER_OPTIONS } from "@/features/designer/definitions/design-options";
 import { buildEnhancedPrompt } from "@/features/designer/utils/design-prompt";
-import type { Gender, SolidFabric, GeneratedDesignImage } from "@/features/designer/types/design";
+import type { Gender, SolidFabric, GeneratedDesignImage, BodyMeasurements } from "@/features/designer/types/design";
+import { STEP_IDS, type StepId } from "@/features/designer/definitions/design-steps";
 
 interface DesignState {
   gender: Gender | null;
@@ -14,9 +15,10 @@ interface DesignState {
     previewUrl: string | null;
     description: string;
   };
-  currentStep: number;
+  currentStepId: StepId;
   generatedImages: GeneratedDesignImage[];
   generatedAiPrompt: string;
+  measurements: BodyMeasurements;
 
   isFrontGenerating: boolean;
   isGeneratingBack: boolean;
@@ -25,7 +27,7 @@ interface DesignState {
 interface DesignActions {
   setGender: (gender: Gender) => void;
   setGarment: (garmentTypeId: string) => void;
-  addCustomFabric: (hex: string, material: string) => void; // امضای جدید
+  addCustomFabric: (hex: string, material: string) => void;
   removeCustomFabric: (fabricId: string) => void;
   toggleFabric: (fabricId: string) => void;
   setFabricAssignment: (fabricId: string, part: string) => void;
@@ -33,9 +35,10 @@ interface DesignActions {
   updateDescription: (description: string) => void;
   setGeneratedImages: (images: GeneratedDesignImage[]) => void;
   addGeneratedImage: (image: GeneratedDesignImage) => void;
-  setCurrentStep: (step: number) => void;
+  setCurrentStepId: (stepId: StepId) => void;
   setIsFrontGenerating: (value: boolean) => void;
   setIsGeneratingBack: (value: boolean) => void;
+  setMeasurements: (measurements: BodyMeasurements) => void;
   restart: () => void;
 }
 
@@ -49,6 +52,7 @@ const computePrompt = (state: DesignState): string => {
     customFabrics,
     sketch,
     fabricAssignments,
+    measurements,
   } = state;
 
   const selectedGarment = GARMENT_TYPES.find((g) => g.id === garmentTypeId) ?? null;
@@ -67,6 +71,7 @@ const computePrompt = (state: DesignState): string => {
     description: sketch.description.trim(),
     sketchPreviewUrl: sketch.previewUrl,
     fabricAssignments,
+    measurements,
   });
 };
 
@@ -77,9 +82,10 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
   selectedFabricIds: [],
   fabricAssignments: {},
   sketch: { file: null, previewUrl: null, description: "" },
-  currentStep: 1,
+  currentStepId: STEP_IDS.GENDER,
   generatedImages: [],
   generatedAiPrompt: "",
+  measurements: {},
 
   isFrontGenerating: false,
   isGeneratingBack: false,
@@ -102,7 +108,7 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
   addCustomFabric: (hex, material) =>
     set((state) => {
       const id = `custom-${++fabricIdCounter}-${Date.now()}`;
-      const label = `${material} (${hex})`; // نمایش جنس و رنگ
+      const label = `${material} (${hex})`;
       const newFabric: SolidFabric = { id, kind: "solid", hex, material, label };
       const newCustomFabrics = [...state.customFabrics, newFabric];
       const newSelectedIds = [...state.selectedFabricIds, id];
@@ -192,9 +198,15 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
   setGeneratedImages: (images) => set({ generatedImages: images }),
   addGeneratedImage: (image) =>
     set((state) => ({ generatedImages: [...state.generatedImages, image] })),
-  setCurrentStep: (step) => set({ currentStep: step }),
+  setCurrentStepId: (stepId) => set({ currentStepId: stepId }),
   setIsFrontGenerating: (value) => set({ isFrontGenerating: value }),
   setIsGeneratingBack: (value) => set({ isGeneratingBack: value }),
+
+  setMeasurements: (measurements) =>
+    set((state) => ({
+      measurements,
+      generatedAiPrompt: computePrompt({ ...state, measurements } as DesignState),
+    })),
 
   restart: () => {
     const { sketch } = get();
@@ -208,9 +220,10 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
       selectedFabricIds: [],
       fabricAssignments: {},
       sketch: { file: null, previewUrl: null, description: "" },
-      currentStep: 1,
+      currentStepId: STEP_IDS.GENDER,
       generatedImages: [],
       generatedAiPrompt: "",
+      measurements: {},
       isFrontGenerating: false,
       isGeneratingBack: false,
     });

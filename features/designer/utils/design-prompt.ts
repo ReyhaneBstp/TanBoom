@@ -16,6 +16,16 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
     })
     .filter(Boolean);
 
+  const measurementLines: string[] = [];
+  if (payload.measurements) {
+    const m = payload.measurements;
+    if (m.height_cm) measurementLines.push(`Garment length: ${m.height_cm} cm`);
+    if (m.chest_cm) measurementLines.push(`Chest circumference: ${m.chest_cm} cm`);
+    if (m.waist_cm) measurementLines.push(`Waist circumference: ${m.waist_cm} cm`);
+    if (m.hips_cm) measurementLines.push(`Hips circumference: ${m.hips_cm} cm`);
+    if (m.head_circumference_cm) measurementLines.push(`Head circumference: ${m.head_circumference_cm} cm`);
+  }
+
   const basePrompt = [
     "You are an expert technical fashion designer. Create a highly detailed, photorealistic image of a custom clothing design.",
     `1. Target Audience: ${payload.genderLabel}`,
@@ -31,15 +41,17 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
     .filter(Boolean)
     .join("\n");
 
-  if (assignmentLines.length > 0) {
-    return [
-      basePrompt,
-      "\nFABRIC PLACEMENT INSTRUCTIONS:",
-      ...assignmentLines,
-    ].join("\n");
-  }
+  const measurementBlock =
+    measurementLines.length > 0
+      ? ["\nMEASUREMENT & FIT REQUIREMENTS:", ...measurementLines].join("\n")
+      : "";
 
-  return basePrompt;
+  const assignmentBlock =
+    assignmentLines.length > 0
+      ? ["\nFABRIC PLACEMENT INSTRUCTIONS:", ...assignmentLines].join("\n")
+      : "";
+
+  return [basePrompt, measurementBlock, assignmentBlock].filter(Boolean).join("\n");
 }
 
 export function buildBackViewPrompt(originalPrompt: string): string {

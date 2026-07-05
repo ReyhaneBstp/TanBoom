@@ -10,9 +10,9 @@ export interface GarmentType {
 export interface SolidFabric {
   id: string;
   kind: "solid";
-  label: string; 
+  label: string;
   hex: string;
-  material: string; 
+  material: string;
 }
 
 export type FabricOption = SolidFabric;
@@ -23,18 +23,19 @@ export interface SketchInput {
   description: string;
 }
 
-export interface DesignFormState {
-  gender: Gender | null;
-  garmentTypeId: string | null;
-  selectedFabricIds: string[];
-  sketch: SketchInput;
-}
-
 export interface GeneratedDesignImage {
   id: string;
   angle: string;
   title: string;
   src: string;
+}
+
+export interface BodyMeasurements {
+  height_cm?: number;
+  chest_cm?: number;
+  waist_cm?: number;
+  hips_cm?: number;
+  head_circumference_cm?: number;
 }
 
 export interface EnhancedPromptPayload {
@@ -45,4 +46,5 @@ export interface EnhancedPromptPayload {
   description: string;
   sketchPreviewUrl: string | null;
   fabricAssignments: Record<string, string>;
+  measurements?: BodyMeasurements;
 }

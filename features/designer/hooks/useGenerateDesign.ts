@@ -6,6 +6,7 @@ import { buildBackViewPrompt } from "../utils/design-prompt";
 import { useGlobalStore } from "@/shared/store/useGlobalStore";
 import type { GeneratedDesignImage } from "../types/design";
 import { fileToBase64 } from "@/shared/utils/fileToBase64";
+import { STEP_IDS } from "../definitions/design-steps";
 
 export function useGenerateDesign() {
   const {
@@ -14,7 +15,7 @@ export function useGenerateDesign() {
     generatedImages,
     setGeneratedImages,
     addGeneratedImage,
-    setCurrentStep,
+    setCurrentStepId,
     setIsFrontGenerating,
     setIsGeneratingBack,
   } = useDesignStore();
@@ -43,7 +44,7 @@ export function useGenerateDesign() {
       };
 
       setGeneratedImages([frontImage]);
-      setCurrentStep(4);
+      setCurrentStepId(STEP_IDS.RESULT);
     } catch (error) {
       console.error(error);
       showSnackbar("خطا در تولید تصویر. لطفاً دوباره تلاش کنید.", "error");
