@@ -10,8 +10,9 @@ export interface GarmentType {
 export interface SolidFabric {
   id: string;
   kind: "solid";
-  label: string;
+  label: string; 
   hex: string;
+  material: string; 
 }
 
 export type FabricOption = SolidFabric;

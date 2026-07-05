@@ -21,3 +21,18 @@ export const GARMENT_TYPES: GarmentType[] = [
   { id: "men-pants", gender: "men", label: "شلوار", icon: "pants" },
   { id: "men-hat", gender: "men", label: "کلاه", icon: "hat" }
 ];
+
+
+export const FABRIC_MATERIALS = [
+  "پنبه",
+  "کتان",
+  "ابریشم",
+  "ساتن",
+  "کرپ",
+  "لینن",
+  "جین",
+  "مخمل",
+  "فوتر",
+  "حریر",
+  "گیپور",
+];

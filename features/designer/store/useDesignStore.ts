@@ -25,7 +25,7 @@ interface DesignState {
 interface DesignActions {
   setGender: (gender: Gender) => void;
   setGarment: (garmentTypeId: string) => void;
-  addCustomFabric: (hex: string) => void;
+  addCustomFabric: (hex: string, material: string) => void; // امضای جدید
   removeCustomFabric: (fabricId: string) => void;
   toggleFabric: (fabricId: string) => void;
   setFabricAssignment: (fabricId: string, part: string) => void;
@@ -99,10 +99,11 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
       generatedAiPrompt: computePrompt({ ...state, garmentTypeId } as DesignState),
     })),
 
-  addCustomFabric: (hex) =>
+  addCustomFabric: (hex, material) =>
     set((state) => {
       const id = `custom-${++fabricIdCounter}-${Date.now()}`;
-      const newFabric: SolidFabric = { id, kind: "solid", hex, label: hex };
+      const label = `${material} (${hex})`; // نمایش جنس و رنگ
+      const newFabric: SolidFabric = { id, kind: "solid", hex, material, label };
       const newCustomFabrics = [...state.customFabrics, newFabric];
       const newSelectedIds = [...state.selectedFabricIds, id];
 

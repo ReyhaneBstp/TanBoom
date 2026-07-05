@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { HiOutlineCheck, HiOutlinePlus, HiOutlineXMark } from "react-icons/hi2";
+import { useState, useRef, useEffect } from "react";
+import { HiOutlineCheck, HiOutlinePlus, HiOutlineXMark, HiChevronDown } from "react-icons/hi2";
 import { LuPalette } from "react-icons/lu";
+import { FABRIC_MATERIALS } from "../definitions/design-options";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
 import type { SolidFabric } from "@/features/designer/types/design";
 import { cn } from "@/shared/utils/mergeClasses";
@@ -15,10 +16,61 @@ export function StepFabric() {
   const toggleFabric = useDesignStore((s) => s.toggleFabric);
 
   const [colorHex, setColorHex] = useState("#C8A2C8");
+  const [materialInput, setMaterialInput] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const filteredMaterials = FABRIC_MATERIALS.filter((m) =>
+    m.includes(materialInput.trim())
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectMaterial = (material: string) => {
+    setMaterialInput(material);
+    setShowSuggestions(false);
+    setHighlightedIndex(-1);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSuggestions || filteredMaterials.length === 0) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev < filteredMaterials.length - 1 ? prev + 1 : 0
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev > 0 ? prev - 1 : filteredMaterials.length - 1
+      );
+    } else if (e.key === "Enter" && highlightedIndex >= 0) {
+      e.preventDefault();
+      selectMaterial(filteredMaterials[highlightedIndex]);
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false);
+    }
+  };
+
+  const isValidMaterial = FABRIC_MATERIALS.includes(materialInput.trim());
+  const canAdd = isValidMaterial && colorHex.length > 0;
 
   const handleAdd = () => {
-    addCustomFabric(colorHex);
+    if (!canAdd) return;
+    addCustomFabric(colorHex, materialInput.trim());
     setColorHex("#C8A2C8");
+    setMaterialInput("");
+    setShowSuggestions(false);
   };
 
   return (
@@ -36,15 +88,60 @@ export function StepFabric() {
               className="h-10 w-16 cursor-pointer rounded-lg border border-white/60 bg-white/45 p-1"
             />
           </div>
-          {colorHex && (
-            <span className="self-end pb-2 text-xs text-muted-foreground" dir="ltr">
-              {colorHex}
-            </span>
-          )}
+
+          <div className="flex flex-col gap-1.5 relative" ref={wrapperRef}>
+            <label className="text-xs font-medium text-foreground/80">
+              جنس پارچه
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={materialInput}
+                onChange={(e) => {
+                  setMaterialInput(e.target.value);
+                  setShowSuggestions(true);
+                  setHighlightedIndex(-1);
+                }}
+                onFocus={() => setShowSuggestions(true)}
+                onKeyDown={handleKeyDown}
+                placeholder="مثلاً پنبه"
+                className="h-10 w-40 rounded-lg border border-white/60 bg-white/45 px-3 py-2 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary-200/50"
+              />
+              <span className="absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                <HiChevronDown className="size-4 text-muted-foreground" />
+              </span>
+            </div>
+
+            {showSuggestions && filteredMaterials.length > 0 && (
+              <ul className="absolute top-full mt-1 z-20 w-full rounded-xl border border-white/70 bg-white/80 backdrop-blur-xl shadow-lg overflow-hidden max-h-40 overflow-y-auto">
+                {filteredMaterials.map((material, idx) => (
+                  <li
+                    key={material}
+                    onMouseDown={() => selectMaterial(material)}
+                    className={cn(
+                      "cursor-pointer px-3 py-2 text-sm transition-colors",
+                      idx === highlightedIndex
+                        ? "bg-primary-100 text-primary-800"
+                        : "hover:bg-primary-50 text-foreground"
+                    )}
+                  >
+                    {material}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
           <button
             type="button"
             onClick={handleAdd}
-            className="flex h-10 items-center gap-2 rounded-full border border-white/80 bg-white/45 px-5 text-xs font-semibold backdrop-blur-xl transition hover:bg-primary-100 hover:text-primary-600"
+            disabled={!canAdd}
+            className={cn(
+              "flex h-10 items-center gap-2 rounded-full border border-white/80 px-5 text-xs font-semibold backdrop-blur-xl transition",
+              canAdd
+                ? "bg-white/45 hover:bg-primary-100 hover:text-primary-600"
+                : "bg-white/30 text-muted-foreground cursor-not-allowed"
+            )}
           >
             <HiOutlinePlus className="size-4" />
             افزودن به لیست پارچه‌ها
@@ -55,11 +152,11 @@ export function StepFabric() {
           <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-primary-200/70 bg-white/30 px-6 py-10 text-center backdrop-blur-xl">
             <LuPalette className="size-10 text-primary-300 animate-pulse" />
             <p className="text-sm text-muted-foreground max-w-xs">
-              هنوز پارچه‌ای اضافه نشده. یک رنگ انتخاب و اضافه کنید.
+              هنوز پارچه‌ای اضافه نشده. یک رنگ و جنس انتخاب و اضافه کنید.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
             {customFabrics.map((fabric) => {
               const selected = selectedFabricIds.includes(fabric.id);
               return (
@@ -93,7 +190,7 @@ export function StepFabric() {
                       <HiOutlineCheck className="size-5 text-white drop-shadow" />
                     ) : null}
                   </span>
-                  <span className="mt-2 block text-xs font-semibold text-foreground">
+                  <span className="mt-2 block text-xs font-semibold text-foreground leading-tight">
                     {fabric.label}
                   </span>
                   <span className="mt-1 block text-[10px] text-muted-foreground" dir="ltr">
@@ -107,7 +204,7 @@ export function StepFabric() {
       </div>
 
       <p className="rounded-2xl border border-white/70 bg-white/40 px-4 py-3 text-xs leading-6 text-muted-foreground backdrop-blur-xl">
-        با کلیک روی دکمه «افزودن»، رنگ پارچه انتخاب می‌شود. برای حذف کامل یک رنگ، روی ضربدر کلیک کنید.
+        با کلیک روی دکمه «افزودن»، رنگ و جنس پارچه انتخاب می‌شود. برای حذف کامل یک پارچه، روی ضربدر کلیک کنید.
       </p>
     </div>
   );

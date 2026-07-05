@@ -4,16 +4,15 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
   const solidFabrics = payload.selectedFabrics as SolidFabric[];
 
   const solidPrompt = solidFabrics
-    .map((fabric) => `${fabric.label} (${fabric.hex})`)
+    .map((fabric) => `${fabric.material} (${fabric.hex})`)
     .join(", ");
 
   const assignmentLines = payload.selectedFabrics
     .map((fabric) => {
       const part = payload.fabricAssignments?.[fabric.id]?.trim();
       if (!part) return null;
-      // all fabrics are solid
       const solid = fabric as SolidFabric;
-      return `- Use solid color ${solid.hex} SPECIFICALLY for the [${part}].`;
+      return `- Use ${solid.material} fabric in solid color ${solid.hex} SPECIFICALLY for the [${part}].`;
     })
     .filter(Boolean);
 
@@ -22,7 +21,7 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
     `1. Target Audience: ${payload.genderLabel}`,
     `2. Garment Type: ${payload.garmentType.label}`,
     `3. Core Description from User: "${payload.description}"`,
-    solidPrompt ? `4. Solid Color Palette: ${solidPrompt}` : "",
+    solidPrompt ? `4. Fabric & Color Palette: ${solidPrompt}` : "",
     payload.sketchPreviewUrl
       ? "5. IMPORTANT: Use the provided hand-drawn sketch strictly as the foundational silhouette and structural reference."
       : "",
