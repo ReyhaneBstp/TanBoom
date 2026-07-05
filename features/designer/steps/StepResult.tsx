@@ -8,6 +8,7 @@ import {
 import { Button } from "@/shared/components/Button";
 import { useDesignStore } from "@/features/designer/store/useDesignStore";
 import { useGenerateDesign } from "../hooks/useGenerateDesign";
+import { handleDownload } from "@/shared/utils/downloadFile";
 
 export function StepResult() {
   const generatedImages = useDesignStore((s) => s.generatedImages);
@@ -35,18 +36,15 @@ export function StepResult() {
                 <h3 className="text-sm font-semibold text-foreground">
                   {image.title}
                 </h3>
-                <p className="mt-1 text-[10px] text-muted-foreground" dir="ltr">
-                  {image.angle}
-                </p>
               </div>
-              <a
-                href={image.src}
-                download={`${image.id}-design.png`}
-                className="flex size-9 items-center justify-center rounded-full bg-white/80 text-primary-500 transition hover:bg-primary-100"
-                aria-label={`دانلود ${image.title}`}
+              <button
+                onClick={() =>
+                  handleDownload(image.src, `${image.id}-design.png`)
+                }
+                className="flex size-9 items-center justify-center rounded-full bg-white/80 text-primary-500"
               >
                 <HiOutlineArrowDownTray className="size-5" />
-              </a>
+              </button>
             </div>
           </article>
         ))}

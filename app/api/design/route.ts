@@ -1,17 +1,14 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import { toFile } from "openai/uploads";
 
 const client = new OpenAI({
-  baseURL: "https://api.gapgpt.app/v1",
-  apiKey: process.env.GAPGPT_API_KEY,
+  baseURL: "https://api.avalai.ir/v1",
+  apiKey: process.env.AVALAI_API_KEY,
 });
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const prompt = body.prompt as string;
-    const imageBase64 = body.imageBase64 as string | undefined;
+    const { prompt, imageBase64 } = await req.json();
 
     if (!prompt) {
       return NextResponse.json(
@@ -20,59 +17,67 @@ export async function POST(req: Request) {
       );
     }
 
-    let imageSrc: string | null = null;
+    const content: any[] = [
+      {
+        type: "text",
+        text: prompt,
+      },
+    ];
 
     if (imageBase64) {
-      const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
-      const imageBuffer = Buffer.from(base64Data, "base64");
-      const imageFile = await toFile(imageBuffer, "sketch.png", {
-        type: "image/png",
+      content.push({
+        type: "image_url",
+        image_url: {
+          url: imageBase64,
+        },
       });
-
-      const response = await client.images.edit({
-        model: "gpt-image-2",
-        image: imageFile,
-        prompt: prompt,
-        size: "1024x1024",
-        response_format: "b64_json",
-      });
-
-      const imageData = (response as any).data?.[0];
-      if (imageData?.b64_json) {
-        imageSrc = `data:image/png;base64,${imageData.b64_json}`;
-      } else if (imageData?.url) {
-        imageSrc = imageData.url;
-      }
-    } else {
-      const response = await client.images.generate({
-        model: "gpt-image-2",
-        prompt: prompt,
-        size: "1024x1024",
-        response_format: "b64_json",
-      });
-
-      const imageData = (response as any).data?.[0];
-      if (imageData?.b64_json) {
-        imageSrc = `data:image/png;base64,${imageData.b64_json}`;
-      } else if (imageData?.url) {
-        imageSrc = imageData.url;
-      }
     }
 
-    if (!imageSrc) {
-      console.error("تصویری در پاسخ یافت نشد");
+    const response = await client.chat.completions.create({
+      model: "gemini-3.1-flash-lite-image",
+
+      messages: [
+        {
+          role: "user",
+          content,
+        },
+      ],
+
+      modalities: ["image", "text"],
+
+      extra_body: {
+        generationConfig: {
+          imageConfig: {
+            imageSize: "1K",
+            aspectRatio: "1:1",
+          },
+        },
+      },
+    } as any);
+
+    const image =
+      (response as any).choices?.[0]?.message?.images?.[0]?.image_url?.url;
+
+    if (!image) {
       return NextResponse.json(
         { error: "تصویری دریافت نشد" },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ image: imageSrc });
+    return NextResponse.json({
+      image,
+    });
   } catch (error: any) {
-    console.error("خطا در API طراحی:", error?.message || error);
+    console.error(error);
+
     return NextResponse.json(
-      { error: "خطا در ارتباط با API تولید تصویر" },
-      { status: 500 }
+      {
+        error: "خطا در تولید تصویر",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
