@@ -28,7 +28,7 @@ export function DesignStepper() {
   const isGenerating = isGeneratingFront || isGeneratingBack;
 
   return (
-    <div className="mx-auto w-full max-w-5xl">
+    <div className="mx-auto w-full max-w-5xl pt-8">
       <div className="mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-end">
         <div className="max-w-2xl">
           <h1 className="md:text-[2.75rem] font-semibold tracking-[-0.03em] text-primary-500 text-5xl">
