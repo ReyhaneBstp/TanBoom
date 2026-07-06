@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="fa" dir="rtl">
       <body className="...">
         <Navbar />
-        <main className="relative pt-15 pb-12 min-h-screen overflow-hidden bg-primary-mesh px-4 py-6 sm:px-6 lg:px-8">
+        <main className="relative pt-15 pb-12 min-h-screen overflow-hidden bg-primary-mesh md:px-0 px-6 ">
           <section>{children}</section>
         </main>
         <Footer />
