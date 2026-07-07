@@ -1,7 +1,10 @@
-import { motion } from "motion/react";
-import { useScrollReveal } from "../hooks/useScrollReveal";
-import { ease } from "../../../shared/definitions/motion";
-import { designSteps } from "../definitions/designSteps";
+import { motion, steps } from "motion/react";
+import { useScrollReveal } from "../../hooks/useScrollReveal";
+import { ease } from "../../../../shared/definitions/motion";
+import { designSteps } from "./definitions";
+import { cn } from "@/shared/utils/mergeClasses";
+import Image from "next/image";
+
 
   
 export default function HowItWorks() {
@@ -31,7 +34,7 @@ export default function HowItWorks() {
               transition={{ duration: 0.55, delay: 0.1 }}
               className="text-4xl md:text-5xl font-black mb-4"
             >
-              چطور کار می‌کنه؟
+              چطور شروع کنم؟
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 18 }}
@@ -45,29 +48,28 @@ export default function HowItWorks() {
   
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8 relative">
             <div className="hidden md:block absolute top-[3.25rem] right-[17%] left-[17%] border-t-2 border-dashed border-border" />
-            {designSteps.map((s, i) => (
+            {designSteps.map((step, i) => (
               <motion.div
-                key={s.num}
+                key={step.num}
                 initial={{ opacity: 0, y: 32 }}
                 animate={visible ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.15 * i + 0.25, ease }}
                 className="group relative bg-card rounded-3xl p-8 border border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5"
               >
                 <div
-                  className="w-[3.25rem] h-[3.25rem] rounded-2xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110"
-                  style={{ backgroundColor: s.bg, color: s.color }}
+                  className={cn("w-[3.25rem] h-[3.25rem] rounded-2xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110", step.bg , step.color)}
                 >
-                  <s.icon size={22} />
+                  <step.icon size={22} />
                 </div>
                 <div
                   className="text-5xl font-black mb-3"
                   style={{ color: "var(--border)" }}
                 >
-                  {s.num}
+                  {step.num}
                 </div>
-                <h3 className="text-xl font-black mb-3">{s.title}</h3>
+                <h3 className="text-xl font-black mb-3">{step.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  {s.desc}
+                  {step.desc}
                 </p>
               </motion.div>
             ))}
@@ -87,10 +89,10 @@ export default function HowItWorks() {
             <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center">
               <div className="text-center text-white px-4">
                 <p className="text-2xl md:text-4xl font-black mb-2">
-                  خلاقیتت رو آزاد کن
+                  خلاقیتت رو آزاد بذار
                 </p>
                 <p className="text-sm md:text-base text-white/75">
-                  هیچ مرزی بین تخیل و واقعیت نیست
+                  این‌جا هیچ مرزی بین تخیل و واقعیت نیست
                 </p>
               </div>
             </div>

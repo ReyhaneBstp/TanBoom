@@ -2,7 +2,9 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { LuArrowLeft, LuSparkles } from "react-icons/lu";
 
-import HeroImage from "@/assets/hero.webp";
+
+import HeroImage from "@/assets/hero.png";
+
 import { Button } from "@/shared/components/Button";
 import { ease, fade } from "@/shared/definitions/motion";
 import {
@@ -131,14 +133,14 @@ export default function Hero() {
           </div>
 
           <div className="order-1 flex justify-center md:order-2">
-            <div className="relative w-full max-w-[360px]">
+            <div className="relative w-full max-w-[460px]">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.85, delay: 0.45, ease }}
-                className="-rotate-2"
+                // className="-rotate-2"
               >
-                <div className="overflow-hidden rounded-[2rem] bg-muted shadow-2xl">
+                <div>
                   <Image
                     src={HeroImage}
                     alt="مدل لباس"
