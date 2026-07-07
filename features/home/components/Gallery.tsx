@@ -26,7 +26,7 @@ export function Gallery() {
                 className="inline-flex items-center gap-2 bg-accent/12 text-accent text-xs font-bold px-4 py-2 rounded-full mb-4"
               >
                 <LuUsers size={11} />
-                جامعه طراحان
+                شاید طراحی بقیه هم برات جالب باشه؟
               </motion.div>
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
@@ -34,7 +34,7 @@ export function Gallery() {
                 transition={{ delay: 0.1 }}
                 className="text-4xl md:text-5xl font-black"
               >
-                الهام بگیر، سفارش بده
+                ایده‌های بقیه رو سفارش بده
               </motion.h2>
             </div>
             <motion.button
@@ -61,7 +61,7 @@ export function Gallery() {
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-100 object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div
                   className={`absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/20 to-transparent transition-opacity duration-300 ${

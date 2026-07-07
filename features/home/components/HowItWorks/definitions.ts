@@ -20,7 +20,7 @@ export const designSteps = [
     {
       icon: LuPackage,
       num: "۰۳",
-      title: "دریافتش کن",
+      title: "دوخته شده‌ش رو دریافت کن",
       desc: "اگه از طرح نهایی خوشت اومد، سفارش بده. خیاطان ماهر ما برات می‌دوزنش و به درِ خونه‌ت می‌رسونیمش.",
       color: "text-primary-100",
       bg: "bg-primary-300",

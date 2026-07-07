@@ -25,7 +25,7 @@ export default function HowItWorks() {
               initial={{ opacity: 0, y: 18 }}
               animate={visible ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-accent/12 text-accent text-xs font-bold px-4 py-2 rounded-full mb-4"
+              className="inline-flex items-center gap-2 bg-primary/12 text-primary text-xs font-bold px-4 py-2 rounded-full mb-4"
             >
               فقط سه قدم
             </motion.div>
@@ -87,7 +87,7 @@ export default function HowItWorks() {
               alt="طراحی لباس"
               className="w-full h-44 md:h-84 object-cover"
             />
-            <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-foreground/40 flex items-center justify-center">
               <div className="text-center text-white px-4">
                 <p className="text-2xl md:text-4xl font-black mb-2">
                   خلاقیتت رو آزاد بذار

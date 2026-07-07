@@ -17,16 +17,12 @@ export function CTASection() {
           initial={{ opacity: 0, y: 36 }}
           animate={visible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease }}
-          className="max-w-4xl mx-auto bg-accent rounded-[2.5rem] p-12 md:p-16 text-center relative overflow-hidden"
+          className="max-w-4xl mx-auto bg-primary-700/80 rounded-[2.5rem] p-12 md:p-16 text-center relative overflow-hidden"
         >
           <div className="pointer-events-none absolute top-0 right-0 w-72 h-72 rounded-full bg-white/10 -translate-y-1/3 translate-x-1/4" />
           <div className="pointer-events-none absolute bottom-0 left-0 w-56 h-56 rounded-full bg-white/10 translate-y-1/3 -translate-x-1/4" />
   
           <div className="relative">
-            <div className="inline-flex items-center gap-2 bg-white/20 text-white text-xs font-bold px-4 py-2 rounded-full mb-6">
-              <LuSparkles size={11} />
-              ثبت‌نام کاملاً رایگانه
-            </div>
             <h2 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
               اولین طرحت رو
               <br />
@@ -39,7 +35,7 @@ export function CTASection() {
               <motion.button
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
-                className="bg-white text-accent font-black text-base px-10 py-4 rounded-2xl shadow-xl"
+                className="bg-white text-primary font-black text-base px-10 py-4 rounded-2xl shadow-xl"
               >
                 ثبت‌نام رایگان
               </motion.button>
