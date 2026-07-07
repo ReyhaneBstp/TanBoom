@@ -1,4 +1,4 @@
-import type { GarmentType, Gender } from "@/features/designer/types/design";
+import type { GarmentType, Gender } from "@/features/design/types/design";
 
 export const GENDER_OPTIONS = [
   { id: "women" as const, label: "زنانه", description: "برای مشاهده انواع پوشاک بانوان کلیک کنید!" },

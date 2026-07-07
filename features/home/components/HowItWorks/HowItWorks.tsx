@@ -4,6 +4,7 @@ import { ease } from "../../../../shared/definitions/motion";
 import { designSteps } from "./definitions";
 import { cn } from "@/shared/utils/mergeClasses";
 import Image from "next/image";
+import HowItWork from "@/assets/how-it-work.png"
 
 
   
@@ -81,10 +82,10 @@ export default function HowItWorks() {
             transition={{ duration: 0.7, delay: 0.65 }}
             className="mt-16 rounded-3xl overflow-hidden relative bg-muted"
           >
-            <img
-              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&h=420&fit=crop&auto=format"
+            <Image
+              src={HowItWork}
               alt="طراحی لباس"
-              className="w-full h-44 md:h-64 object-cover"
+              className="w-full h-44 md:h-84 object-cover"
             />
             <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center">
               <div className="text-center text-white px-4">

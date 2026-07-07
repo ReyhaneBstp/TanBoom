@@ -1,7 +1,6 @@
 "use client";
 
 import { HiOutlineArrowLeft, HiOutlineArrowRight } from "react-icons/hi2";
-import { useDesignStepper } from "@/features/designer/hooks/useDesignStepper";
 import { StepFabric } from "./steps/StepFabric";
 import { StepGender } from "./steps/StepGender";
 import { StepIndicator } from "./components/StepIndicator";
@@ -11,7 +10,9 @@ import { StepMeasurements } from "./steps/StepMeasurements";
 import { useGenerateDesign } from "./hooks/useGenerateDesign";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/Card";
 import { Button } from "@/shared/components/Button";
-import { STEP_IDS } from "@/features/designer/definitions/design-steps";
+import { useDesignStepper } from "./hooks/useDesignStepper";
+import { STEP_IDS } from "./definitions/design-steps";
+
 
 export function DesignStepper() {
   const {

@@ -9,8 +9,8 @@ import {
 } from "react-icons/hi2";
 import { LuPalette } from "react-icons/lu";
 import { FABRIC_MATERIALS } from "../definitions/design-options";
-import { useDesignStore } from "@/features/designer/store/useDesignStore";
-import type { SolidFabric } from "@/features/designer/types/design";
+import { useDesignStore } from "@/features/design/store/useDesignStore";
+import type { SolidFabric } from "@/features/design/types/design";
 import { cn } from "@/shared/utils/mergeClasses";
 import { Button } from "@/shared/components/Button";
 import { Input } from "@/shared/components/Input";

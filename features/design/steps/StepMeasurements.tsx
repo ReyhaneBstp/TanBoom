@@ -1,11 +1,11 @@
 "use client";
 
-import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import { useDesignStore } from "@/features/design/store/useDesignStore";
 import {
   GARMENT_MEASUREMENT_CATEGORY,
   MEASUREMENT_FIELDS_BY_CATEGORY,
-} from "@/features/designer/definitions/design-options";
-import type { BodyMeasurements } from "@/features/designer/types/design";
+} from "@/features/design/definitions/design-options";
+import type { BodyMeasurements } from "@/features/design/types/design";
 import { Label } from "@/shared/components/Label";
 import { Input } from "@/shared/components/Input";
 

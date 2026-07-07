@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { STEPPER_STEPS, stepsInfo, STEP_IDS } from "@/features/designer/definitions/design-steps";
-import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import { STEPPER_STEPS, stepsInfo, STEP_IDS } from "@/features/design/definitions/design-steps";
+import { useDesignStore } from "@/features/design/store/useDesignStore";
 import { useGenerateDesign } from "./useGenerateDesign";
-import { GARMENT_MEASUREMENT_CATEGORY } from "@/features/designer/definitions/design-options";
+import { GARMENT_MEASUREMENT_CATEGORY } from "@/features/design/definitions/design-options";
 
 export function useDesignStepper() {
   const currentStepId = useDesignStore((s) => s.currentStepId);

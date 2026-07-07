@@ -8,7 +8,7 @@ import {
   GiLabCoat,
   GiPoloShirt
 } from "react-icons/gi";
-import type { GarmentType } from "@/features/designer/types/design";
+import type { GarmentType } from "@/features/design/types/design";
 
 interface GarmentIconProps {
   icon: GarmentType["icon"];

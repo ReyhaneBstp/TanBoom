@@ -6,7 +6,7 @@ import {
   HiOutlineArrowPath,
 } from "react-icons/hi2";
 import { Button } from "@/shared/components/Button";
-import { useDesignStore } from "@/features/designer/store/useDesignStore";
+import { useDesignStore } from "@/features/design/store/useDesignStore";
 import { useGenerateDesign } from "../hooks/useGenerateDesign";
 import { handleDownload } from "@/shared/utils/downloadFile";
 

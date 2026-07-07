@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import { GARMENT_TYPES, GENDER_OPTIONS } from "@/features/designer/definitions/design-options";
-import { buildEnhancedPrompt } from "@/features/designer/utils/design-prompt";
-import type { Gender, SolidFabric, GeneratedDesignImage, BodyMeasurements } from "@/features/designer/types/design";
-import { STEP_IDS, type StepId } from "@/features/designer/definitions/design-steps";
+import { GARMENT_TYPES, GENDER_OPTIONS } from "@/features/design/definitions/design-options";
+import { buildEnhancedPrompt } from "@/features/design/utils/design-prompt";
+import type { Gender, SolidFabric, GeneratedDesignImage, BodyMeasurements } from "@/features/design/types/design";
+import { STEP_IDS, type StepId } from "@/features/design/definitions/design-steps";
 
 interface DesignState {
   gender: Gender | null;

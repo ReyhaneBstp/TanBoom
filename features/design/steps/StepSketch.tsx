@@ -5,8 +5,8 @@ import type { DragEvent } from "react";
 import { useMemo } from "react";
 import { HiOutlineArrowUpTray, HiOutlinePhoto } from "react-icons/hi2";
 import { Textarea } from "@/shared/components/Textarea";
-import { useDesignStore } from "@/features/designer/store/useDesignStore";
-import type { SolidFabric } from "@/features/designer/types/design";
+import { useDesignStore } from "@/features/design/store/useDesignStore";
+import type { SolidFabric } from "@/features/design/types/design";
 import { cn } from "@/shared/utils/mergeClasses";
 import { Input } from "@/shared/components/Input";
 
