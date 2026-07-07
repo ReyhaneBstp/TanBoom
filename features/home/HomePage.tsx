@@ -3,7 +3,7 @@
 import { CTASection } from "./components/CTASection";
 import { ForDesigners } from "./components/ForDesigners";
 import { Gallery } from "./components/Gallery";
-import Hero from "./components/Hero";
+import Hero from "./components/Hero/Hero";
 import HowItWorks from "./components/HowItWorks";
 import { Testimonials } from "./components/Testimonials";
 
