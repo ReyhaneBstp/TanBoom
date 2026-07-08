@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 import { LuArrowLeft, LuStar } from "react-icons/lu";
 import { ease } from "../../../shared/definitions/motion";
-import DesignerImage from "@/assets/designer.png";
+import DesignerImage from "@/assets/landing/designer.png";
 import Image from "next/image";
 import { Button } from "@/shared/components/Button";
 
