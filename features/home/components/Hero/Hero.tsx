@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { LuArrowLeft, LuSparkles } from "react-icons/lu";
 
 
-import HeroImage from "@/assets/hero.png";
+import HeroImage from "@/assets/landing/hero.png";
 
 import { Button } from "@/shared/components/Button";
 import { ease, fade } from "@/shared/definitions/motion";
@@ -99,11 +99,11 @@ export default function Hero() {
 
               <div className="flex items-center gap-3 text-sm font-medium text-muted-foreground">
                 <div className="flex -space-x-2 space-x-reverse">
-                  {avatars.map((id) => (
-                    <img
-                      key={id}
-                      src={`https://images.unsplash.com/photo-${id}?w=32&h=32&fit=crop&auto=format`}
-                      alt=""
+                  {avatars.map((image, index) => (
+                    <Image
+                      key={index}
+                      src={image}
+                      alt="avatar"
                       className="h-8 w-8 rounded-full border-2 border-background object-cover"
                     />
                   ))}

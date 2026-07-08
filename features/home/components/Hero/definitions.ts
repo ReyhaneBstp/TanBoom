@@ -1,10 +1,16 @@
 import { HTMLMotionProps } from "framer-motion";
 import { LuHeart, LuPencil } from "react-icons/lu";
+import avatar1 from "@/assets/avatars/avatar1.jpg"
+import avatar2 from "@/assets/avatars/avatar2.jpg"
+import avatar3 from "@/assets/avatars/avatar3.jpg"
+import avatar4 from "@/assets/avatars/avatar4.jpg"
+
 
 export const avatars = [
-  "1494790108377-be9c29b29330",
-  "1438761681033-6461ffad8d80",
-  "1534528741775-53994a69daeb",
+  avatar1,
+  avatar2,
+  avatar3,
+  avatar4
 ];
 
 export const features = [

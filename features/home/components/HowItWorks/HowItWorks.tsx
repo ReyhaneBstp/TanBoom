@@ -4,7 +4,7 @@ import { ease } from "../../../../shared/definitions/motion";
 import { designSteps } from "./definitions";
 import { cn } from "@/shared/utils/mergeClasses";
 import Image from "next/image";
-import HowItWork from "@/assets/how-it-work.png"
+import HowItWork from "@/assets/landing/how-it-work.png"
 
 
   
