@@ -27,12 +27,20 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-6">
-        <a href="#" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center group-hover:scale-110 transition-transform">
-            <LuScissors size={13} className="text-accent-foreground" />
-          </div>
-          <span className="text-lg font-black tracking-tight">تن‌بوم</span>
-        </a>
+        <div className="flex items-center">
+          <button
+            className="md:hidden p-1 text-foreground"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <LuX size={20} /> : <LuMenu size={20} />}
+          </button>
+          <a href="#" className="flex items-center gap-2.5 group mr-2">
+            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center group-hover:scale-110 transition-transform">
+              <LuScissors size={13} className="text-accent-foreground" />
+            </div>
+            <span className="text-lg font-black tracking-tight">تن‌بوم</span>
+          </a>
+        </div>
 
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
           {[
@@ -61,12 +69,6 @@ export default function Navbar() {
           >
             شروع طراحی
           </motion.button>
-          <button
-            className="md:hidden p-1 text-foreground"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <LuX size={20} /> : <LuMenu size={20} />}
-          </button>
         </div>
       </div>
 
@@ -74,7 +76,7 @@ export default function Navbar() {
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="md:hidden bg-background border-b border-border px-6 pb-5 pt-2 flex flex-col gap-4"
+          className="md:hidden bg-background border-b border-border px-6 pb-5 pt-2 flex flex-col gap-4 -mt-2"
         >
           {[
             ["چطور کار می‌کنه؟", "#how"],

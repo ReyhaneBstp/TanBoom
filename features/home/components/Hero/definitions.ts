@@ -33,7 +33,7 @@ export const floatingCards = [
     title: "طرحی جدید",
     subtitle: "روی بوم تنِ تو",
     Icon: LuPencil,
-    className: "absolute -top-4 -left-4 sm:-left-10",
+    className: "absolute top-10 md:-top-4 -left-4 sm:-left-10",
   },
 ];
 

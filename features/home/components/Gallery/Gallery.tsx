@@ -48,7 +48,7 @@ export function Gallery() {
             </motion.button>
           </div>
   
-          <div className="columns-2 md:columns-3 gap-4 md:gap-5 [column-gap:1rem] md:[column-gap:1.25rem]">
+          <div className="columns-1 md:columns-3 gap-4 md:gap-5 [column-gap:1rem] md:[column-gap:1.25rem]">
             {galleryItems.map((item, i) => (
               <motion.div
                 key={item.id}

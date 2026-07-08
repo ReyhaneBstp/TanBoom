@@ -16,7 +16,7 @@ import {
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center overflow-hidden pb-20 md:pb-0">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute top-0 right-[-120px] h-[560px] w-[560px] rounded-full bg-primary/12 blur-3xl" />
         <div className="absolute bottom-[-80px] left-[-60px] h-[420px] w-[420px] rounded-full bg-secondary blur-2xl" />
@@ -120,7 +120,7 @@ export default function Hero() {
             >
               {features.map((feature) => (
                 <div key={feature.title}>
-                  <div className="text-lg font-black text-primary">
+                  <div className="text-sm md:text-lg font-black text-primary">
                     {feature.title}
                   </div>
 
@@ -133,7 +133,7 @@ export default function Hero() {
           </div>
 
           <div className="order-1 flex justify-center md:order-2">
-            <div className="relative w-full max-w-[460px]">
+            <div className="relative w-full max-w-[460px] md:pt-0 pt-20">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -143,7 +143,7 @@ export default function Hero() {
                   <Image
                     src={HeroImage}
                     alt="مدل لباس"
-                    className="h-[400px] w-full object-cover sm:h-[460px]"
+                    className="max-h-[400px] w-full object-cover"
                   />
                 </div>
               </motion.div>
