@@ -41,6 +41,6 @@ export const stepsInfo: Record<StepId, { eyebrow: string; title: string; descrip
   [STEP_IDS.RESULT]: {
     eyebrow: "نتیجه",
     title: "تصویر طراحی شده",
-    description: "نتیجه نهایی طراحی بر اساس اطلاعاتت.",
+    description: "اگه لباست زنده بشه چه شکلی میشه؟",
   },
 };

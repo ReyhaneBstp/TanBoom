@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { useScrollReveal } from "../hooks/useScrollReveal";
-import { testimonials } from "../definitions/testimonials";
+import { useScrollReveal } from "../../hooks/useScrollReveal";
+import { testimonials } from "./definitions";
 import { LuStar } from "react-icons/lu";
 
 export function Testimonials() {

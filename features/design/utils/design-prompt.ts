@@ -1,4 +1,6 @@
+import { GARMENT_MEASUREMENT_CATEGORY } from "../definitions/design-options";
 import { EnhancedPromptPayload, SolidFabric } from "../types/design";
+
 
 export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
   const solidFabrics = payload.selectedFabrics as SolidFabric[];
@@ -11,68 +13,122 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
     .map((fabric) => {
       const part = payload.fabricAssignments?.[fabric.id]?.trim();
       if (!part) return null;
-      const solid = fabric as SolidFabric;
-      return `- Use ${solid.material} fabric in solid color ${solid.hex} SPECIFICALLY for the [${part}].`;
+      return `- Use ${fabric.material} fabric in solid color ${fabric.hex} ONLY for [${part}].`;
     })
     .filter(Boolean);
 
   const measurementLines: string[] = [];
   if (payload.measurements) {
     const m = payload.measurements;
-    if (m.height_cm) measurementLines.push(`Garment length: ${m.height_cm} cm`);
+    if (m.height_cm) measurementLines.push(`Total garment length: ${m.height_cm} cm`);
     if (m.chest_cm) measurementLines.push(`Chest circumference: ${m.chest_cm} cm`);
     if (m.waist_cm) measurementLines.push(`Waist circumference: ${m.waist_cm} cm`);
     if (m.hips_cm) measurementLines.push(`Hips circumference: ${m.hips_cm} cm`);
-    if (m.head_circumference_cm) measurementLines.push(`Head circumference: ${m.head_circumference_cm} cm`);
   }
 
+  // ==================== MANNEQUIN CATEGORY ====================
+  const garmentKey = payload.garmentType?.id || payload.garmentType?.label?.toLowerCase() || "";
+  const category = GARMENT_MEASUREMENT_CATEGORY[garmentKey] || "upper_body";
+
+  let mannequinType: string;
+  let mannequinView: string;
+
+  switch (category) {
+    case "full_body":
+      mannequinType = "full-body";
+      mannequinView = "standing naturally";
+      break;
+    case "lower_body":
+      mannequinType = "lower-body (from waist down)";
+      mannequinView = "standing naturally";
+      break;
+    case "head":
+      mannequinType = "head-only mannequin";
+      mannequinView = "front facing";
+      break;
+    case "upper_body":
+    default:
+      mannequinType = "upper-body (bust to hips)";
+      mannequinView = "standard product pose";
+      break;
+  }
+
+  const mannequinDescription = `Consistent ${mannequinType} mannequin with smooth satin-finish ivory skin, completely featureless face (no eyes, nose, mouth), no hair, elegant and neutral posture (${mannequinView}), arms positioned naturally according to garment.`;
+
+  // ==================== BASE PROMPT ====================
   const basePrompt = [
-    "You are an expert technical fashion illustrator specializing in precise translation of hand-drawn sketches to photorealistic garments.",
-    
-    `1. Target Audience: ${payload.genderLabel}`,
-    `2. Garment Type: ${payload.garmentType.label}`,
-    `3. Core Description from User: "${payload.description}"`,
-    
-    solidPrompt ? `4. Fabric & Color Palette: ${solidPrompt}` : "",
-    
-    payload.sketchPreviewUrl 
-      ? `5. CRITICAL REFERENCE: You are given a hand-drawn sketch. STRICTLY follow the provided sketch as the EXACT silhouette, proportions, seam lines, design details, placement of elements, neckline shape, sleeve style, hem length, and all structural features. Do not alter, simplify, or add any design elements not present in the sketch. Translate the sketch lines faithfully into realistic fabric and stitching.` 
-      : "",
-  
-    "6. Style: Highly detailed photorealistic rendering of the garment, professional atelier technical design, visible fabric texture and drape, precise stitching and seams, natural folds and wrinkles according to the sketch.",
-    
-    "7. STRICT RULES:",
-    "- Follow the sketch 100% for shape and details. Do not invent new patterns, decorations, buttons, pockets, or design features.",
-    "- Do not make it more 'fashionable' or add artistic interpretations unless explicitly in the sketch.",
-    "- Plain solid white background, no mannequin face, no head, no text, no logos, no shadows on background.",
-    "- Focus ONLY on the clothing item itself.",
-    
-    "8. Rendering: Photorealistic, high resolution, accurate fabric behavior based on the assigned materials."
+    "You are a professional fashion product photography AI specialized in ultra-photorealistic garment visualization on consistent mannequins.",
+
+    `Target Audience: ${payload.genderLabel}`,
+    `Garment Type: ${payload.garmentType.label}`,
+    `User Description: "${payload.description}"`,
+    solidPrompt ? `Fabrics: ${solidPrompt}` : "",
+
+    "",
+
+    payload.sketchPreviewUrl ? `SKETCH RULES:
+The provided sketch is a strict structural reference. Follow it EXACTLY for silhouette, proportions, construction, seams, neckline, sleeves, hem, panels, pleats, gathers, and all design elements. Do not invent or remove anything.` : "",
+
+    "",
+
+    // Mannequin Lock - قوی و ثابت
+    `MANNEQUIN LOCK:
+Always display the garment on the **exact same consistent ${mannequinType} mannequin** in every image.
+${mannequinDescription}
+The mannequin appearance, color, finish, and pose style must be identical across all generations.`,
+
+    "",
+
+    `STYLE LOCK:
+Ultra-photorealistic luxury fashion product photography.
+Professional studio lighting with soft diffused key light.
+Clean white seamless background.
+Realistic fabric drape, natural wrinkles, accurate stitching, true-to-life textures and colors.
+8K commercial catalog quality.`,
+
+    "",
+
+    `NEVER GENERATE:
+Illustration, sketch, drawing, painting, anime, cartoon, CGI look, stylized art, visible face details, hands, logos, text, watermarks, or unrequested accessories.`,
+
+    "",
+
+    `STRICT RULES:
+- Only show the garment on the defined consistent mannequin.
+- Plain white seamless background only.
+- Keep exact proportions and construction from the sketch.
+- Do not add extra details not present in the sketch.`,
+
+    "",
+
+    "FINAL OUTPUT: One single, perfectly centered, front-view commercial product photograph.",
   ]
-  .filter(Boolean)
-  .join("\n");
+    .filter(Boolean)
+    .join("\n");
 
-  const measurementBlock =
-    measurementLines.length > 0
-      ? ["\nMEASUREMENT & FIT REQUIREMENTS:", ...measurementLines].join("\n")
-      : "";
+  const measurementBlock = measurementLines.length > 0
+    ? `\nMEASUREMENT & FIT:\n${measurementLines.join("\n")}`
+    : "";
 
-  const assignmentBlock =
-    assignmentLines.length > 0
-      ? ["\nFABRIC PLACEMENT INSTRUCTIONS:", ...assignmentLines].join("\n")
-      : "";
+  const assignmentBlock = assignmentLines.length > 0
+    ? `\nFABRIC PLACEMENT:\n${assignmentLines.join("\n")}`
+    : "";
 
-  return [basePrompt, measurementBlock, assignmentBlock].filter(Boolean).join("\n");
+  return [basePrompt, measurementBlock, assignmentBlock]
+    .filter(Boolean)
+    .join("\n");
 }
 
 export function buildBackViewPrompt(originalPrompt: string): string {
   return [
     originalPrompt,
-    "\n--- NEW INSTRUCTION ---",
-    "Now generate the BACK VIEW of the same garment.",
-    "The back view must be 100% consistent in style, colors, fabric textures, and design details with the front view.",
-    "Show the garment from behind on a plain white background.",
-    "Do NOT show any mannequin face or front details. Only the back of the garment.",
-    "Maintain the same realistic rendering quality and lighting.",
+
+    "\n--- BACK VIEW ---",
+
+    "Generate the **back view** of the EXACT same garment on the **same consistent mannequin**.",
+    "Maintain identical mannequin appearance, lighting, fabric behavior, and quality.",
+    "Perfect visual match with the front view in all details.",
+    "Commercial catalog style, white seamless background.",
+    "Back view only.",
   ].join("\n");
 }

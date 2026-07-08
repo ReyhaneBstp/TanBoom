@@ -1,44 +1,51 @@
+import sample1 from "@/assets/gallery/sample.png";
+import sample2 from "@/assets/gallery/sample2.png";
+import sample3 from "@/assets/gallery/sample3.png";
+import sample4 from "@/assets/gallery/sample4.png";
+import sample5 from "@/assets/gallery/sample5.png";
+import sample6 from "@/assets/gallery/sample6.png";
+
 export const galleryItems = [
     {
       id: 1,
       image:
-        "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=520&fit=crop&auto=format",
+      sample2,
       designer: "نیلوفر رضایی",
-      title: "پیراهن بلند پاییزی",
+      title: "مانتوی گیپور دار",
       orders: 47,
       likes: 234,
     },
     {
       id: 2,
       image:
-        "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&h=460&fit=crop&auto=format",
+      sample1,
       designer: "سارا محمدی",
-      title: "کت سنتی مدرن",
+      title: "کت و شلوارک سرهمی",
       orders: 31,
       likes: 189,
     },
     {
       id: 3,
       image:
-        "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&h=560&fit=crop&auto=format",
+      sample3,
       designer: "مریم اکبری",
-      title: "ست اداری شیک",
+      title: "شومیز رسمی",
       orders: 58,
       likes: 312,
     },
     {
       id: 4,
       image:
-        "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=500&fit=crop&auto=format",
+      sample4,
       designer: "زهرا کریمی",
-      title: "مانتوی مجلسی",
+      title: "شومیز دخترانه",
       orders: 22,
       likes: 167,
     },
     {
       id: 5,
       image:
-        "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&h=540&fit=crop&auto=format",
+      sample5,
       designer: "فاطمه حسینی",
       title: "پیراهن مینیمال",
       orders: 15,
@@ -47,7 +54,7 @@ export const galleryItems = [
     {
       id: 6,
       image:
-        "https://images.unsplash.com/photo-1485968579580-fc6f43bad5b0?w=400&h=480&fit=crop&auto=format",
+      sample6,
       designer: "ریحانه نوری",
       title: "لباس هنری مدرن",
       orders: 39,

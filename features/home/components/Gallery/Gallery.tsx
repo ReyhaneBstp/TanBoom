@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useScrollReveal } from "../hooks/useScrollReveal";
+import { useScrollReveal } from "../../hooks/useScrollReveal";
 import { motion } from "motion/react";
 import { LuArrowLeft, LuHeart, LuUsers } from "react-icons/lu";
-import { galleryItems } from "../definitions/gallery";
-import { ease } from "../../../shared/definitions/motion";
+import { galleryItems } from "./definitions";
+import { ease } from "../../../../shared/definitions/motion";
+import Image from "next/image";
 
 export function Gallery() {
     const { ref, visible } = useScrollReveal();
@@ -58,7 +59,7 @@ export function Gallery() {
                 onMouseLeave={() => setHovId(null)}
                 className="break-inside-avoid mb-4 md:mb-5 rounded-2xl overflow-hidden relative group cursor-pointer bg-muted"
               >
-                <img
+                <Image
                   src={item.image}
                   alt={item.title}
                   className="w-full h-100 object-cover transition-transform duration-500 group-hover:scale-105"
