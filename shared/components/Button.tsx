@@ -3,17 +3,15 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../utils/mergeClasses";
 import React from "react";
 
-
-
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-45",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap bg-primary text-primary-foreground font-black text-base px-8 py-4 rounded-2xl shadow-lg shadow-primary/20 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-45",
   {
     variants: {
       variant: {
-        default: "bg-primary-400 text-white shadow-soft-primary hover:bg-primary-300",
-        glass: "glass-chip text-foreground hover:border-primary-300/80 hover:bg-white/80 hover:shadow-soft-primary",
-        ghost: "text-muted-foreground hover:bg-white/70 hover:text-foreground",
-        outline: "border border-primary-200 bg-white/55 text-foreground hover:border-primary-300 hover:bg-white"
+        default: "bg-primary-600 text-white shadow-soft-primary hover:bg-primary-700",
+        glass: "glass-chip text-foreground hover:border-primary-600/80 hover:bg-white/80 hover:shadow-soft-primary",
+        ghost: "bg-primary-100 text-muted-foreground hover:bg-primary-200/70 hover:text-foreground",
+        outline: "border border-primary-600 bg-white/55 text-foreground hover:border-primary-600 hover:bg-white"
       },
       size: {
         default: "h-11 px-5",
