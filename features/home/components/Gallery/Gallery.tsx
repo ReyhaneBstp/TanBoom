@@ -1,3 +1,6 @@
+
+"use client"
+
 import { useState } from "react";
 import { useScrollReveal } from "../../hooks/useScrollReveal";
 import { motion } from "motion/react";

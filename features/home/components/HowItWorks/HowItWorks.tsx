@@ -1,3 +1,6 @@
+
+"use client"
+
 import { motion, steps } from "motion/react";
 import { useScrollReveal } from "../../hooks/useScrollReveal";
 import { ease } from "../../../../shared/definitions/motion";

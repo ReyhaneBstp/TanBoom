@@ -1,7 +1,7 @@
+"use client";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { LuArrowLeft, LuSparkles } from "react-icons/lu";
-
 
 import HeroImage from "@/assets/landing/hero.png";
 
@@ -136,13 +136,14 @@ export default function Hero() {
             <div className="relative w-full max-w-[460px] md:pt-0 pt-20">
               <motion.div
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.85, delay: 0.45, ease }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.35 }}
               >
                 <div>
                   <Image
+                    priority
                     src={HeroImage}
-                    alt="مدل لباس"
+                    alt="تصویر هیرو"
                     className="max-h-[400px] w-full object-cover"
                   />
                 </div>

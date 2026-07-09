@@ -1,4 +1,6 @@
-import { motion } from "framer-motion";
+"use client"
+
+import { motion } from "motion/react";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 import { LuArrowLeft, LuStar } from "react-icons/lu";
 import { ease } from "../../../shared/definitions/motion";
