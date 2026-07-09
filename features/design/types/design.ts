@@ -46,5 +46,7 @@ export interface EnhancedPromptPayload {
   description: string;
   sketchPreviewUrl: string | null;
   fabricAssignments: Record<string, string>;
+  selectedAccessories: string[];
+  accessoryPlacements: Record<string, string>;
   measurements?: BodyMeasurements;
 }

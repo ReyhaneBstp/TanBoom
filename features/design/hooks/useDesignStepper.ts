@@ -48,6 +48,7 @@ export function useDesignStepper() {
       [
         Boolean(gender && garmentTypeId),
         selectedFabricIds.length > 0,
+        true,
         Boolean(sketch.file && sketch.description.trim().length > 8),
         isMeasurementsValid,
         generatedImages.length > 0,

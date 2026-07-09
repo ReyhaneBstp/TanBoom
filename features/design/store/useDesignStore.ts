@@ -10,6 +10,8 @@ interface DesignState {
   customFabrics: SolidFabric[];
   selectedFabricIds: string[];
   fabricAssignments: Record<string, string>;
+  selectedAccessories: string[];
+  accessoryPlacements: Record<string, string>;
   sketch: {
     file: File | null;
     previewUrl: string | null;
@@ -31,6 +33,8 @@ interface DesignActions {
   removeCustomFabric: (fabricId: string) => void;
   toggleFabric: (fabricId: string) => void;
   setFabricAssignment: (fabricId: string, part: string) => void;
+  toggleAccessory: (accessoryId: string) => void;
+  setAccessoryPlacement: (accessoryId: string, placement: string) => void;
   updateSketchFile: (file: File | null) => void;
   updateDescription: (description: string) => void;
   setGeneratedImages: (images: GeneratedDesignImage[]) => void;
@@ -50,6 +54,8 @@ const computePrompt = (state: DesignState): string => {
     garmentTypeId,
     selectedFabricIds,
     customFabrics,
+    selectedAccessories,
+    accessoryPlacements,
     sketch,
     fabricAssignments,
     measurements,
@@ -71,6 +77,8 @@ const computePrompt = (state: DesignState): string => {
     description: sketch.description.trim(),
     sketchPreviewUrl: sketch.previewUrl,
     fabricAssignments,
+    selectedAccessories,
+    accessoryPlacements,
     measurements,
   });
 };
@@ -81,6 +89,8 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
   customFabrics: [],
   selectedFabricIds: [],
   fabricAssignments: {},
+  selectedAccessories: [],
+  accessoryPlacements: {},
   sketch: { file: null, previewUrl: null, description: "" },
   currentStepId: STEP_IDS.GENDER,
   generatedImages: [],
@@ -174,6 +184,36 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
       };
     }),
 
+  toggleAccessory: (accessoryId) =>
+    set((state) => {
+      const exists = state.selectedAccessories.includes(accessoryId);
+      const newSelectedAccessories = exists
+        ? state.selectedAccessories.filter((id) => id !== accessoryId)
+        : [...state.selectedAccessories, accessoryId];
+
+      const newPlacements = { ...state.accessoryPlacements };
+      if (exists) delete newPlacements[accessoryId];
+
+      return {
+        selectedAccessories: newSelectedAccessories,
+        accessoryPlacements: newPlacements,
+        generatedAiPrompt: computePrompt({
+          ...state,
+          selectedAccessories: newSelectedAccessories,
+          accessoryPlacements: newPlacements,
+        } as DesignState),
+      };
+    }),
+
+  setAccessoryPlacement: (accessoryId, placement) =>
+    set((state) => {
+      const newPlacements = { ...state.accessoryPlacements, [accessoryId]: placement };
+      return {
+        accessoryPlacements: newPlacements,
+        generatedAiPrompt: computePrompt({ ...state, accessoryPlacements: newPlacements } as DesignState),
+      };
+    }),
+
   updateSketchFile: (file) =>
     set((state) => {
       if (state.sketch.previewUrl) URL.revokeObjectURL(state.sketch.previewUrl);
@@ -219,6 +259,8 @@ export const useDesignStore = create<DesignState & DesignActions>((set, get) => 
       customFabrics: [],
       selectedFabricIds: [],
       fabricAssignments: {},
+      selectedAccessories: [],
+      accessoryPlacements: {},
       sketch: { file: null, previewUrl: null, description: "" },
       currentStepId: STEP_IDS.GENDER,
       generatedImages: [],

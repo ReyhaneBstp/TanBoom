@@ -37,6 +37,38 @@ export const FABRIC_MATERIALS = [
   "تور"
 ];
 
+export interface Accessory {
+  id: string;
+  label: string;
+}
+
+export const ACCESSORIES: Accessory[] = [
+  { id: "pearl-trim", label: "تور مروارید" },
+  { id: "lace-trim", label: "تور گیپور" },
+  { id: "buttons", label: "دکمه" },
+  { id: "ribbon", label: "روبان" },
+  { id: "bow", label: "پاپیون" },
+  { id: "zipper", label: "زیپ" },
+  { id: "buckle", label: "سگک" },
+  { id: "sequins", label: "پولک" },
+  { id: "beads", label: "مهره" },
+  { id: "rhinestones", label: "نگین" },
+  { id: "embroidery", label: "گلدوزی" },
+  { id: "fringe", label: "منگوله" },
+  { id: "tassels", label: "آویز منگوله‌دار" },
+  { id: "studs", label: "میخ تزئینی" },
+  { id: "chain", label: "زنجیر" },
+  { id: "decorative-patch", label: "وصله تزئینی" },
+  { id: "applique", label: "اپلیکه" },
+  { id: "metal-ring", label: "حلقه فلزی" },
+  { id: "eyelets", label: "چشمی" },
+  { id: "decorative-cord", label: "طناب تزئینی" },
+  { id: "ruffles", label: "رفرف" },
+  { id: "pleats", label: "چین" },
+  { id: "pompom", label: "پوم‌پوم" },
+  { id: "feather", label: "پر" },
+];
+
 export type MeasurementCategory = "upper_body" | "lower_body" | "head" | "full_body";
 
 export const GARMENT_MEASUREMENT_CATEGORY: Record<string, MeasurementCategory> = {
