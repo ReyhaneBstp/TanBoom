@@ -29,7 +29,7 @@ export const galleryItems = [
       image:
       sample3,
       designer: "مریم اکبری",
-      title: "شومیز رسمی",
+      title: "شومیز دخترانه",
       orders: 58,
       likes: 312,
     },
@@ -37,8 +37,8 @@ export const galleryItems = [
       id: 4,
       image:
       sample4,
-      designer: "زهرا کریمی",
-      title: "شومیز دخترانه",
+      designer: "زهرا رستمی",
+      title: "شومیز رسمی",
       orders: 22,
       likes: 167,
     },

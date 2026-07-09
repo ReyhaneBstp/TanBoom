@@ -2,7 +2,6 @@ import { GARMENT_MEASUREMENT_CATEGORY } from "../definitions/design-options";
 import { ACCESSORIES } from "../definitions/design-options";
 import type { EnhancedPromptPayload, SolidFabric } from "../types/design";
 
-
 export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
   const solidFabrics = payload.selectedFabrics as SolidFabric[];
 
@@ -21,9 +20,12 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
   const measurementLines: string[] = [];
   if (payload.measurements) {
     const m = payload.measurements;
-    if (m.height_cm) measurementLines.push(`Total garment length: ${m.height_cm} cm`);
-    if (m.chest_cm) measurementLines.push(`Chest circumference: ${m.chest_cm} cm`);
-    if (m.waist_cm) measurementLines.push(`Waist circumference: ${m.waist_cm} cm`);
+    if (m.height_cm)
+      measurementLines.push(`Total garment length: ${m.height_cm} cm`);
+    if (m.chest_cm)
+      measurementLines.push(`Chest circumference: ${m.chest_cm} cm`);
+    if (m.waist_cm)
+      measurementLines.push(`Waist circumference: ${m.waist_cm} cm`);
     if (m.hips_cm) measurementLines.push(`Hips circumference: ${m.hips_cm} cm`);
   }
 
@@ -42,7 +44,8 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
   }
 
   // ==================== MANNEQUIN CATEGORY ====================
-  const garmentKey = payload.garmentType?.id || payload.garmentType?.label?.toLowerCase() || "";
+  const garmentKey =
+    payload.garmentType?.id || payload.garmentType?.label?.toLowerCase() || "";
   const category = GARMENT_MEASUREMENT_CATEGORY[garmentKey] || "upper_body";
 
   let mannequinType: string;
@@ -62,9 +65,12 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
       mannequinView = "front facing";
       break;
     case "upper_body":
+    case "upper_body":
     default:
-      mannequinType = "upper-body (bust to hips)";
-      mannequinView = "standard product pose";
+      mannequinType = "upper-body mannequin";
+      mannequinView =
+        "professional fashion product photography pose. The camera is framed VERY TIGHTLY from the neck/shoulders down to JUST BELOW the hem of the garment. The bottom of the frame must cut off cleanly and completely below the garment. " +
+        "ABSOLUTELY NO lower torso, hips, crotch area, or legs of the mannequin should be visible. The image must end right after the hem of the clothing.";
       break;
   }
 
@@ -81,8 +87,10 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
 
     "",
 
-    payload.sketchPreviewUrl ? `SKETCH RULES:
-The provided sketch is a strict structural reference. Follow it EXACTLY for silhouette, proportions, construction, seams, neckline, sleeves, hem, panels, pleats, gathers, and all design elements. Do not invent or remove anything.` : "",
+    payload.sketchPreviewUrl
+      ? `SKETCH RULES:
+The provided sketch is a strict structural reference. Follow it EXACTLY for silhouette, proportions, construction, seams, neckline, sleeves, hem, panels, pleats, gathers, and all design elements. Do not invent or remove anything.`
+      : "",
 
     "",
 
@@ -111,26 +119,30 @@ Illustration, sketch, drawing, painting, anime, cartoon, CGI look, stylized art,
 - Only show the garment on the defined consistent mannequin.
 - Plain white seamless background only.
 - Keep exact proportions and construction from the sketch.
-- Do not add extra details not present in the sketch.`,
-
-    "",
+- Do not add extra details not present in the sketch.
+- CRITICAL FOR SHORT GARMENTS: For any upper-body garment that does not reach the hips (shirts, blouses, crop tops, short tops, etc.), the framing MUST be extremely tight. The image should end immediately below the hem. 
+  NEVER show the mannequin's bare lower torso, hips, crotch area, or legs. Do not show any naked parts between the legs or below the waist.
+- The mannequin must appear complete within the frame — no awkward cutoffs or visible uncovered body parts.`,
 
     "FINAL OUTPUT: One single, perfectly centered, front-view commercial product photograph.",
   ]
     .filter(Boolean)
     .join("\n");
 
-  const measurementBlock = measurementLines.length > 0
-    ? `\nMEASUREMENT & FIT:\n${measurementLines.join("\n")}`
-    : "";
+  const measurementBlock =
+    measurementLines.length > 0
+      ? `\nMEASUREMENT & FIT:\n${measurementLines.join("\n")}`
+      : "";
 
-  const assignmentBlock = assignmentLines.length > 0
-    ? `\nFABRIC PLACEMENT:\n${assignmentLines.join("\n")}`
-    : "";
+  const assignmentBlock =
+    assignmentLines.length > 0
+      ? `\nFABRIC PLACEMENT:\n${assignmentLines.join("\n")}`
+      : "";
 
-  const accessoryBlock = accessoryLines.length > 0
-    ? `\nACCESSORIES & DECORATIVE ELEMENTS:\n${accessoryLines.join("\n")}`
-    : "";
+  const accessoryBlock =
+    accessoryLines.length > 0
+      ? `\nACCESSORIES & DECORATIVE ELEMENTS:\n${accessoryLines.join("\n")}`
+      : "";
 
   return [basePrompt, measurementBlock, assignmentBlock, accessoryBlock]
     .filter(Boolean)
