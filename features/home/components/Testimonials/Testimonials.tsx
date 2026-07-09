@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { useScrollReveal } from "../../hooks/useScrollReveal";
 import { testimonials } from "./definitions";
 import { LuStar } from "react-icons/lu";

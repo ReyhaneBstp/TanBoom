@@ -1,5 +1,3 @@
-"use client"
-
 import { CTASection } from "./components/CTASection";
 import { ForDesigners } from "./components/ForDesigners";
 import { Gallery } from "./components/Gallery/Gallery";

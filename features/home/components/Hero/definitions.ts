@@ -1,4 +1,4 @@
-import { HTMLMotionProps } from "framer-motion";
+import { HTMLMotionProps } from "motion/react";
 import { LuHeart, LuPencil } from "react-icons/lu";
 import avatar1 from "@/assets/avatars/avatar1.jpg"
 import avatar2 from "@/assets/avatars/avatar2.jpg"
