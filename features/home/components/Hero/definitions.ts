@@ -73,5 +73,3 @@ export const floatingAnimation: Pick<
     },
   },
 };
-
-// test
