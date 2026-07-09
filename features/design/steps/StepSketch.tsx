@@ -3,7 +3,7 @@
 
 import type { DragEvent } from "react";
 import { useMemo } from "react";
-import { HiOutlineArrowUpTray, HiOutlinePhoto } from "react-icons/hi2";
+import { HiOutlineArrowUpTray, HiOutlinePhoto, HiOutlineSparkles } from "react-icons/hi2";
 import { Textarea } from "@/shared/components/Textarea";
 import { useDesignStore } from "@/features/design/store/useDesignStore";
 import type { SolidFabric } from "@/features/design/types/design";
@@ -158,9 +158,7 @@ export function StepSketch() {
                 className="flex items-start gap-2.5 rounded-xl bg-white/50 p-2"
               >
                 <div className="flex-shrink-0 pt-0.5">
-                  <span className="flex size-8 items-center justify-center rounded-full border border-white/70 shadow-inner bg-primary-100 text-primary-500 text-xs font-bold">
-                    ⚡
-                  </span>
+                  <HiOutlineSparkles className="text-primary-400" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <span className="block truncate text-xs font-semibold text-foreground">

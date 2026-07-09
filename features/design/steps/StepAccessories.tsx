@@ -11,28 +11,6 @@ export function StepAccessories() {
 
   return (
     <div className="flex flex-col gap-6 min-h-[22rem]">
-      <div className="rounded-2xl border border-primary-200/60 bg-primary-50/30 px-4 py-3 backdrop-blur-xl">
-        <p className="text-sm text-foreground/80 leading-relaxed">
-          این مرحله اختیاری است. می‌توانید یک یا چند اکسسوری انتخاب کنید، یا بدون انتخاب ادامه دهید.
-        </p>
-      </div>
-
-      {selectedAccessories.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-primary-200/60 bg-white/25 px-8 py-14 text-center backdrop-blur-xl">
-          <div className="flex size-16 items-center justify-center rounded-2xl bg-primary-100/60">
-            <HiOutlineSparkles className="size-8 text-primary-400" />
-          </div>
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-foreground/70">
-              هیچ اکسسوری انتخاب نشده
-            </p>
-            <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">
-              برای افزودن جزئیات تزئینی، از لیست زیر انتخاب کنید.
-            </p>
-          </div>
-        </div>
-      ) : null}
-
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {ACCESSORIES.map((accessory) => {
           const selected = selectedAccessories.includes(accessory.id);
