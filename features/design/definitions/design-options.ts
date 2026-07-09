@@ -1,8 +1,8 @@
-import type { GarmentType, Gender } from "@/features/design/types/design";
+import type { Accessory, GarmentType, MeasurementCategory } from "@/features/design/types/design";
 
 export const GENDER_OPTIONS = [
   { id: "women" as const, label: "زنانه", description: "برای مشاهده انواع پوشاک بانوان کلیک کنید!" },
-  { id: "men" as const, label: "مردانه", description: "برای مشاهده انواع پوشاک آقاان کلیک کنید!" },
+  { id: "men" as const, label: "مردانه", description: "برای مشاهده انواع پوشاک آقایان کلیک کنید!" },
 ];
 
 export const GARMENT_TYPES: GarmentType[] = [
@@ -37,7 +37,27 @@ export const FABRIC_MATERIALS = [
   "تور"
 ];
 
-export type MeasurementCategory = "upper_body" | "lower_body" | "head" | "full_body";
+
+export const ACCESSORIES: Accessory[] = [
+  { id: "buttons", label: "دکمه" },
+  { id: "zipper", label: "زیپ" },
+  { id: "pearl-trim", label: "مروارید" },
+  { id: "sequins", label: "پولک" },
+  { id: "rhinestones", label: "نگین" },
+  { id: "bow", label: "پاپیون" },
+  { id: "ribbon", label: "روبان" },
+  { id: "embroidery", label: "دانتل" },
+  { id: "decorative-patch", label: "ریشه لباس" },
+  { id: "tassels", label: "آویز منگوله‌دار" },
+  { id: "pompom", label: "پوم‌پوم" },
+  { id: "feather", label: "پر" },
+  { id: "chain", label: "زنجیر" },
+  { id: "metal-ring", label: "حلقه فلزی" },
+  { id: "lace-trim", label: "تور گیپور" },
+  { id: "applique", label: "اپلیکه" },
+];
+
+
 
 export const GARMENT_MEASUREMENT_CATEGORY: Record<string, MeasurementCategory> = {
   "women-shomiz": "upper_body",

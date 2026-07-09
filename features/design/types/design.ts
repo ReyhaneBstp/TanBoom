@@ -7,6 +7,11 @@ export interface GarmentType {
   icon: "shirt" | "pants" | "skirt" | "hat" | "coat" | "dress" | "shomiz" | "manto" | "mensShirt";
 }
 
+export interface Accessory {
+  id: string;
+  label: string;
+}
+
 export interface SolidFabric {
   id: string;
   kind: "solid";
@@ -46,5 +51,9 @@ export interface EnhancedPromptPayload {
   description: string;
   sketchPreviewUrl: string | null;
   fabricAssignments: Record<string, string>;
+  selectedAccessories: string[];
+  accessoryPlacements: Record<string, string>;
   measurements?: BodyMeasurements;
 }
+
+export type MeasurementCategory = "upper_body" | "lower_body" | "head" | "full_body";

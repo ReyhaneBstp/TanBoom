@@ -2,16 +2,17 @@
 
 import { HiOutlineArrowLeft, HiOutlineArrowRight } from "react-icons/hi2";
 import { StepFabric } from "./steps/StepFabric";
+import { StepAccessories } from "./steps/StepAccessories";
 import { StepGender } from "./steps/StepGender";
 import { StepIndicator } from "./components/StepIndicator";
 import { StepResult } from "./steps/StepResult";
 import { StepSketch } from "./steps/StepSketch";
 import { StepMeasurements } from "./steps/StepMeasurements";
-import { useGenerateDesign } from "./hooks/useGenerateDesign";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/Card";
 import { Button } from "@/shared/components/Button";
 import { useDesignStepper } from "./hooks/useDesignStepper";
 import { STEP_IDS } from "./definitions/design-steps";
+import { useGenerateImage } from "./hooks/useGenerateImage";
 
 
 export function DesignStepper() {
@@ -25,7 +26,7 @@ export function DesignStepper() {
     handleGoBack,
   } = useDesignStepper();
 
-  const { isGeneratingFront, isGeneratingBack } = useGenerateDesign();
+  const { isGeneratingFront, isGeneratingBack } = useGenerateImage();
   const isGenerating = isGeneratingFront || isGeneratingBack;
 
   return (
@@ -39,7 +40,7 @@ export function DesignStepper() {
             با روایتی از سمت تو ...
           </p>
         </div>
-        <div className="w-full lg:w-[28rem]">
+        <div className="w-full lg:w-[35rem]">
           <StepIndicator />
         </div>
       </div>
@@ -52,7 +53,7 @@ export function DesignStepper() {
             </p>
             <div className="mx-3 h-px flex-1 rounded-full bg-primary-100/40" />
             <span className="w-fit whitespace-nowrap rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-              مرحله {useDesignStepper().currentStepIndex + 1} از {5}
+              مرحله {useDesignStepper().currentStepIndex + 1} از {6}
             </span>
           </div>
 
@@ -67,6 +68,7 @@ export function DesignStepper() {
         <CardContent className="min-h-[28rem] pt-5 sm:pt-6">
           {currentStepId === STEP_IDS.GENDER && <StepGender />}
           {currentStepId === STEP_IDS.FABRIC && <StepFabric />}
+          {currentStepId === STEP_IDS.ACCESSORIES && <StepAccessories />}
           {currentStepId === STEP_IDS.SKETCH && <StepSketch />}
           {currentStepId === STEP_IDS.MEASUREMENTS && <StepMeasurements />}
           {currentStepId === STEP_IDS.RESULT && <StepResult />}

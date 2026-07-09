@@ -1,5 +1,6 @@
 import { GARMENT_MEASUREMENT_CATEGORY } from "../definitions/design-options";
-import { EnhancedPromptPayload, SolidFabric } from "../types/design";
+import { ACCESSORIES } from "../definitions/design-options";
+import type { EnhancedPromptPayload, SolidFabric } from "../types/design";
 
 
 export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
@@ -24,6 +25,20 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
     if (m.chest_cm) measurementLines.push(`Chest circumference: ${m.chest_cm} cm`);
     if (m.waist_cm) measurementLines.push(`Waist circumference: ${m.waist_cm} cm`);
     if (m.hips_cm) measurementLines.push(`Hips circumference: ${m.hips_cm} cm`);
+  }
+
+  const accessoryLines: string[] = [];
+  if (payload.selectedAccessories && payload.selectedAccessories.length > 0) {
+    payload.selectedAccessories.forEach((accId) => {
+      const acc = ACCESSORIES.find((a) => a.id === accId);
+      if (!acc) return;
+      const placement = payload.accessoryPlacements?.[accId]?.trim();
+      if (placement) {
+        accessoryLines.push(`- ${acc.label} on [${placement}].`);
+      } else {
+        accessoryLines.push(`- ${acc.label}.`);
+      }
+    });
   }
 
   // ==================== MANNEQUIN CATEGORY ====================
@@ -71,7 +86,6 @@ The provided sketch is a strict structural reference. Follow it EXACTLY for silh
 
     "",
 
-    // Mannequin Lock - قوی و ثابت
     `MANNEQUIN LOCK:
 Always display the garment on the **exact same consistent ${mannequinType} mannequin** in every image.
 ${mannequinDescription}
@@ -114,7 +128,11 @@ Illustration, sketch, drawing, painting, anime, cartoon, CGI look, stylized art,
     ? `\nFABRIC PLACEMENT:\n${assignmentLines.join("\n")}`
     : "";
 
-  return [basePrompt, measurementBlock, assignmentBlock]
+  const accessoryBlock = accessoryLines.length > 0
+    ? `\nACCESSORIES & DECORATIVE ELEMENTS:\n${accessoryLines.join("\n")}`
+    : "";
+
+  return [basePrompt, measurementBlock, assignmentBlock, accessoryBlock]
     .filter(Boolean)
     .join("\n");
 }

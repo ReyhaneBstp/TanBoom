@@ -9,18 +9,18 @@ import {
 } from "react-icons/hi2";
 import { LuPalette } from "react-icons/lu";
 import { FABRIC_MATERIALS } from "../definitions/design-options";
-import { useDesignStore } from "@/features/design/store/useDesignStore";
 import type { SolidFabric } from "@/features/design/types/design";
 import { cn } from "@/shared/utils/mergeClasses";
 import { Button } from "@/shared/components/Button";
 import { Input } from "@/shared/components/Input";
+import { useFabricStore } from "../store/fabricStore";
 
 export function StepFabric() {
-  const customFabrics = useDesignStore((s) => s.customFabrics) as SolidFabric[];
-  const selectedFabricIds = useDesignStore((s) => s.selectedFabricIds);
-  const addCustomFabric = useDesignStore((s) => s.addCustomFabric);
-  const removeCustomFabric = useDesignStore((s) => s.removeCustomFabric);
-  const toggleFabric = useDesignStore((s) => s.toggleFabric);
+  const customFabrics = useFabricStore((s) => s.customFabrics) as SolidFabric[];
+  const selectedFabricIds = useFabricStore((s) => s.selectedFabricIds);
+  const addCustomFabric = useFabricStore((s) => s.addCustomFabric);
+  const removeCustomFabric = useFabricStore((s) => s.removeCustomFabric);
+  const toggleFabric = useFabricStore((s) => s.toggleFabric);
 
   const [colorHex, setColorHex] = useState("#c17b5c");
   const [materialInput, setMaterialInput] = useState("");

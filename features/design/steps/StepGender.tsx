@@ -2,16 +2,17 @@
 
 import { LuShirt } from "react-icons/lu";
 import { GENDER_OPTIONS, GARMENT_TYPES } from "@/features/design/definitions/design-options";
-import { useDesignStore } from "@/features/design/store/useDesignStore";
 import { GarmentIcon } from "../components/GarmentIcon";
 import { OptionCard } from "../components/OptionCard";
 import { GiFemale, GiMale } from "react-icons/gi";
+import { useGarmentStore } from "../store/garmentStore";
+import { useGenderStore } from "../store/genderStore";
 
 export function StepGender() {
-  const gender = useDesignStore((s) => s.gender);
-  const garmentTypeId = useDesignStore((s) => s.garmentTypeId);
-  const setGender = useDesignStore((s) => s.setGender);
-  const setGarment = useDesignStore((s) => s.setGarment);
+  const gender = useGenderStore((s) => s.gender);
+  const garmentTypeId = useGarmentStore((s) => s.garmentTypeId);
+  const setGender = useGenderStore((s) => s.setGender);
+  const setGarment = useGarmentStore((s) => s.setGarment);
 
   const filteredGarments = GARMENT_TYPES.filter(
     (garment) => garment.gender === gender
