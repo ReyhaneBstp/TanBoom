@@ -1,24 +1,30 @@
 "use client";
 
-import { useDesignStore } from "../store/useDesignStore";
 import { DesignService } from "../service/ai-api";
 import { buildBackViewPrompt } from "../utils/design-prompt";
 import { useGlobalStore } from "@/shared/store/useGlobalStore";
 import type { GeneratedDesignImage } from "../types/design";
 import { fileToBase64 } from "@/shared/utils/fileToBase64";
 import { STEP_IDS } from "../definitions/design-steps";
+import { useDesignPrompt } from "@/features/home/hooks/useDesignPrompt";
+import { useSketchStore } from "../store/sketchStore";
+import { useGenerationStore } from "../store/generationStore";
+import { useStepStore } from "../store/stepStore";
+
 
 export function useGenerateDesign() {
+  const generatedAiPrompt = useDesignPrompt();
+  const sketch = useSketchStore((s) => s.sketch);
   const {
-    generatedAiPrompt,
-    sketch,
     generatedImages,
     setGeneratedImages,
     addGeneratedImage,
-    setCurrentStepId,
-    setIsFrontGenerating,
+    setisGeneratingFront,
     setIsGeneratingBack,
-  } = useDesignStore();
+    isGeneratingFront,
+    isGeneratingBack,
+  } = useGenerationStore();
+  const setCurrentStepId = useStepStore((s) => s.setCurrentStepId);
 
   const { showLoading, hideLoading, showSnackbar } = useGlobalStore();
 
@@ -26,7 +32,7 @@ export function useGenerateDesign() {
     if (!generatedAiPrompt) return;
 
     showLoading("در حال تولید تصویر...");
-    setIsFrontGenerating(true);
+    setisGeneratingFront(true);
 
     try {
       let sketchBase64: string | undefined;
@@ -50,7 +56,7 @@ export function useGenerateDesign() {
       showSnackbar("خطا در تولید تصویر. لطفاً دوباره تلاش کنید.", "error");
     } finally {
       hideLoading();
-      setIsFrontGenerating(false);
+      setisGeneratingFront(false);
     }
   };
 
@@ -86,7 +92,7 @@ export function useGenerateDesign() {
   return {
     generateFront,
     generateBackView,
-    isGeneratingFront: useDesignStore((s) => s.isFrontGenerating),
-    isGeneratingBack: useDesignStore((s) => s.isGeneratingBack),
+    isGeneratingFront,
+    isGeneratingBack,
   };
 }

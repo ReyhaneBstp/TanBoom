@@ -1,6 +1,5 @@
 "use client";
 
-import { useDesignStore } from "@/features/design/store/useDesignStore";
 import {
   GARMENT_MEASUREMENT_CATEGORY,
   MEASUREMENT_FIELDS_BY_CATEGORY,
@@ -8,12 +7,14 @@ import {
 import type { BodyMeasurements } from "@/features/design/types/design";
 import { Label } from "@/shared/components/Label";
 import { Input } from "@/shared/components/Input";
+import { useGarmentStore } from "../store/garmentStore";
+import { useMeasurementsStore } from "../store/measurementsStore";
 
 
 export function StepMeasurements() {
-  const garmentTypeId = useDesignStore((s) => s.garmentTypeId);
-  const measurements = useDesignStore((s) => s.measurements);
-  const setMeasurements = useDesignStore((s) => s.setMeasurements);
+  const garmentTypeId = useGarmentStore((s) => s.garmentTypeId);
+  const measurements = useMeasurementsStore((s) => s.measurements);
+  const setMeasurements = useMeasurementsStore((s) => s.setMeasurements);
 
   const category = garmentTypeId ? GARMENT_MEASUREMENT_CATEGORY[garmentTypeId] : undefined;
   const fields = category ? MEASUREMENT_FIELDS_BY_CATEGORY[category] : [];

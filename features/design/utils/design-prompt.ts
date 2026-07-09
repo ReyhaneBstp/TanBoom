@@ -86,7 +86,6 @@ The provided sketch is a strict structural reference. Follow it EXACTLY for silh
 
     "",
 
-    // Mannequin Lock - قوی و ثابت
     `MANNEQUIN LOCK:
 Always display the garment on the **exact same consistent ${mannequinType} mannequin** in every image.
 ${mannequinDescription}

@@ -2,7 +2,7 @@ import type { GarmentType } from "@/features/design/types/design";
 
 export const GENDER_OPTIONS = [
   { id: "women" as const, label: "زنانه", description: "برای مشاهده انواع پوشاک بانوان کلیک کنید!" },
-  { id: "men" as const, label: "مردانه", description: "برای مشاهده انواع پوشاک آقاان کلیک کنید!" },
+  { id: "men" as const, label: "مردانه", description: "برای مشاهده انواع پوشاک آقایان کلیک کنید!" },
 ];
 
 export const GARMENT_TYPES: GarmentType[] = [

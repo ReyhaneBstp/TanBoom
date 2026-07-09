@@ -6,15 +6,15 @@ import {
   HiOutlineArrowPath,
 } from "react-icons/hi2";
 import { Button } from "@/shared/components/Button";
-import { useDesignStore } from "@/features/design/store/useDesignStore";
 import { useGenerateDesign } from "../hooks/useGenerateDesign";
 import { handleDownload } from "@/shared/utils/downloadFile";
+import { useGenerationStore } from "../store/generationStore";
+import { useStepStore } from "../store/stepStore";
 
 export function StepResult() {
-  const generatedImages = useDesignStore((s) => s.generatedImages);
-  const generatedAiPrompt = useDesignStore((s) => s.generatedAiPrompt);
+  const generatedImages = useGenerationStore((s) => s.generatedImages);
   const { generateBackView, isGeneratingBack } = useGenerateDesign();
-  const restart = useDesignStore((s) => s.restart);
+  const restart = useStepStore((s) => s.reset);
 
   const hasBack = generatedImages.some((img) => img.id === "back");
 
@@ -98,17 +98,6 @@ export function StepResult() {
           </Button>
         </div>
 
-        <details className="mt-4 rounded-[1.4rem] bg-white/55 p-4 text-xs text-muted-foreground">
-          <summary className="cursor-pointer font-semibold text-foreground">
-            مشاهده پرامپت نهایی
-          </summary>
-          <pre
-            className="mt-3 whitespace-pre-wrap text-left leading-6"
-            dir="ltr"
-          >
-            {generatedAiPrompt}
-          </pre>
-        </details>
       </div>
     </div>
   );

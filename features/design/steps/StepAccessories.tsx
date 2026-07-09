@@ -2,12 +2,12 @@
 
 import { HiOutlineCheck, HiOutlineSparkles } from "react-icons/hi2";
 import { ACCESSORIES } from "../definitions/design-options";
-import { useDesignStore } from "@/features/design/store/useDesignStore";
 import { cn } from "@/shared/utils/mergeClasses";
+import { useAccessoryStore } from "../store/accessoryStore";
 
 export function StepAccessories() {
-  const selectedAccessories = useDesignStore((s) => s.selectedAccessories);
-  const toggleAccessory = useDesignStore((s) => s.toggleAccessory);
+  const selectedAccessories = useAccessoryStore((s) => s.selectedAccessories);
+  const toggleAccessory = useAccessoryStore((s) => s.toggleAccessory);
 
   return (
     <div className="flex flex-col gap-6 min-h-[22rem]">

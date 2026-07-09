@@ -5,26 +5,28 @@ import type { DragEvent } from "react";
 import { useMemo } from "react";
 import { HiOutlineArrowUpTray, HiOutlinePhoto, HiOutlineSparkles } from "react-icons/hi2";
 import { Textarea } from "@/shared/components/Textarea";
-import { useDesignStore } from "@/features/design/store/useDesignStore";
 import type { SolidFabric } from "@/features/design/types/design";
 import { ACCESSORIES } from "@/features/design/definitions/design-options";
 import { cn } from "@/shared/utils/mergeClasses";
 import { Input } from "@/shared/components/Input";
+import { useSketchStore } from "../store/sketchStore";
+import { useFabricStore } from "../store/fabricStore";
+import { useAccessoryStore } from "../store/accessoryStore";
 
 export function StepSketch() {
-  const previewUrl = useDesignStore((s) => s.sketch.previewUrl);
-  const description = useDesignStore((s) => s.sketch.description);
-  const updateSketchFile = useDesignStore((s) => s.updateSketchFile);
-  const updateDescription = useDesignStore((s) => s.updateDescription);
+  const previewUrl = useSketchStore((s) => s.sketch.previewUrl);
+  const description = useSketchStore((s) => s.sketch.description);
+  const updateSketchFile = useSketchStore((s) => s.updateSketchFile);
+  const updateDescription = useSketchStore((s) => s.updateDescription);
 
-  const selectedFabricIds = useDesignStore((s) => s.selectedFabricIds);
-  const customFabrics = useDesignStore((s) => s.customFabrics) as SolidFabric[];
-  const fabricAssignments = useDesignStore((s) => s.fabricAssignments);
-  const setFabricAssignment = useDesignStore((s) => s.setFabricAssignment);
+  const selectedFabricIds = useFabricStore((s) => s.selectedFabricIds);
+  const customFabrics = useFabricStore((s) => s.customFabrics) as SolidFabric[];
+  const fabricAssignments = useFabricStore((s) => s.fabricAssignments);
+  const setFabricAssignment = useFabricStore((s) => s.setFabricAssignment);
 
-  const selectedAccessories = useDesignStore((s) => s.selectedAccessories);
-  const accessoryPlacements = useDesignStore((s) => s.accessoryPlacements);
-  const setAccessoryPlacement = useDesignStore((s) => s.setAccessoryPlacement);
+  const selectedAccessories = useAccessoryStore((s) => s.selectedAccessories);
+  const accessoryPlacements = useAccessoryStore((s) => s.accessoryPlacements);
+  const setAccessoryPlacement = useAccessoryStore((s) => s.setAccessoryPlacement);
 
   const allFabrics = useMemo(() => [...customFabrics], [customFabrics]);
 
