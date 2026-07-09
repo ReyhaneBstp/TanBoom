@@ -12,7 +12,7 @@ import { useGenerationStore } from "../store/generationStore";
 import { useStepStore } from "../store/stepStore";
 
 
-export function useGenerateDesign() {
+export function useGenerateImage() {
   const generatedAiPrompt = useDesignPrompt();
   const sketch = useSketchStore((s) => s.sketch);
   const {

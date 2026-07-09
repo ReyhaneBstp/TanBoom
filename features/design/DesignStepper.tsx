@@ -8,11 +8,11 @@ import { StepIndicator } from "./components/StepIndicator";
 import { StepResult } from "./steps/StepResult";
 import { StepSketch } from "./steps/StepSketch";
 import { StepMeasurements } from "./steps/StepMeasurements";
-import { useGenerateDesign } from "./hooks/useGenerateDesign";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/Card";
 import { Button } from "@/shared/components/Button";
 import { useDesignStepper } from "./hooks/useDesignStepper";
 import { STEP_IDS } from "./definitions/design-steps";
+import { useGenerateImage } from "./hooks/useGenerateImage";
 
 
 export function DesignStepper() {
@@ -26,7 +26,7 @@ export function DesignStepper() {
     handleGoBack,
   } = useDesignStepper();
 
-  const { isGeneratingFront, isGeneratingBack } = useGenerateDesign();
+  const { isGeneratingFront, isGeneratingBack } = useGenerateImage();
   const isGenerating = isGeneratingFront || isGeneratingBack;
 
   return (

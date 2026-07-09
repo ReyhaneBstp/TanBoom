@@ -1,4 +1,4 @@
-import type { GarmentType } from "@/features/design/types/design";
+import type { Accessory, GarmentType, MeasurementCategory } from "@/features/design/types/design";
 
 export const GENDER_OPTIONS = [
   { id: "women" as const, label: "زنانه", description: "برای مشاهده انواع پوشاک بانوان کلیک کنید!" },
@@ -37,10 +37,6 @@ export const FABRIC_MATERIALS = [
   "تور"
 ];
 
-export interface Accessory {
-  id: string;
-  label: string;
-}
 
 export const ACCESSORIES: Accessory[] = [
   { id: "buttons", label: "دکمه" },
@@ -61,7 +57,7 @@ export const ACCESSORIES: Accessory[] = [
   { id: "applique", label: "اپلیکه" },
 ];
 
-export type MeasurementCategory = "upper_body" | "lower_body" | "head" | "full_body";
+
 
 export const GARMENT_MEASUREMENT_CATEGORY: Record<string, MeasurementCategory> = {
   "women-shomiz": "upper_body",

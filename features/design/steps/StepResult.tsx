@@ -6,14 +6,14 @@ import {
   HiOutlineArrowPath,
 } from "react-icons/hi2";
 import { Button } from "@/shared/components/Button";
-import { useGenerateDesign } from "../hooks/useGenerateDesign";
 import { handleDownload } from "@/shared/utils/downloadFile";
 import { useGenerationStore } from "../store/generationStore";
 import { useStepStore } from "../store/stepStore";
+import { useGenerateImage } from "../hooks/useGenerateImage";
 
 export function StepResult() {
   const generatedImages = useGenerationStore((s) => s.generatedImages);
-  const { generateBackView, isGeneratingBack } = useGenerateDesign();
+  const { generateBackView, isGeneratingBack } = useGenerateImage();
   const restart = useStepStore((s) => s.reset);
 
   const hasBack = generatedImages.some((img) => img.id === "back");

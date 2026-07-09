@@ -7,7 +7,6 @@ import {
   STEP_IDS,
   StepId,
 } from "@/features/design/definitions/design-steps";
-import { useGenerateDesign } from "./useGenerateDesign";
 import { GARMENT_MEASUREMENT_CATEGORY } from "@/features/design/definitions/design-options";
 import { useStepStore } from "../store/stepStore";
 import { useGenderStore } from "../store/genderStore";
@@ -17,6 +16,7 @@ import { useSketchStore } from "../store/sketchStore";
 import { useGenerationStore } from "../store/generationStore";
 import { useMeasurementsStore } from "../store/measurementsStore";
 import { useAccessoryStore } from "../store/accessoryStore";
+import { useGenerateImage } from "./useGenerateImage";
 
 const OPTIONAL_STEPS: readonly StepId[] = [
   STEP_IDS.ACCESSORIES,
@@ -34,7 +34,7 @@ export function useDesignStepper() {
   const selectedAccessories = useAccessoryStore((s) => s.selectedAccessories);
   const setCurrentStepId = useStepStore((s) => s.setCurrentStepId);
 
-  const { generateFront } = useGenerateDesign();
+  const { generateFront } = useGenerateImage();
 
   const currentStepIndex = useMemo(
     () => STEPPER_STEPS.findIndex((step) => step.id === currentStepId),
