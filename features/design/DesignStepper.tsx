@@ -20,6 +20,8 @@ import { useDesignStepper } from "./hooks/useDesignStepper";
 import { STEP_IDS } from "./definitions/design-steps";
 import { useGenerateImage } from "./hooks/useGenerateImage";
 import { useBreakpoint } from "@/shared/hooks/useBreakPoint";
+import { useEffect } from "react";
+import { useGenerationStore } from "./store/generationStore";
 
 export function DesignStepper() {
   const {
@@ -30,11 +32,21 @@ export function DesignStepper() {
     currentStepInfo,
     handleGoNext,
     handleGoBack,
+    currentStepIndex,
   } = useDesignStepper();
 
-  const { isGeneratingFront, isGeneratingBack } = useGenerateImage();
+  const  isGeneratingFront  = useGenerationStore((s) => s.isGeneratingFront);
+  const  isGeneratingBack  = useGenerationStore((s) => s.isGeneratingBack);
+  
   const isGenerating = isGeneratingFront || isGeneratingBack;
   const { isMobile } = useBreakpoint();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [currentStepId]);
 
   return (
     <div className="mx-auto w-full max-w-5xl pt-8">
@@ -61,7 +73,7 @@ export function DesignStepper() {
             </p>
             <div className="mx-3 h-px flex-1 rounded-full bg-primary-100/40" />
             <span className="w-fit whitespace-nowrap rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-              مرحله {useDesignStepper().currentStepIndex + 1} از {6}
+              مرحله {currentStepIndex + 1} از {6}
             </span>
           </div>
 
