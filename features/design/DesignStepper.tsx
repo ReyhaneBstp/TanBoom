@@ -37,9 +37,8 @@ export function DesignStepper() {
 
   const  isGeneratingFront  = useGenerationStore((s) => s.isGeneratingFront);
   const  isGeneratingBack  = useGenerationStore((s) => s.isGeneratingBack);
-  
+
   const isGenerating = isGeneratingFront || isGeneratingBack;
-  const { isMobile } = useBreakpoint();
 
   useEffect(() => {
     window.scrollTo({
@@ -59,11 +58,11 @@ export function DesignStepper() {
             با روایتی از سمت تو ...
           </p>
         </div>
-        {!isMobile && (
-          <div className="w-full lg:w-[35rem]">
+
+          <div className="hidden lg-block w-full lg:w-[35rem]">
             <StepIndicator />
           </div>
-        )}
+
       </div>
       <Card className="overflow-hidden">
         <CardHeader className="border-b border-white/60 bg-white/35">
