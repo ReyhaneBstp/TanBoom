@@ -1,3 +1,4 @@
+@import "@fontsource/vazirmatn";
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
