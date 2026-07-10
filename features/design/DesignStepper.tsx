@@ -8,12 +8,18 @@ import { StepIndicator } from "./components/StepIndicator";
 import { StepResult } from "./steps/StepResult";
 import { StepSketch } from "./steps/StepSketch";
 import { StepMeasurements } from "./steps/StepMeasurements";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/Card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/Card";
 import { Button } from "@/shared/components/Button";
 import { useDesignStepper } from "./hooks/useDesignStepper";
 import { STEP_IDS } from "./definitions/design-steps";
 import { useGenerateImage } from "./hooks/useGenerateImage";
-
+import { useBreakpoint } from "@/shared/hooks/useBreakPoint";
 
 export function DesignStepper() {
   const {
@@ -28,23 +34,25 @@ export function DesignStepper() {
 
   const { isGeneratingFront, isGeneratingBack } = useGenerateImage();
   const isGenerating = isGeneratingFront || isGeneratingBack;
+  const { isMobile } = useBreakpoint();
 
   return (
     <div className="mx-auto w-full max-w-5xl pt-8">
       <div className="mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-end">
         <div className="max-w-2xl">
-          <h1 className="md:text-[2.75rem] font-semibold tracking-[-0.03em] text-primary-500 text-5xl">
+          <h1 className="md:text-[2.75rem] font-semibold tracking-[-0.03em] text-primary-500 text-4xl">
             طراحی لباسی نو؛{" "}
           </h1>
           <p className="mt-3 text-xl leading-2 text-primary-500 tracking-[-0.001em]">
             با روایتی از سمت تو ...
           </p>
         </div>
-        <div className="w-full lg:w-[35rem]">
-          <StepIndicator />
-        </div>
+        {!isMobile && (
+          <div className="w-full lg:w-[35rem]">
+            <StepIndicator />
+          </div>
+        )}
       </div>
-
       <Card className="overflow-hidden">
         <CardHeader className="border-b border-white/60 bg-white/35">
           <div className="flex w-full items-center">
@@ -91,7 +99,9 @@ export function DesignStepper() {
               onClick={handleGoNext}
               disabled={!canGoNext || isGenerating}
             >
-              {currentStepId === STEP_IDS.MEASUREMENTS ? "تولید تصویر" : "ادامه"}
+              {currentStepId === STEP_IDS.MEASUREMENTS
+                ? "تولید تصویر"
+                : "ادامه"}
               <HiOutlineArrowLeft className="size-4" />
             </Button>
           </div>
