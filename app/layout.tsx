@@ -1,5 +1,6 @@
 import { GlobalLoading } from "@/shared/components/GlobalLoading";
 import { GlobalSnackbar } from "@/shared/components/GlobalSnackbar";
+import { auth } from "@/auth";
 import { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/shared/components/Layout/Navbar";
@@ -10,15 +11,17 @@ export const metadata: Metadata = {
   description: "صفحه تعاملی طراحی لباس سفارشی با جریان مرحله‌ای",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
   return (
     <html lang="fa" dir="rtl">
       <body className="...">
-        <Navbar />
+        <Navbar isAuthenticated={Boolean(session?.user)} />
         <main className="relative pt-15 pb-12 min-h-screen overflow-hidden bg-primary-mesh md:px-0 px-6 ">
           <section>{children}</section>
         </main>

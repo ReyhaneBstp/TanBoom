@@ -1,11 +1,17 @@
 "use client";
 
+import { LogoutButton } from "@/features/auth/components/LogoutButton";
+import Link from "next/link";
 import { ease } from "@/shared/definitions/motion";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { LuMenu, LuScissors, LuX } from "react-icons/lu";
 
-export default function Navbar() {
+export default function Navbar({
+  isAuthenticated,
+}: {
+  isAuthenticated: boolean;
+}) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -34,12 +40,12 @@ export default function Navbar() {
           >
             {open ? <LuX size={20} /> : <LuMenu size={20} />}
           </button>
-          <a href="#" className="flex items-center gap-2.5 group mr-2">
+          <Link href="/" className="flex items-center gap-2.5 group mr-2">
             <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center group-hover:scale-110 transition-transform">
               <LuScissors size={13} className="text-accent-foreground" />
             </div>
             <span className="text-lg font-black tracking-tight">تن‌بوم</span>
-          </a>
+          </Link>
         </div>
 
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
@@ -59,16 +65,27 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="hidden md:block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            ورود
-          </button>
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="bg-accent text-accent-foreground text-sm font-bold px-5 py-2.5 rounded-full shadow-md shadow-accent/25"
-          >
-            شروع طراحی
-          </motion.button>
+          {isAuthenticated ? (
+            <LogoutButton
+              variant="ghost"
+              className="hidden md:inline-flex bg-transparent px-0 py-0 text-sm font-medium text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground"
+            />
+          ) : (
+            <Link
+              href="/login"
+              className="hidden md:block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              ورود
+            </Link>
+          )}
+          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+            <Link
+              href="/design"
+              className="inline-flex rounded-full bg-accent px-5 py-2.5 text-sm font-bold text-accent-foreground shadow-md shadow-accent/25"
+            >
+              شروع طراحی
+            </Link>
+          </motion.div>
         </div>
       </div>
 
@@ -82,17 +99,27 @@ export default function Navbar() {
             ["چطور کار می‌کنه؟", "#how"],
             ["گالری طرح‌ها", "#gallery"],
             ["برای طراحان", "#designers"],
-            ["ورود", "#"],
-          ].map(([label, href]) => (
-            <a
-              key={href}
-              href={href}
-              onClick={() => setOpen(false)}
-              className="text-sm font-medium text-foreground hover:text-accent transition-colors"
-            >
-              {label}
-            </a>
-          ))}
+            [isAuthenticated ? "خروج" : "ورود", isAuthenticated ? "__logout__" : "/login"],
+            ["شروع طراحی", "/design"],
+          ].map(([label, href]) =>
+            href === "__logout__" ? (
+              <div key={label} onClick={() => setOpen(false)}>
+                <LogoutButton
+                  variant="ghost"
+                  className="h-auto px-0 py-0 text-sm font-medium text-foreground shadow-none hover:bg-transparent hover:text-accent"
+                />
+              </div>
+            ) : (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className="text-sm font-medium text-foreground hover:text-accent transition-colors"
+              >
+                {label}
+              </Link>
+            )
+          )}
         </motion.div>
       )}
     </motion.nav>
