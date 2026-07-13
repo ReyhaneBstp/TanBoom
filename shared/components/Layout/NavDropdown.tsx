@@ -69,8 +69,8 @@ export function NavbarDropdown({ user }: NavbarDropdownProps) {
             داشبورد
           </Link>
           <LogoutButton
-            variant="ghost"
-            className="w-full justify-start px-3 py-2 rounded-lg text-sm font-medium hover:bg-muted transition-colors text-foreground"
+            variant="text"
+            className="w-full justify-start px-3 py-2 text-sm font-medium hover:bg-muted transition-colors"
           />
         </motion.div>
       )}
