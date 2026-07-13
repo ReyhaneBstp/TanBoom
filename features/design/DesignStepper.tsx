@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import dynamic from "next/dynamic";
 import { HiOutlineArrowLeft, HiOutlineArrowRight } from "react-icons/hi2";
-
 import { StepIndicator } from "./components/StepIndicator";
 import {
   Card,
@@ -16,42 +14,12 @@ import { Button } from "@/shared/components/Button";
 import { useDesignStepper } from "./hooks/useDesignStepper";
 import { STEP_IDS } from "./definitions/design-steps";
 import { useGenerationStore } from "./store/generationStore";
-
-const StepGender = dynamic(() =>
-  import("./steps/StepGender").then((m) => ({
-    default: m.StepGender,
-  }))
-);
-
-const StepFabric = dynamic(() =>
-  import("./steps/StepFabric").then((m) => ({
-    default: m.StepFabric,
-  }))
-);
-
-const StepAccessories = dynamic(() =>
-  import("./steps/StepAccessories").then((m) => ({
-    default: m.StepAccessories,
-  }))
-);
-
-const StepSketch = dynamic(() =>
-  import("./steps/StepSketch").then((m) => ({
-    default: m.StepSketch,
-  }))
-);
-
-const StepMeasurements = dynamic(() =>
-  import("./steps/StepMeasurements").then((m) => ({
-    default: m.StepMeasurements,
-  }))
-);
-
-const StepResult = dynamic(() =>
-  import("./steps/StepResult").then((m) => ({
-    default: m.StepResult,
-  }))
-);
+import { StepGender } from "./steps/StepGender";
+import { StepFabric } from "./steps/StepFabric";
+import { StepAccessories } from "./steps/StepAccessories";
+import { StepSketch } from "./steps/StepSketch";
+import { StepMeasurements } from "./steps/StepMeasurements";
+import { StepResult } from "./steps/StepResult";
 
 export function DesignStepper() {
   const {
