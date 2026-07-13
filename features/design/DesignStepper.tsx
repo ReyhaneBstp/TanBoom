@@ -1,13 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { HiOutlineArrowLeft, HiOutlineArrowRight } from "react-icons/hi2";
-import { StepFabric } from "./steps/StepFabric";
-import { StepAccessories } from "./steps/StepAccessories";
-import { StepGender } from "./steps/StepGender";
 import { StepIndicator } from "./components/StepIndicator";
-import { StepResult } from "./steps/StepResult";
-import { StepSketch } from "./steps/StepSketch";
-import { StepMeasurements } from "./steps/StepMeasurements";
 import {
   Card,
   CardContent,
@@ -18,10 +13,13 @@ import {
 import { Button } from "@/shared/components/Button";
 import { useDesignStepper } from "./hooks/useDesignStepper";
 import { STEP_IDS } from "./definitions/design-steps";
-import { useGenerateImage } from "./hooks/useGenerateImage";
-import { useBreakpoint } from "@/shared/hooks/useBreakPoint";
-import { useEffect } from "react";
 import { useGenerationStore } from "./store/generationStore";
+import { StepGender } from "./steps/StepGender";
+import { StepFabric } from "./steps/StepFabric";
+import { StepAccessories } from "./steps/StepAccessories";
+import { StepSketch } from "./steps/StepSketch";
+import { StepMeasurements } from "./steps/StepMeasurements";
+import { StepResult } from "./steps/StepResult";
 
 export function DesignStepper() {
   const {
@@ -35,8 +33,8 @@ export function DesignStepper() {
     currentStepIndex,
   } = useDesignStepper();
 
-  const  isGeneratingFront  = useGenerationStore((s) => s.isGeneratingFront);
-  const  isGeneratingBack  = useGenerationStore((s) => s.isGeneratingBack);
+  const isGeneratingFront = useGenerationStore((s) => s.isGeneratingFront);
+  const isGeneratingBack = useGenerationStore((s) => s.isGeneratingBack);
 
   const isGenerating = isGeneratingFront || isGeneratingBack;
 
@@ -51,35 +49,43 @@ export function DesignStepper() {
     <div className="mx-auto w-full max-w-5xl pt-8">
       <div className="mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-end">
         <div className="max-w-2xl">
-          <h1 className="md:text-[2.75rem] font-semibold tracking-[-0.03em] text-primary-500 text-4xl">
-            طراحی لباسی نو؛{" "}
+          <h1 className="text-4xl font-semibold tracking-[-0.03em] text-primary-500 md:text-[2.75rem]">
+            طراحی لباسی نو؛
           </h1>
-          <p className="mt-3 text-xl leading-2 text-primary-500 tracking-[-0.001em]">
+
+          <p className="mt-3 text-xl tracking-[-0.001em] text-primary-500">
             با روایتی از سمت تو ...
           </p>
         </div>
 
-          <div className="hidden lg-block w-full lg:w-[35rem]">
-            <StepIndicator />
-          </div>
-
+        <div className="hidden w-full lg:block lg:w-[35rem]">
+          <StepIndicator />
+        </div>
       </div>
+
       <Card className="overflow-hidden">
         <CardHeader className="border-b border-white/60 bg-white/35">
           <div className="flex w-full items-center">
             <p className="whitespace-nowrap text-xs font-semibold text-primary-600">
               {currentStepInfo.eyebrow}
             </p>
+
             <div className="mx-3 h-px flex-1 rounded-full bg-primary-100/40" />
+
             <span className="w-fit whitespace-nowrap rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-              مرحله {currentStepIndex + 1} از {6}
+              مرحله {currentStepIndex + 1} از 6
             </span>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <CardTitle className="mt-2">{currentStepInfo.title}</CardTitle>
-              <CardDescription>{currentStepInfo.description}</CardDescription>
+              <CardTitle className="mt-2">
+                {currentStepInfo.title}
+              </CardTitle>
+
+              <CardDescription>
+                {currentStepInfo.description}
+              </CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -113,6 +119,7 @@ export function DesignStepper() {
               {currentStepId === STEP_IDS.MEASUREMENTS
                 ? "تولید تصویر"
                 : "ادامه"}
+
               <HiOutlineArrowLeft className="size-4" />
             </Button>
           </div>

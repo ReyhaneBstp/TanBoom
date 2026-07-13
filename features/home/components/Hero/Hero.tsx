@@ -18,9 +18,9 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pb-20 md:pb-0">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 right-[-120px] h-[560px] w-[560px] rounded-full bg-primary/12 blur-3xl" />
-        <div className="absolute bottom-[-80px] left-[-60px] h-[420px] w-[420px] rounded-full bg-secondary blur-2xl" />
-        <div className="absolute top-1/2 left-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-card/50 blur-3xl" />
+        <div className="absolute top-0 right-[-120px] h-[560px] w-[560px] rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/15 blur-3xl" />
+        <div className="absolute bottom-[-80px] left-[-60px] h-[420px] w-[420px] rounded-full bg-primary/20 blur-3xl" />
       </div>
 
       <div className="relative mx-auto w-full max-w-7xl px-5 sm:px-8">

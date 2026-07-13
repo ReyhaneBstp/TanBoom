@@ -16,7 +16,6 @@ import { useSketchStore } from "../store/sketchStore";
 import { useGenerationStore } from "../store/generationStore";
 import { useMeasurementsStore } from "../store/measurementsStore";
 import { useAccessoryStore } from "../store/accessoryStore";
-import { useGenerateImage } from "./useGenerateImage";
 
 const OPTIONAL_STEPS: readonly StepId[] = [
   STEP_IDS.ACCESSORIES,
@@ -34,7 +33,6 @@ export function useDesignStepper() {
   const selectedAccessories = useAccessoryStore((s) => s.selectedAccessories);
   const setCurrentStepId = useStepStore((s) => s.setCurrentStepId);
 
-  const { generateFront } = useGenerateImage();
 
   const currentStepIndex = useMemo(
     () => STEPPER_STEPS.findIndex((step) => step.id === currentStepId),
@@ -112,11 +110,6 @@ export function useDesignStepper() {
 
   const handleGoNext = async () => {
     if (!canGoNext) return;
-
-    if (currentStepId === STEP_IDS.MEASUREMENTS) {
-      await generateFront();
-      return;
-    }
 
     const nextIndex = currentStepIndex + 1;
 

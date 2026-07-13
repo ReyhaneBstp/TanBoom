@@ -1,22 +1,94 @@
-/* eslint-disable @next/next/no-img-element */
+"use client";
 
+import { useState, useEffect } from "react";
 import {
   HiOutlineArrowDownTray,
   HiOutlineSparkles,
   HiOutlineArrowPath,
+  HiOutlineBookmark,
+  HiOutlineGlobeAlt,
+  HiOutlineShoppingBag,
 } from "react-icons/hi2";
 import { Button } from "@/shared/components/Button";
 import { handleDownload } from "@/shared/utils/downloadFile";
 import { useGenerationStore } from "../store/generationStore";
 import { useStepStore } from "../store/stepStore";
 import { useGenerateImage } from "../hooks/useGenerateImage";
+import {
+  saveDesignToDashboard,
+  publishDesignToGallery,
+} from "@/server/actions/design-actions";
+import { OrderModal } from "./OrderModal";
+import { useGlobalStore } from "@/shared/store/useGlobalStore";
 
 export function StepResult() {
   const generatedImages = useGenerationStore((s) => s.generatedImages);
-  const { generateBackView, isGeneratingBack } = useGenerateImage();
+  const { generateBackView, generateFront, isGeneratingBack } =
+    useGenerateImage();
   const restart = useStepStore((s) => s.reset);
 
   const hasBack = generatedImages.some((img) => img.id === "back");
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [currentDesignId, setCurrentDesignId] = useState<string | null>(null);
+  const { showSnackbar } = useGlobalStore();
+
+  useEffect(() => {
+    if (generatedImages.length === 0) {
+      generateFront();
+    }
+  }, []);
+
+  const frontImage = generatedImages.find((img) => img.id === "front")?.src;
+  const backImage = generatedImages.find((img) => img.id === "back")?.src;
+
+  const handleSave = async (action: "dashboard" | "gallery") => {
+    if (!frontImage) {
+      return;
+    }
+    setIsSaving(true);
+    try {
+      let res;
+      if (action === "dashboard") {
+        res = await saveDesignToDashboard({
+          title: "طرح جدید",
+          frontImage,
+          backImage: backImage ?? undefined,
+        });
+        showSnackbar("طرح در داشبورد شما ذخیره شد", "success");
+      } else {
+        res = await publishDesignToGallery({
+          title: "طرح جدید",
+          frontImage,
+          backImage: backImage ?? undefined,
+        });
+        showSnackbar("طرح در گالری عمومی منتشر شد", "success");
+      }
+    } catch (error: any) {
+      showSnackbar("خطا در ذخیره‌سازی", "error");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleOrderClick = async () => {
+    if (!currentDesignId && frontImage) {
+      try {
+        const res = await saveDesignToDashboard({
+          title: "طرح جدید",
+          frontImage,
+          backImage: backImage ?? undefined,
+        });
+        setCurrentDesignId(res.designId);
+        setShowOrderModal(true);
+      } catch (error: any) {
+        showSnackbar("عملیات با خطا مواجه شد", "error");
+      }
+    } else {
+      setShowOrderModal(true);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -80,25 +152,63 @@ export function StepResult() {
           </div>
         )}
       </div>
-      <div className="rounded-[2rem] border border-white/80 bg-white/45 p-4 backdrop-blur-xl">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <HiOutlineSparkles className="size-5 text-primary-500" />
-              خروجی نهایی
-            </h3>
-            <p className="mt-1 text-xs leading-6 text-muted-foreground">
-              {hasBack
-                ? "نمای جلو و پشت لباس آماده است."
-                : "نمای جلو تولید شد. می‌توانید نمای پشت را نیز دریافت کنید."}
-            </p>
-          </div>
-          <Button type="button" variant="glass" onClick={restart}>
-            طراحی جدید
+
+      {/* سه دکمه اصلی */}
+      <div className="rounded-[2rem] border border-white/80 bg-white/45 p-4 backdrop-blur-xl space-y-4">
+        <h3 className="text-sm font-semibold flex items-center gap-2">
+          <HiOutlineSparkles className="size-5 text-primary-500" />
+          مدیریت طرح
+        </h3>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            variant="glass"
+            onClick={() => handleSave("dashboard")}
+            disabled={isSaving}
+            className="flex-1 gap-2"
+          >
+            <HiOutlineBookmark className="size-5" />
+            ذخیره در داشبورد شخصی
+          </Button>
+
+          <Button
+            variant="glass"
+            onClick={() => handleSave("gallery")}
+            disabled={isSaving}
+            className="flex-1 gap-2"
+          >
+            <HiOutlineGlobeAlt className="size-5" />
+            انتشار در گالری عمومی
+          </Button>
+
+          <Button
+            variant="glass"
+            onClick={handleOrderClick}
+            disabled={isSaving}
+            className="flex-1 gap-2"
+          >
+            <HiOutlineShoppingBag className="size-5" />
+            ثبت سفارش
           </Button>
         </div>
 
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={restart}
+          className="mt-2"
+        >
+          طراحی جدید
+        </Button>
       </div>
+
+      {/* مودال ثبت سفارش */}
+      {showOrderModal && currentDesignId && (
+        <OrderModal
+          designId={currentDesignId}
+          onClose={() => setShowOrderModal(false)}
+        />
+      )}
     </div>
   );
 }
