@@ -1,5 +1,5 @@
 import bcryptjs from "bcryptjs"; 
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/server/prisma/prisma";
 import { RegisterInput } from "@/features/auth/lib/validations";
 
 export async function findUserByEmail(email: string) {

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useFormState } from "react-dom";       
 import { useFormStatus } from "react-dom";
-import { registerAction, type AuthActionState } from "@/features/auth/actions/auth-actions";
+import { registerAction, type AuthActionState } from "@/server/actions/auth-actions";
 import { Button } from "@/shared/components/Button";
 import { Input } from "@/shared/components/Input";
 import { Label } from "@/shared/components/Label";

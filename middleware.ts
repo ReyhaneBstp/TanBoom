@@ -13,7 +13,7 @@ export default auth((req) => {
   );
 
   if (isAuthRoute && isLoggedIn) {
-    return NextResponse.redirect(new URL("/design", nextUrl));
+    return NextResponse.redirect(new URL("/", nextUrl));
   }
 
   if (isProtectedRoute && !isLoggedIn) {

@@ -6,7 +6,7 @@ import { signIn, signOut } from "@/auth";
 import {
   registerUser,
   validateLoginInput,
-} from "@/features/auth/server/auth-service";
+} from "@/server/services/auth-service";
 
 export type AuthActionState = {
   success: boolean;
@@ -31,7 +31,7 @@ export async function registerAction(
 
   return {
     success: true,
-    message: "ثبت‌نام انجام شد. حالا وارد شوید.",
+    message: "ثبت‌نام با موفقیت انجام شد.",
   };
 }
 
@@ -39,7 +39,7 @@ export async function loginAction(
   _prevState: AuthActionState,
   formData: FormData
 ): Promise<AuthActionState> {
-  const callbackUrl = String(formData.get("callbackUrl") ?? "/design");
+  const callbackUrl = String(formData.get("callbackUrl") ?? "/");
   const loginResult = validateLoginInput({
     email: String(formData.get("email") ?? ""),
     password: String(formData.get("password") ?? ""),
@@ -71,6 +71,6 @@ export async function loginAction(
 
 export async function logoutAction() {
   await signOut({
-    redirectTo: "/login",
+    redirectTo: "/",
   });
 }

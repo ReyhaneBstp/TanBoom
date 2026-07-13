@@ -1,6 +1,5 @@
 "use client";
 
-import { DesignService } from "../service/ai-api";
 import { buildBackViewPrompt } from "../utils/design-prompt";
 import { useGlobalStore } from "@/shared/store/useGlobalStore";
 import type { GeneratedDesignImage } from "../types/design";
@@ -10,7 +9,7 @@ import { useDesignPrompt } from "@/features/home/hooks/useDesignPrompt";
 import { useSketchStore } from "../store/sketchStore";
 import { useGenerationStore } from "../store/generationStore";
 import { useStepStore } from "../store/stepStore";
-
+import { generateImageAction } from "@/server/actions/generate-image";
 
 export function useGenerateImage() {
   const generatedAiPrompt = useDesignPrompt();
@@ -40,7 +39,10 @@ export function useGenerateImage() {
         sketchBase64 = await fileToBase64(sketch.file);
       }
 
-      const imageUrl = await DesignService.generateImage(generatedAiPrompt, sketchBase64);
+      const imageUrl = await generateImageAction(
+        generatedAiPrompt,
+        sketchBase64,
+      );
 
       const frontImage: GeneratedDesignImage = {
         id: "front",
@@ -70,7 +72,10 @@ export function useGenerateImage() {
       const backPrompt = buildBackViewPrompt(generatedAiPrompt);
       const frontImageSrc = generatedImages[0].src;
 
-      const imageUrl = await DesignService.generateImage(backPrompt, frontImageSrc);
+      const imageUrl = await generateImageAction(
+        backPrompt,
+        frontImageSrc,
+      );
 
       const backImage: GeneratedDesignImage = {
         id: "back",

@@ -10,13 +10,21 @@ import { handleDownload } from "@/shared/utils/downloadFile";
 import { useGenerationStore } from "../store/generationStore";
 import { useStepStore } from "../store/stepStore";
 import { useGenerateImage } from "../hooks/useGenerateImage";
+import { useEffect } from "react";
 
 export function StepResult() {
   const generatedImages = useGenerationStore((s) => s.generatedImages);
-  const { generateBackView, isGeneratingBack } = useGenerateImage();
+  const { generateBackView, generateFront, isGeneratingBack } =
+    useGenerateImage();
   const restart = useStepStore((s) => s.reset);
 
   const hasBack = generatedImages.some((img) => img.id === "back");
+
+  useEffect(() => {
+    if (generatedImages.length === 0) {
+      generateFront();
+    }
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -97,7 +105,6 @@ export function StepResult() {
             طراحی جدید
           </Button>
         </div>
-
       </div>
     </div>
   );

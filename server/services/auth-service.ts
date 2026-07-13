@@ -1,4 +1,4 @@
-import { findUserByEmail, createUser } from "@/features/auth/server/user-service";
+import { findUserByEmail, createUser } from "@/server/services/user-service";
 import {
   loginSchema,
   registerSchema,

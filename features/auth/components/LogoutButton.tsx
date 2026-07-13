@@ -1,4 +1,4 @@
-import { logoutAction } from "@/features/auth/actions/auth-actions";
+import { logoutAction } from "@/server/actions/auth-actions";
 import { Button, type ButtonProps } from "@/shared/components/Button";
 
 export function LogoutButton(props: ButtonProps) {

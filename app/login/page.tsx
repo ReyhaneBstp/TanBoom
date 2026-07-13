@@ -9,12 +9,11 @@ export default async function LoginPage({
   searchParams: Promise<{ callbackUrl?: string }>;
 }) {
   const session = await auth();
+  const params = await searchParams;
 
   if (session?.user) {
-    redirect("/design");
+    redirect(params.callbackUrl || "/");
   }
-
-  const params = await searchParams;
 
   return (
     <AuthCard

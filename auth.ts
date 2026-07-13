@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcryptjs from "bcryptjs"; 
 import { loginSchema } from "@/features/auth/lib/validations";
-import { findUserByEmail } from "@/features/auth/server/user-service";
+import { findUserByEmail } from "@/server/services/user-service";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,

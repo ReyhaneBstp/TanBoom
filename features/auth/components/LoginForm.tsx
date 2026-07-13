@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useFormState } from "react-dom";       
 import { useFormStatus } from "react-dom";
-import { loginAction, type AuthActionState } from "@/features/auth/actions/auth-actions";
+import { loginAction, type AuthActionState } from "@/server/actions/auth-actions";
 import { Button } from "@/shared/components/Button";
 import { Input } from "@/shared/components/Input";
 import { Label } from "@/shared/components/Label";
@@ -28,7 +28,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
 
   return (
     <form action={formAction} className="space-y-5">
-      <input type="hidden" name="callbackUrl" value={callbackUrl ?? "/design"} />
+      <input type="hidden" name="callbackUrl" value={callbackUrl ?? "/"} />
 
       <div className="space-y-2">
         <Label htmlFor="email">ایمیل</Label>

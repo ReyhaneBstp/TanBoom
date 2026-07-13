@@ -7,7 +7,7 @@ export default async function RegisterPage() {
   const session = await auth();
 
   if (session?.user) {
-    redirect("/design");
+    redirect("/");
   }
 
   return (
