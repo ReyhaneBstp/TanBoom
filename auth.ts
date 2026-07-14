@@ -1,8 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import bcryptjs from "bcryptjs"; 
 import { loginSchema } from "@/features/auth/lib/validations";
-import { findUserByEmail } from "@/server/services/user-service";
+import { authenticateUser } from "@/server/services/user-service";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -26,26 +25,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        const user = await findUserByEmail(parsed.data.email);
+        const user = await authenticateUser(
+          parsed.data.email,
+          parsed.data.password
+        );
 
         if (!user) {
           return null;
         }
 
-        const isPasswordValid = await bcryptjs.compare(
-          parsed.data.password,
-          user.password
-        );
-
-        if (!isPasswordValid) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        };
+        return user;
       },
     }),
   ],

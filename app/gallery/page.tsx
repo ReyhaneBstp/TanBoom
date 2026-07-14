@@ -1,10 +1,7 @@
-import { prisma } from "@/server/prisma/prisma";
+import { getPublicDesigns } from "@/server/services/design-service";
 
 export default async function GalleryPage() {
-  const publicDesigns = await prisma.design.findMany({
-    where: { isPublic: true },
-    orderBy: { createdAt: "desc" },
-  });
+  const publicDesigns = await getPublicDesigns();
 
   return (
     <div className="max-w-6xl mx-auto p-8">
@@ -21,6 +18,9 @@ export default async function GalleryPage() {
                 className="w-full h-64 object-cover rounded-lg"
               />
               <h2 className="mt-3 font-semibold">{design.title}</h2>
+              <p className="text-xs text-gray-500">
+                طراح: {design.creatorName ?? "کاربر تن‌بوم"}
+              </p>
             </div>
           ))}
         </div>

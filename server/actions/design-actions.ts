@@ -1,7 +1,12 @@
 "use server";
 
 import { auth } from "@/auth";
-import { prisma } from "@/server/prisma/prisma";
+import { createDesign, getDesignById } from "@/server/services/design-service";
+import {
+  createOrder as createOrderRecord,
+  getOrderById,
+  updateOrderStatus as updateOrderStatusRecord,
+} from "@/server/services/order-service";
 import { revalidatePath } from "next/cache";
 
 export async function saveDesignToDashboard(data: {
@@ -12,20 +17,17 @@ export async function saveDesignToDashboard(data: {
   const session = await auth();
   if (!session?.user?.id) throw new Error("لطفاً وارد شوید");
 
-  const design = await prisma.design.create({
-    data: {
-      title: data.title,
-      frontImage: data.frontImage,
-      backImage: data.backImage ?? null,
-      isPublic: false,
-      userId: session.user.id,
-    },
+  const design = await createDesign({
+    title: data.title,
+    frontImage: data.frontImage,
+    backImage: data.backImage,
+    isPublic: false,
+    userId: session.user.id,
   });
 
   revalidatePath("/dashboard");
   return { success: true, designId: design.id };
 }
-
 
 export async function publishDesignToGallery(data: {
   title: string;
@@ -35,14 +37,12 @@ export async function publishDesignToGallery(data: {
   const session = await auth();
   if (!session?.user?.id) throw new Error("لطفاً وارد شوید");
 
-  const design = await prisma.design.create({
-    data: {
-      title: data.title,
-      frontImage: data.frontImage,
-      backImage: data.backImage ?? null,
-      isPublic: true,
-      userId: session.user.id,
-    },
+  const design = await createDesign({
+    title: data.title,
+    frontImage: data.frontImage,
+    backImage: data.backImage,
+    isPublic: true,
+    userId: session.user.id,
   });
 
   revalidatePath("/gallery");
@@ -58,23 +58,34 @@ export async function createOrder(data: {
   const session = await auth();
   if (!session?.user?.id) throw new Error("لطفاً وارد شوید");
 
-  const design = await prisma.design.findUnique({
-    where: { id: data.designId },
-  });
+  const design = await getDesignById(data.designId);
   if (!design || design.userId !== session.user.id) {
     throw new Error("طرح مورد نظر یافت نشد یا دسترسی ندارید");
   }
 
-  const order = await prisma.order.create({
-    data: {
-      size: data.size,
-      quantity: data.quantity ?? 1,
-      notes: data.notes ?? null,
-      designId: design.id,
-      userId: session.user.id,
-    },
+  const order = await createOrderRecord({
+    size: data.size,
+    quantity: data.quantity ?? 1,
+    notes: data.notes,
+    designId: design.id,
+    userId: session.user.id,
   });
 
   revalidatePath("/dashboard");
   return { success: true, orderId: order.id };
+}
+
+export async function updateOrderStatus(orderId: string, status: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("لطفاً وارد شوید");
+
+  const order = await getOrderById(orderId);
+  if (!order || order.userId !== session.user.id) {
+    throw new Error("سفارش مورد نظر یافت نشد یا دسترسی ندارید");
+  }
+
+  const updated = await updateOrderStatusRecord(orderId, status);
+
+  revalidatePath("/dashboard");
+  return { success: true, status: updated.status };
 }

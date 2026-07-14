@@ -19,6 +19,10 @@ export const registerSchema = z
       .trim()
       .email("ایمیل معتبر وارد کنید.")
       .max(120, "ایمیل معتبر وارد کنید."),
+    phone: z
+      .string()
+      .trim()
+      .regex(/^09\d{9}$/, "شماره موبایل معتبر وارد کنید."),
     password: passwordSchema,
     confirmPassword: z.string(),
   })
