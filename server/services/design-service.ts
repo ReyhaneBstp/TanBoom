@@ -70,6 +70,22 @@ export async function getUserDesigns(userId: string) {
   return records.map(mapDesign);
 }
 
+export async function updateDesign(
+  id: string,
+  data: Partial<{ title: string; isPublic: boolean }>
+) {
+  const pb = await getPocketBase();
+
+  const record = await pb.collection("designs").update(id, data);
+  return mapDesign(record);
+}
+
+export async function deleteDesign(id: string) {
+  const pb = await getPocketBase();
+
+  await pb.collection("designs").delete(id);
+}
+
 export async function getPublicDesigns() {
   const pb = await getPocketBase();
 

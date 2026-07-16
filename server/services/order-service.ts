@@ -9,6 +9,7 @@ export type OrderRecord = {
   status: string;
   designId: string;
   designTitle: string | null;
+  designImage: string | null;
   userId: string;
   createdAt: string;
 };
@@ -22,6 +23,7 @@ function mapOrder(record: RecordModel): OrderRecord {
     status: record.status,
     designId: record.design,
     designTitle: record.expand?.design?.title ?? null,
+    designImage: record.expand?.design?.frontImage ?? null,
     userId: record.user,
     createdAt: record.created,
   };

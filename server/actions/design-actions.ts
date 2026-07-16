@@ -1,7 +1,12 @@
 "use server";
 
 import { auth } from "@/auth";
-import { createDesign, getDesignById } from "@/server/services/design-service";
+import {
+  createDesign,
+  deleteDesign as deleteDesignRecord,
+  getDesignById,
+  updateDesign as updateDesignRecord,
+} from "@/server/services/design-service";
 import {
   createOrder as createOrderRecord,
   getOrderById,
@@ -47,6 +52,51 @@ export async function publishDesignToGallery(data: {
 
   revalidatePath("/gallery");
   return { success: true, designId: design.id };
+}
+
+async function getOwnedDesign(designId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("لطفاً وارد شوید");
+
+  const design = await getDesignById(designId);
+  if (!design || design.userId !== session.user.id) {
+    throw new Error("طرح مورد نظر یافت نشد یا دسترسی ندارید");
+  }
+
+  return design;
+}
+
+export async function renameDesign(designId: string, title: string) {
+  const design = await getOwnedDesign(designId);
+
+  const trimmed = title.trim();
+  if (!trimmed) throw new Error("نام طرح نمی‌تواند خالی باشد");
+
+  const updated = await updateDesignRecord(design.id, { title: trimmed });
+
+  revalidatePath("/dashboard");
+  if (design.isPublic) revalidatePath("/gallery");
+  return { success: true, title: updated.title };
+}
+
+export async function setDesignVisibility(designId: string, isPublic: boolean) {
+  const design = await getOwnedDesign(designId);
+
+  const updated = await updateDesignRecord(design.id, { isPublic });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/gallery");
+  return { success: true, isPublic: updated.isPublic };
+}
+
+export async function deleteDesign(designId: string) {
+  const design = await getOwnedDesign(designId);
+
+  await deleteDesignRecord(design.id);
+
+  revalidatePath("/dashboard");
+  if (design.isPublic) revalidatePath("/gallery");
+  return { success: true };
 }
 
 export async function createOrder(data: {
