@@ -69,8 +69,7 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
     default:
       mannequinType = "upper-body mannequin";
       mannequinView =
-        "professional fashion product photography pose. The camera is framed VERY TIGHTLY from the neck/shoulders down to JUST BELOW the hem of the garment. The bottom of the frame must cut off cleanly and completely below the garment. " +
-        "ABSOLUTELY NO lower torso, hips, crotch area, or legs of the mannequin should be visible. The image must end right after the hem of the clothing.";
+        "professional fashion product photography pose. The camera is framed VERY TIGHTLY from the neck/shoulders down to JUST BELOW the hem of the garment. The bottom of the frame must cut off cleanly and completely below the garment. ";
       break;
   }
 
@@ -120,8 +119,7 @@ Illustration, sketch, drawing, painting, anime, cartoon, CGI look, stylized art,
 - Plain white seamless background only.
 - Keep exact proportions and construction from the sketch.
 - Do not add extra details not present in the sketch.
-- CRITICAL FOR SHORT GARMENTS: For any upper-body garment that does not reach the hips (shirts, blouses, crop tops, short tops, etc.), the framing MUST be extremely tight. The image should end immediately below the hem. 
-  NEVER show the mannequin's bare lower torso, hips, crotch area, or legs. Do not show any naked parts between the legs or below the waist.
+- CRITICAL FOR SHORT GARMENTS: For any upper-body garment that does not reach the hips (shirts, blouses, crop tops, short tops, etc.), the framing MUST be extremely tight. The image should end immediately below the hem.
 - The mannequin must appear complete within the frame — no awkward cutoffs or visible uncovered body parts.`,
 
     "FINAL OUTPUT: One single, perfectly centered, front-view commercial product photograph.",

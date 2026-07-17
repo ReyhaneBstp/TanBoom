@@ -6,7 +6,6 @@ import { useGarmentStore } from "@/features/design/store/garmentStore";
 import { useFabricStore } from "@/features/design/store/fabricStore";
 import { useAccessoryStore } from "@/features/design/store/accessoryStore";
 import { useSketchStore } from "@/features/design/store/sketchStore";
-import { useMeasurementsStore } from "@/features/design/store/measurementsStore";
 
 
 export function useDesignPrompt(): string {
@@ -18,7 +17,6 @@ export function useDesignPrompt(): string {
   const selectedAccessories = useAccessoryStore((s) => s.selectedAccessories);
   const accessoryPlacements = useAccessoryStore((s) => s.accessoryPlacements);
   const sketch = useSketchStore((s) => s.sketch);
-  const measurements = useMeasurementsStore((s) => s.measurements);
 
   return useMemo(() => {
     const selectedGarment = GARMENT_TYPES.find((g) => g.id === garmentTypeId) ?? null;
@@ -39,7 +37,6 @@ export function useDesignPrompt(): string {
       fabricAssignments,
       selectedAccessories,
       accessoryPlacements,
-      measurements,
     });
   }, [
     gender,
@@ -50,6 +47,5 @@ export function useDesignPrompt(): string {
     selectedAccessories,
     accessoryPlacements,
     sketch,
-    measurements,
   ]);
 }

@@ -114,3 +114,13 @@ export const MEASUREMENT_FIELDS_BY_CATEGORY: Record<
     { key: "wrist_cm", label: "دور مچ", placeholder: "مثلاً ۱۶" },
   ],
 };
+
+/** برچسب فارسی هر اندازه برای نمایش در کارت سفارش */
+export const MEASUREMENT_LABELS: Record<string, string> = Object.values(
+  MEASUREMENT_FIELDS_BY_CATEGORY
+)
+  .flat()
+  .reduce<Record<string, string>>((acc, field) => {
+    acc[field.key] ??= field.label;
+    return acc;
+  }, {});

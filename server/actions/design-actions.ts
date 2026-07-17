@@ -12,6 +12,7 @@ import {
   getOrderById,
   updateOrderStatus as updateOrderStatusRecord,
 } from "@/server/services/order-service";
+import type { BodyMeasurements } from "@/features/design/types/design";
 import { revalidatePath } from "next/cache";
 
 export async function saveDesignToDashboard(data: {
@@ -104,6 +105,7 @@ export async function createOrder(data: {
   size: string;
   quantity?: number;
   notes?: string;
+  measurements?: BodyMeasurements;
 }) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("لطفاً وارد شوید");
@@ -117,6 +119,7 @@ export async function createOrder(data: {
     size: data.size,
     quantity: data.quantity ?? 1,
     notes: data.notes,
+    measurements: data.measurements,
     designId: design.id,
     userId: session.user.id,
   });

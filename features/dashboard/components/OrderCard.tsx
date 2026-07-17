@@ -5,8 +5,10 @@ import {
   HiOutlineCalendarDays,
   HiOutlineCube,
   HiOutlineSwatch,
+  HiOutlineScale,
 } from "react-icons/hi2";
 import type { OrderRecord } from "@/server/services/order-service";
+import { MEASUREMENT_LABELS } from "@/features/design/definitions/design-options";
 import { ease } from "@/shared/definitions/motion";
 import {
   formatPersianDate,
@@ -24,6 +26,12 @@ export function OrderCard({ order, index }: OrderCardProps) {
   const status = getOrderStatusConfig(order.status);
   const StatusIcon = status.icon;
   const isCancelled = order.status === "cancelled";
+
+  const measurementEntries = order.measurements
+    ? Object.entries(order.measurements).filter(
+        ([, value]) => typeof value === "number" && Number.isFinite(value)
+      )
+    : [];
 
   return (
     <motion.article
@@ -76,6 +84,28 @@ export function OrderCard({ order, index }: OrderCardProps) {
           )}
         </div>
       </div>
+
+      {measurementEntries.length > 0 && (
+        <div className="mt-4 rounded-[1.3rem] border border-primary-100/80 bg-primary-50/40 px-4 py-3">
+          <p className="mb-2 flex items-center gap-1.5 text-[11px] font-bold text-primary-600">
+            <HiOutlineScale className="size-3.5" />
+            اندازه‌های ثبت شده (سانتی‌متر)
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {measurementEntries.map(([key, value]) => (
+              <span
+                key={key}
+                className="inline-flex items-center gap-1 rounded-full border border-white/80 bg-white/70 px-2.5 py-1 text-[11px] text-muted-foreground"
+              >
+                {MEASUREMENT_LABELS[key] ?? key}:
+                <b className="text-foreground">
+                  {Number(value).toLocaleString("fa-IR")}
+                </b>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {isCancelled ? (
         <p className="mt-4 rounded-[1.3rem] border border-red-100 bg-red-50/70 px-4 py-2.5 text-xs text-red-700">

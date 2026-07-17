@@ -1,7 +1,7 @@
-import { ClientResponseError } from "pocketbase";
 import {
   createPocketBaseClient,
   getPocketBase,
+  isPbNotFound,
 } from "@/server/pocketbase/pocketbase";
 import { RegisterInput } from "@/features/auth/lib/validations";
 
@@ -15,7 +15,7 @@ export async function findUserByEmail(email: string) {
         pb.filter("email = {:email}", { email: email.toLowerCase() })
       );
   } catch (error) {
-    if (error instanceof ClientResponseError && error.status === 404) {
+    if (isPbNotFound(error)) {
       return null;
     }
     throw error;

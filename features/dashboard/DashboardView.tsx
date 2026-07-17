@@ -37,6 +37,11 @@ export function DashboardView({
     [designs]
   );
 
+  const privateDesigns = useMemo(
+    () => designs.filter((d) => !d.isPublic),
+    [designs]
+  );
+
   const activeOrders = useMemo(
     () =>
       orders.filter((o) => o.status !== "delivered" && o.status !== "cancelled")
@@ -55,7 +60,7 @@ export function DashboardView({
       key: "designs",
       label: "گالری من",
       icon: HiOutlineSquares2X2,
-      count: designs.length,
+      count: privateDesigns.length,
     },
     {
       key: "public",
@@ -97,7 +102,7 @@ export function DashboardView({
       >
         <div>
           <p className="text-sm text-muted-foreground">
-            خوش آمدید{userName ? `، ${userName}` : ""} 👋
+            خوش آمدید{userName ? `، ${userName}` : ""} 
           </p>
           <h1 className="mt-1 text-2xl font-black tracking-tight text-foreground sm:text-3xl">
             داشبورد شخصی
@@ -198,7 +203,7 @@ export function DashboardView({
           ))}
 
         {activeTab === "designs" &&
-          (designs.length === 0 ? (
+          (privateDesigns.length === 0 ? (
             <EmptyState
               icon={HiOutlinePaintBrush}
               title="گالری شما خالی است"
@@ -208,7 +213,7 @@ export function DashboardView({
             />
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {designs.map((design, i) => (
+              {privateDesigns.map((design, i) => (
                 <DesignCard key={design.id} design={design} index={i} />
               ))}
             </div>

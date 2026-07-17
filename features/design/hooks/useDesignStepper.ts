@@ -7,14 +7,12 @@ import {
   STEP_IDS,
   StepId,
 } from "@/features/design/definitions/design-steps";
-import { GARMENT_MEASUREMENT_CATEGORY } from "@/features/design/definitions/design-options";
 import { useStepStore } from "../store/stepStore";
 import { useGenderStore } from "../store/genderStore";
 import { useGarmentStore } from "../store/garmentStore";
 import { useFabricStore } from "../store/fabricStore";
 import { useSketchStore } from "../store/sketchStore";
 import { useGenerationStore } from "../store/generationStore";
-import { useMeasurementsStore } from "../store/measurementsStore";
 import { useAccessoryStore } from "../store/accessoryStore";
 
 const OPTIONAL_STEPS: readonly StepId[] = [
@@ -29,7 +27,6 @@ export function useDesignStepper() {
   const selectedFabricIds = useFabricStore((s) => s.selectedFabricIds);
   const sketch = useSketchStore((s) => s.sketch);
   const generatedImages = useGenerationStore((s) => s.generatedImages);
-  const measurements = useMeasurementsStore((s) => s.measurements);
   const selectedAccessories = useAccessoryStore((s) => s.selectedAccessories);
   const setCurrentStepId = useStepStore((s) => s.setCurrentStepId);
 
@@ -39,32 +36,6 @@ export function useDesignStepper() {
     [currentStepId]
   );
 
-  const isMeasurementsValid = useMemo(() => {
-    if (!garmentTypeId) return false;
-
-    const category = GARMENT_MEASUREMENT_CATEGORY[garmentTypeId];
-    if (!category) return false;
-
-    const m = measurements;
-
-    switch (category) {
-      case "head":
-        return Boolean(m.head_circumference_cm);
-
-      case "upper_body":
-        return Boolean(m.height_cm || m.chest_cm || m.waist_cm);
-
-      case "lower_body":
-        return Boolean(m.height_cm || m.waist_cm || m.hips_cm);
-
-      case "full_body":
-        return Boolean(m.height_cm || m.chest_cm || m.waist_cm || m.hips_cm);
-
-      default:
-        return false;
-    }
-  }, [garmentTypeId, measurements]);
-
   const completedSteps = useMemo(
     () =>
       [
@@ -72,7 +43,6 @@ export function useDesignStepper() {
         selectedFabricIds.length > 0,
         selectedAccessories.length > 0,
         Boolean(sketch.file && sketch.description.trim().length > 8),
-        isMeasurementsValid,
         generatedImages.length > 0,
       ] as const,
     [
@@ -82,7 +52,6 @@ export function useDesignStepper() {
       selectedAccessories,
       sketch.file,
       sketch.description,
-      isMeasurementsValid,
       generatedImages,
     ]
   );
