@@ -1,4 +1,5 @@
 
+import Link from "next/link";
 import Motion from "@/shared/components/Motion";
 import { ease } from "@/shared/definitions/motion";
 import { LuArrowLeft } from "react-icons/lu";
@@ -30,16 +31,23 @@ export function CTASection() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Motion
-              as="button"
+              as="div"
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className="bg-white text-primary font-black text-base px-10 py-4 rounded-2xl shadow-xl"
             >
-              ثبت‌نام رایگان
+              <Link
+                href="/register"
+                className="inline-flex bg-white text-primary font-black text-base px-10 py-4 rounded-2xl shadow-xl"
+              >
+                ثبت‌نام رایگان
+              </Link>
             </Motion>
-            <button className="text-white/85 font-medium hover:text-white transition-colors flex items-center gap-2 text-sm">
+            <Link
+              href="/gallery"
+              className="text-white/85 font-medium hover:text-white transition-colors flex items-center gap-2 text-sm"
+            >
               گالری طرح‌ها رو ببین <LuArrowLeft size={14} />
-            </button>
+            </Link>
           </div>
         </div>
       </Motion>

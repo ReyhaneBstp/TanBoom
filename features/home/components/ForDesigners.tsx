@@ -1,6 +1,7 @@
 import { LuArrowLeft, LuStar } from "react-icons/lu";
 import DesignerImage from "@/assets/landing/designer.webp";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/shared/components/Button";
 import Motion from "@/shared/components/Motion";
 
@@ -83,7 +84,7 @@ export function ForDesigners() {
 
             <Button asChild size="lg">
               <Motion
-                as="button"
+                as="div"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, amount: 0.4 }}
@@ -91,8 +92,10 @@ export function ForDesigners() {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
-                همین الان شروع کن
-                <LuArrowLeft size={17} />
+                <Link href="/design" className="flex items-center gap-2">
+                  همین الان شروع کن
+                  <LuArrowLeft size={17} />
+                </Link>
               </Motion>
             </Button>
           </div>

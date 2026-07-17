@@ -1,4 +1,5 @@
 import { LuArrowLeft, LuUsers } from "react-icons/lu";
+import Link from "next/link";
 import { galleryItems } from "./definitions";
 import { ease } from "@/shared/definitions/motion";
 import Image from "next/image";
@@ -33,14 +34,19 @@ export function Gallery() {
             </Motion>
           </div>
           <Motion
-            as="button"
+            as="div"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ delay: 0.2 }}
-            className="hidden sm:flex items-center gap-2 text-sm font-bold text-accent hover:gap-3.5 transition-all"
+            className="hidden sm:block"
           >
-            همه طرح‌ها <LuArrowLeft size={15} />
+            <Link
+              href="/gallery"
+              className="flex items-center gap-2 text-sm font-bold text-accent hover:gap-3.5 transition-all"
+            >
+              همه طرح‌ها <LuArrowLeft size={15} />
+            </Link>
           </Motion>
         </div>
         <div className="columns-1 md:columns-3 gap-4 md:gap-5 [column-gap:1rem] md:[column-gap:1.25rem]">

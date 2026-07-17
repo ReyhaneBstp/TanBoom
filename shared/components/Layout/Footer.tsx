@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LuInstagram, LuScissors } from "react-icons/lu";
 
 export default function Footer() {
@@ -24,24 +25,34 @@ export default function Footer() {
             {[
               {
                 title: "لینک‌های مهم",
-                links: ["گالری طرح‌ها", "چطور کار می‌کنه", "قیمت‌گذاری", "درباره ما"],
+                links: [
+                  { label: "گالری طرح‌ها", href: "/gallery" },
+                  { label: "چطور کار می‌کنه", href: "/#how" },
+                  { label: "شروع طراحی", href: "/design" },
+                  { label: "برای طراحان", href: "/#designers" },
+                ],
               },
               {
                 title: "پشتیبانی",
-                links: ["سوالات متداول", "تماس با ما", "شرایط استفاده", "حریم خصوصی"],
+                links: [
+                  { label: "سوالات متداول", href: "/faq" },
+                  { label: "راهنمای طراحی", href: "/guide" },
+                  { label: "داشبورد", href: "/dashboard" },
+                  { label: "ورود / ثبت‌نام", href: "/login" },
+                ],
               },
             ].map((col) => (
               <div key={col.title}>
                 <h4 className="font-bold mb-5 text-sm">{col.title}</h4>
                 <ul className="space-y-3">
                   {col.links.map((link) => (
-                    <li key={link}>
-                      <a
-                        href="#"
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
                         className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                       >
-                        {link}
-                      </a>
+                        {link.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -53,4 +64,3 @@ export default function Footer() {
       </footer>
     );
   }
-  

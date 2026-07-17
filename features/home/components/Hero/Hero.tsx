@@ -1,6 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import { LuArrowLeft, LuSparkles } from "react-icons/lu";
-import HeroImage from "@/assets/landing/hero.png";
+import HeroImage from "@/assets/landing/hero.webp";
 import { Button } from "@/shared/components/Button";
 import { ease, fade } from "@/shared/definitions/motion";
 import { avatars, features } from "./definitions";
@@ -82,16 +83,18 @@ export default function Hero() {
             >
               <Button asChild size="lg">
                 <Motion
-                  as="button"
+                  as="div"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   className="group gap-3"
                 >
-                  شروع طراحی رایگان
-                  <LuArrowLeft
-                    size={17}
-                    className="transition-transform group-hover:-translate-x-1"
-                  />
+                  <Link href="/design" className="flex items-center gap-3">
+                    شروع طراحی رایگان
+                    <LuArrowLeft
+                      size={17}
+                      className="transition-transform group-hover:-translate-x-1"
+                    />
+                  </Link>
                 </Motion>
               </Button>
 
