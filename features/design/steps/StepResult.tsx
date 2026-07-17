@@ -8,8 +8,10 @@ import {
   HiOutlineBookmark,
   HiOutlineGlobeAlt,
   HiOutlineShoppingBag,
+  HiOutlinePencilSquare,
 } from "react-icons/hi2";
 import { Button } from "@/shared/components/Button";
+import { Input } from "@/shared/components/Input";
 import { handleDownload } from "@/shared/utils/downloadFile";
 import { useGenerationStore } from "../store/generationStore";
 import { useStepStore } from "../store/stepStore";
@@ -32,6 +34,7 @@ export function StepResult() {
   const [isSaving, setIsSaving] = useState(false);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [currentDesignId, setCurrentDesignId] = useState<string | null>(null);
+  const [designTitle, setDesignTitle] = useState("");
   const { showSnackbar } = useGlobalStore();
 
   useEffect(() => {
@@ -48,23 +51,25 @@ export function StepResult() {
       return;
     }
     setIsSaving(true);
+    const title = designTitle.trim() || "طرح جدید";
     try {
       let res;
       if (action === "dashboard") {
         res = await saveDesignToDashboard({
-          title: "طرح جدید",
+          title,
           frontImage,
           backImage: backImage ?? undefined,
         });
         showSnackbar("طرح در داشبورد شما ذخیره شد", "success");
       } else {
         res = await publishDesignToGallery({
-          title: "طرح جدید",
+          title,
           frontImage,
           backImage: backImage ?? undefined,
         });
         showSnackbar("طرح در گالری عمومی منتشر شد", "success");
       }
+      setCurrentDesignId(res.designId);
     } catch (error: any) {
       showSnackbar("خطا در ذخیره‌سازی", "error");
     } finally {
@@ -76,7 +81,7 @@ export function StepResult() {
     if (!currentDesignId && frontImage) {
       try {
         const res = await saveDesignToDashboard({
-          title: "طرح جدید",
+          title: designTitle.trim() || "طرح جدید",
           frontImage,
           backImage: backImage ?? undefined,
         });
@@ -159,6 +164,23 @@ export function StepResult() {
           <HiOutlineSparkles className="size-5 text-primary-500" />
           مدیریت طرح
         </h3>
+
+        <div className="space-y-2">
+          <label
+            htmlFor="design-title"
+            className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground"
+          >
+            <HiOutlinePencilSquare className="size-4" />
+            نام طرح
+          </label>
+          <Input
+            id="design-title"
+            value={designTitle}
+            onChange={(e) => setDesignTitle(e.target.value)}
+            placeholder="مثلاً: مانتو تابستانه لینن"
+            maxLength={80}
+          />
+        </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
           <Button

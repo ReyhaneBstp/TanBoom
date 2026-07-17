@@ -45,6 +45,14 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
+        <Label htmlFor="phone">شماره موبایل</Label>
+        <Input id="phone" name="phone" type="tel" dir="ltr" placeholder="09123456789" required />
+        {state.fieldErrors?.phone?.[0] ? (
+          <p className="text-sm text-rose-600">{state.fieldErrors.phone[0]}</p>
+        ) : null}
+      </div>
+
+      <div className="space-y-2">
         <Label htmlFor="password">رمز عبور</Label>
         <PasswordField id="password" name="password" placeholder="حداقل ۸ کاراکتر" required />
         {state.fieldErrors?.password?.[0] ? (

@@ -3,7 +3,6 @@ export const STEP_IDS = {
   FABRIC: "fabric",
   ACCESSORIES: "accessories",
   SKETCH: "sketch",
-  MEASUREMENTS: "measurements",
   RESULT: "result",
 } as const;
 
@@ -14,7 +13,6 @@ export const STEPPER_STEPS = [
   { id: STEP_IDS.FABRIC, label: "انتخاب پارچه" },
   { id: STEP_IDS.ACCESSORIES, label: "اکسسوری" },
   { id: STEP_IDS.SKETCH, label: "طراحی" },
-  { id: STEP_IDS.MEASUREMENTS, label: "سایزبندی" },
   { id: STEP_IDS.RESULT, label: "نتیجه" },
 ] as const;
 
@@ -39,11 +37,6 @@ export const stepsInfo: Record<StepId, { eyebrow: string; title: string; descrip
     eyebrow: "طراحی اولیه",
     title: "طرح لباست رو روی کاغذ بکش",
     description: "اسکچ دستی و توضیحات شما مبنای تولید تصویر قرار می‌گیره. پس بهتره جزئیات طراحیت رو دقیق برامون توصیف کنی",
-  },
-  [STEP_IDS.MEASUREMENTS]: {
-    eyebrow: "سایز و اندازه",
-    title: "قد و اندازه‌های بدن",
-    description: "قد دلخواه لباس و سایزبندیش رو مشخص کن تا اندازه لباس دقیق‌تر بشه.",
   },
   [STEP_IDS.RESULT]: {
     eyebrow: "نتیجه",

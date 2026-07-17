@@ -21,6 +21,7 @@ export async function registerAction(
   const result = await registerUser({
     name: String(formData.get("name") ?? ""),
     email: String(formData.get("email") ?? ""),
+    phone: String(formData.get("phone") ?? ""),
     password: String(formData.get("password") ?? ""),
     confirmPassword: String(formData.get("confirmPassword") ?? ""),
   });
