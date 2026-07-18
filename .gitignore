@@ -10,5 +10,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-server/pocketbase/pocketbase-bin/pb_data
-server/pocketbase/pocketbase-bin/pocketbase
+# server/pocketbase/pocketbase-bin/pb_data
+# server/pocketbase/pocketbase-bin/pocketbase
