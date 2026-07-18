@@ -1,72 +1,74 @@
-"use client"
-
-import { motion } from "motion/react";
-import { useScrollReveal } from "../hooks/useScrollReveal";
 import { LuArrowLeft, LuStar } from "react-icons/lu";
-import { ease } from "../../../shared/definitions/motion";
-import DesignerImage from "@/assets/landing/designer.png";
+import DesignerImage from "@/assets/landing/designer.webp";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/shared/components/Button";
+import Motion from "@/shared/components/Motion";
+
 
 export function ForDesigners() {
-  const { ref, visible } = useScrollReveal();
-
   return (
-    <section
-      id="designers"
-      ref={(el) => {
-        (ref as React.MutableRefObject<HTMLElement | null>).current = el;
-      }}
-      className="py-24 bg-primary/8"
-    >
+    <section id="designers" className="py-24 bg-primary/8">
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-14 lg:gap-20 items-center">
           <div>
-            <motion.div
+            <Motion
+              as="div"
               initial={{ opacity: 0, y: 16 }}
-              animate={visible ? { opacity: 1, y: 0 } : {}}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
               className="inline-flex items-center gap-2 bg-primary/20 text-primary text-xs font-bold px-4 py-2 rounded-full mb-6"
             >
               <LuStar size={11} />
               طرحت رو با بقیه به اشتراک بذار
-            </motion.div>
-            <motion.h2
+            </Motion>
+
+            <Motion
+              as="h2"
               initial={{ opacity: 0, y: 22 }}
-              animate={visible ? { opacity: 1, y: 0 } : {}}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
               transition={{ delay: 0.1 }}
               className="text-4xl md:text-5xl font-black mb-6 text-primary-700 leading-tight"
             >
               میتونه طرحت تنِ
               <br />
               دنیا باشه
-            </motion.h2>
-            <motion.p
+            </Motion>
+
+            <Motion
+              as="p"
               initial={{ opacity: 0, y: 18 }}
-              animate={visible ? { opacity: 1, y: 0 } : {}}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
               transition={{ delay: 0.2 }}
               className="text-muted-foreground text-base leading-loose mb-10 max-w-[420px]"
             >
-              این‌جا این امکان وجود داره که طرح‌هایی که کشیدی رو با بقیه هم به اشتراک بذاری. شاید ایده‌‌ی تو،
+              این‌جا این امکان وجود داره که اگه خودت تایید کنی طراحی‌هات برای بقیه هم توی گالری تن‌بوم نمایش داده بشه. شاید ایده‌ی تو،
               لباس ایده‌آل کسی باشه!
-              <br />
-              جالبه بدونی اگه کسی طرح تو رو سفارش بده، به ازای هر سفارش ۱۰٪ از قیمت اون لباس برای تو می‌شه.
-            </motion.p>
+        
+              
+            </Motion>
 
-            <motion.ul
+            <Motion
+              as="ul"
               initial={{ opacity: 0 }}
-              animate={visible ? { opacity: 1 } : {}}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.4 }}
               transition={{ delay: 0.3 }}
               className="space-y-3.5 mb-10"
             >
               {[
+                "بدون دغدغه‌ی تولید، نمونه‌ی دیجیتال بساز",
                 "طرح‌هات رو با همه به اشتراک بذار",
-                "از هر سفارش درآمد کسب کن",
-                "در جامعه طراحان معروف‌ شو",
+                "از طرح‌های بقیه الهام بگیر",
               ].map((item, i) => (
-                <motion.li
+                <Motion
+                  as="li"
                   key={i}
                   initial={{ opacity: 0, x: 14 }}
-                  animate={visible ? { opacity: 1, x: 0 } : {}}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
                   transition={{ delay: 0.32 + i * 0.07 }}
                   className="flex items-center gap-3"
                 >
@@ -76,28 +78,33 @@ export function ForDesigners() {
                   <span className="text-muted-foreground/75 text-sm">
                     {item}
                   </span>
-                </motion.li>
+                </Motion>
               ))}
-            </motion.ul>
+            </Motion>
 
             <Button asChild size="lg">
-              <motion.button
+              <Motion
+                as="div"
                 initial={{ opacity: 0 }}
-                animate={visible ? { opacity: 1 } : {}}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, amount: 0.4 }}
                 transition={{ delay: 0.15 }}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
-                همین الان شروع کن
-                <LuArrowLeft size={17} />
-              </motion.button>
+                <Link href="/design" className="flex items-center gap-2">
+                  همین الان شروع کن
+                  <LuArrowLeft size={17} />
+                </Link>
+              </Motion>
             </Button>
           </div>
-
-          <motion.div
+          <Motion
+            as="div"
             initial={{ opacity: 0, x: -36 }}
-            animate={visible ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.75, delay: 0.3, ease }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.75, delay: 0.3 }}
             className="relative"
           >
             <div className="rounded-3xl overflow-hidden bg-muted">
@@ -107,7 +114,8 @@ export function ForDesigners() {
                 className="w-full h-[460px] md:h-[520px] object-cover"
               />
             </div>
-            <motion.div
+            <Motion
+              as="div"
               animate={{ y: [0, -9, 0] }}
               transition={{
                 duration: 3.6,
@@ -119,8 +127,8 @@ export function ForDesigners() {
               <div className="text-[11px] text-muted-foreground mt-0.5">
                 پس بیا لباسامون رو قشنگ‌تر کن :)
               </div>
-            </motion.div>
-          </motion.div>
+            </Motion>
+          </Motion>
         </div>
       </div>
     </section>

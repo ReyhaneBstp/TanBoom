@@ -1,9 +1,9 @@
 import { HTMLMotionProps } from "motion/react";
 import { LuHeart, LuPencil } from "react-icons/lu";
-import avatar1 from "@/assets/avatars/avatar1.jpg"
-import avatar2 from "@/assets/avatars/avatar2.jpg"
-import avatar3 from "@/assets/avatars/avatar3.jpg"
-import avatar4 from "@/assets/avatars/avatar4.jpg"
+import avatar1 from "@/assets/avatars/avatar1.webp"
+import avatar2 from "@/assets/avatars/avatar2.webp"
+import avatar3 from "@/assets/avatars/avatar3.webp"
+import avatar4 from "@/assets/avatars/avatar4.webp"
 
 
 export const avatars = [

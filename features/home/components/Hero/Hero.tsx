@@ -1,18 +1,12 @@
-"use client";
 import Image from "next/image";
-import { motion } from "motion/react";
+import Link from "next/link";
 import { LuArrowLeft, LuSparkles } from "react-icons/lu";
-
-import HeroImage from "@/assets/landing/hero.png";
-
+import HeroImage from "@/assets/landing/hero.webp";
 import { Button } from "@/shared/components/Button";
 import { ease, fade } from "@/shared/definitions/motion";
-import {
-  avatars,
-  features,
-  floatingAnimation,
-  floatingCards,
-} from "./definitions";
+import { avatars, features } from "./definitions";
+import FloatingCarts from "./FloatingCarts";
+import Motion from "@/shared/components/Motion";
 
 export default function Hero() {
   return (
@@ -26,7 +20,8 @@ export default function Hero() {
       <div className="relative mx-auto w-full max-w-7xl px-5 sm:px-8">
         <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2 lg:gap-16">
           <div className="order-2 md:order-1">
-            <motion.div
+            <Motion
+              as="div"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.25 }}
@@ -34,9 +29,10 @@ export default function Hero() {
             >
               <LuSparkles size={11} />
               لباس‌هایی به سبک تو
-            </motion.div>
+            </Motion>
 
-            <motion.h1
+            <Motion
+              as="h1"
               initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.75, delay: 0.35, ease }}
@@ -61,9 +57,10 @@ export default function Hero() {
                   />
                 </svg>
               </span>
-            </motion.h1>
+            </Motion>
 
-            <motion.p
+            <Motion
+              as="p"
               variants={fade}
               initial="hidden"
               animate="show"
@@ -74,9 +71,10 @@ export default function Hero() {
               یک تجسم واقعی تبدیل می‌کنیم و بهت نشونش می‌دیم. بعد از تأییدت،
               خیاطان حرفه‌ای ما با عشق و دقت برات می‌دوزنش و به دستت رسونده
               می‌شه.
-            </motion.p>
+            </Motion>
 
-            <motion.div
+            <Motion
+              as="div"
               variants={fade}
               initial="hidden"
               animate="show"
@@ -84,17 +82,20 @@ export default function Hero() {
               className="flex flex-col items-start gap-4 sm:flex-row sm:items-center"
             >
               <Button asChild size="lg">
-                <motion.button
+                <Motion
+                  as="div"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   className="group gap-3"
                 >
-                  شروع طراحی رایگان
-                  <LuArrowLeft
-                    size={17}
-                    className="transition-transform group-hover:-translate-x-1"
-                  />
-                </motion.button>
+                  <Link href="/design" className="flex items-center gap-3">
+                    شروع طراحی رایگان
+                    <LuArrowLeft
+                      size={17}
+                      className="transition-transform group-hover:-translate-x-1"
+                    />
+                  </Link>
+                </Motion>
               </Button>
 
               <div className="flex items-center gap-3 text-sm font-medium text-muted-foreground">
@@ -110,9 +111,10 @@ export default function Hero() {
                 </div>
                 به جمع ما اضافه شو!
               </div>
-            </motion.div>
+            </Motion>
 
-            <motion.div
+            <Motion
+              as="div"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.9 }}
@@ -123,18 +125,17 @@ export default function Hero() {
                   <div className="text-sm md:text-lg font-black text-primary">
                     {feature.title}
                   </div>
-
                   <div className="mt-1 text-xs leading-relaxed text-muted-foreground">
                     {feature.description}
                   </div>
                 </div>
               ))}
-            </motion.div>
+            </Motion>
           </div>
-
           <div className="order-1 flex justify-center md:order-2">
             <div className="relative w-full max-w-[460px] md:pt-0 pt-20">
-              <motion.div
+              <Motion
+                as="div"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.35 }}
@@ -147,29 +148,8 @@ export default function Hero() {
                     className="max-h-[400px] w-full object-cover"
                   />
                 </div>
-              </motion.div>
-
-              {floatingCards.map(({ Icon, title, subtitle, className }) => (
-                <motion.div
-                  key={title}
-                  {...floatingAnimation}
-                  className={`${className} rounded-2xl border border-border bg-card px-4 py-3 shadow-xl`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-primary/15">
-                      <Icon size={15} className="text-primary" />
-                    </div>
-
-                    <div>
-                      <div className="text-[10px] text-muted-foreground">
-                        {title}
-                      </div>
-
-                      <div className="text-sm font-bold">{subtitle}</div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+              </Motion>
+              <FloatingCarts />
             </div>
           </div>
         </div>

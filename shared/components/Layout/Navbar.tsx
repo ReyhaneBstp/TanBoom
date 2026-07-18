@@ -72,17 +72,17 @@ export default function Navbar({
         </div>
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
           {[
-            ["چطور کار می‌کنه؟", "#how"],
-            ["گالری طرح‌ها", "#gallery"],
-            ["برای طراحان", "#designers"],
+            ["گالری طرح‌ها", "/gallery"],
+            ["راهنمای طراحی", "/guide"],
+            ["سوالات متداول", "/faq"],
           ].map(([label, href]) => (
-            <a
+            <Link
               key={href}
               href={href}
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               {label}
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -118,9 +118,9 @@ export default function Navbar({
           className="md:hidden bg-background border-b border-border px-6 pb-5 pt-2 flex flex-col gap-4 -mt-2"
         >
           {[
-            ["چطور کار می‌کنه؟", "#how"],
-            ["گالری طرح‌ها", "#gallery"],
-            ["برای طراحان", "#designers"],
+            ["گالری طرح‌ها", "/gallery"],
+            ["راهنمای طراحی", "/guide"],
+            ["سوالات متداول", "/faq"],
           ].map(([label, href]) => (
             <Link
               key={href}
