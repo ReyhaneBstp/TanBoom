@@ -5,6 +5,8 @@ import { authenticateUser } from "@/server/services/user-service";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
+  // پشت ریورس‌پراکسی هاست، بدون این فلگ Auth.js خطای UntrustedHost می‌دهد
+  trustHost: true,
   session: {
     strategy: "jwt",
   },
