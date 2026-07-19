@@ -27,9 +27,8 @@ export default function Footer() {
                 title: "لینک‌های مهم",
                 links: [
                   { label: "گالری طرح‌ها", href: "/gallery" },
-                  { label: "چطور کار می‌کنه", href: "/#how" },
                   { label: "شروع طراحی", href: "/design" },
-                  { label: "برای طراحان", href: "/#designers" },
+                  { label: "ورود / ثبت‌نام", href: "/login" },
                 ],
               },
               {
@@ -38,7 +37,7 @@ export default function Footer() {
                   { label: "سوالات متداول", href: "/faq" },
                   { label: "راهنمای طراحی", href: "/guide" },
                   { label: "داشبورد", href: "/dashboard" },
-                  { label: "ورود / ثبت‌نام", href: "/login" },
+                  
                 ],
               },
             ].map((col) => (

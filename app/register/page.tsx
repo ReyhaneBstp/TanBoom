@@ -13,7 +13,7 @@ export default async function RegisterPage() {
   return (
     <AuthCard
       title="ساخت حساب کاربری"
-      description="با همان ظاهر فعلی، فقط چند قدم تا شروع طراحی فاصله دارید."
+      description="فقط چند قدم تا شروع طراحی فاصله دارید."
     >
       <RegisterForm />
     </AuthCard>
