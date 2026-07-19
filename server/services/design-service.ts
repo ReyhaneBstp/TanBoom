@@ -28,7 +28,7 @@ async function toImageFile(source: string, name: string): Promise<File> {
     return new File([buffer], `${name}.${ext}`, { type: mimeType });
   }
 
-  // لینک خارجی: دانلود و تبدیل به فایل
+
   const response = await fetch(source);
   if (!response.ok) {
     throw new Error("دریافت تصویر ممکن نشد");
@@ -39,7 +39,6 @@ async function toImageFile(source: string, name: string): Promise<File> {
   return new File([buffer], `${name}.${ext}`, { type: mimeType });
 }
 
-/** ساخت آدرس فایل رکورد در پاکت‌بیس؛ اگر فایلی نباشد null برمی‌گرداند. */
 export function getDesignFileUrl(
   pb: Awaited<ReturnType<typeof getPocketBase>>,
   record: { [key: string]: any },

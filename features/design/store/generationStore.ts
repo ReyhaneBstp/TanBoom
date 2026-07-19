@@ -5,6 +5,8 @@ interface GenerationState {
   generatedImages: GeneratedDesignImage[];
   isGeneratingFront: boolean;
   isGeneratingBack: boolean;
+  frontError: boolean;
+  backError: boolean;
 }
 
 interface GenerationActions {
@@ -12,6 +14,8 @@ interface GenerationActions {
   addGeneratedImage: (image: GeneratedDesignImage) => void;
   setisGeneratingFront: (value: boolean) => void;
   setIsGeneratingBack: (value: boolean) => void;
+  setFrontError: (value: boolean) => void;
+  setBackError: (value: boolean) => void;
   reset: () => void;
 }
 
@@ -19,6 +23,8 @@ export const useGenerationStore = create<GenerationState & GenerationActions>((s
   generatedImages: [],
   isGeneratingFront: false,
   isGeneratingBack: false,
+  frontError: false,
+  backError: false,
 
   setGeneratedImages: (images) => set({ generatedImages: images }),
 
@@ -29,6 +35,16 @@ export const useGenerationStore = create<GenerationState & GenerationActions>((s
 
   setIsGeneratingBack: (value) => set({ isGeneratingBack: value }),
 
+  setFrontError: (value) => set({ frontError: value }),
+
+  setBackError: (value) => set({ backError: value }),
+
   reset: () =>
-    set({ generatedImages: [], isGeneratingFront: false, isGeneratingBack: false }),
+    set({
+      generatedImages: [],
+      isGeneratingFront: false,
+      isGeneratingBack: false,
+      frontError: false,
+      backError: false,
+    }),
 }));

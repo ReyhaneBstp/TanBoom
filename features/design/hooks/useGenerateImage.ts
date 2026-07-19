@@ -22,6 +22,8 @@ export function useGenerateImage() {
     setIsGeneratingBack,
     isGeneratingFront,
     isGeneratingBack,
+    setFrontError,
+    setBackError,
   } = useGenerationStore();
   const setCurrentStepId = useStepStore((s) => s.setCurrentStepId);
 
@@ -29,33 +31,43 @@ export function useGenerateImage() {
 
   const generateFront = async () => {
     if (!generatedAiPrompt) return;
+    if (useGenerationStore.getState().isGeneratingFront) return;
 
     showLoading("در حال تولید تصویر...");
     setisGeneratingFront(true);
+    setFrontError(false);
 
     try {
       let sketchBase64: string | undefined;
       if (sketch.file) {
         sketchBase64 = await fileToBase64(sketch.file);
       }
+      const result = await generateImageAction(generatedAiPrompt, sketchBase64);
 
-      const imageUrl = await generateImageAction(
-        generatedAiPrompt,
-        sketchBase64,
-      );
+      if (!result.success) {
+        setFrontError(true);
+        setCurrentStepId(STEP_IDS.RESULT);
+        showSnackbar(result.error, "error");
+        return;
+      }
 
       const frontImage: GeneratedDesignImage = {
         id: "front",
         title: "نمای روبه‌رو",
         angle: "front",
-        src: imageUrl,
+        src: result.imageUrl,
       };
 
       setGeneratedImages([frontImage]);
       setCurrentStepId(STEP_IDS.RESULT);
     } catch (error) {
       console.error(error);
-      showSnackbar("خطا در تولید تصویر. لطفاً دوباره تلاش کنید.", "error");
+      setFrontError(true);
+      setCurrentStepId(STEP_IDS.RESULT);
+      showSnackbar(
+        "ارتباط با سرور برقرار نشد. اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.",
+        "error"
+      );
     } finally {
       hideLoading();
       setisGeneratingFront(false);
@@ -64,30 +76,39 @@ export function useGenerateImage() {
 
   const generateBackView = async () => {
     if (generatedImages.length === 0) return;
+    if (useGenerationStore.getState().isGeneratingBack) return;
 
     showLoading("در حال تولید نمای پشت...");
     setIsGeneratingBack(true);
+    setBackError(false);
 
     try {
       const backPrompt = buildBackViewPrompt(generatedAiPrompt);
       const frontImageSrc = generatedImages[0].src;
 
-      const imageUrl = await generateImageAction(
-        backPrompt,
-        frontImageSrc,
-      );
+      const result = await generateImageAction(backPrompt, frontImageSrc);
+
+      if (!result.success) {
+        setBackError(true);
+        showSnackbar(result.error, "error");
+        return;
+      }
 
       const backImage: GeneratedDesignImage = {
         id: "back",
         title: "نمای پشت",
         angle: "back",
-        src: imageUrl,
+        src: result.imageUrl,
       };
 
       addGeneratedImage(backImage);
     } catch (error) {
       console.error(error);
-      showSnackbar("خطا در تولید نمای پشت.", "error");
+      setBackError(true);
+      showSnackbar(
+        "ارتباط با سرور برقرار نشد. اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.",
+        "error"
+      );
     } finally {
       hideLoading();
       setIsGeneratingBack(false);

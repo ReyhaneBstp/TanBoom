@@ -1,9 +1,8 @@
 import { getPublicDesigns } from "@/server/services/design-service";
 import { unstable_cache } from "next/cache";
 
-// کش دیتای گالری؛ به‌جای درخواست به پاکت‌بیس در هر ناوبری، هر ۶۰ ثانیه تازه‌سازی می‌شود
-const getCachedPublicDesigns = unstable_cache(getPublicDesigns, ["public-designs"], {
-  revalidate: 60,
+
+const getCachedPublicDesigns = unstable_cache(getPublicDesigns, ["public-designs"], {  revalidate: 60,
 });
 
 export default async function GalleryPage() {

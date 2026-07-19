@@ -6,7 +6,6 @@ const protectedRoutes = ["/design"];
 
 export default auth((req) => {
   const { nextUrl } = req;
-  // فقط وجود user یعنی لاگین واقعی؛ req.auth در حالت خطا هم می‌تواند آبجکت (truthy) باشد
   const isLoggedIn = Boolean(req.auth?.user);
   const isAuthRoute = authRoutes.has(nextUrl.pathname);
   const isProtectedRoute = protectedRoutes.some((route) =>

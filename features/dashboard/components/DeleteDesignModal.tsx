@@ -5,6 +5,7 @@ import { HiOutlineTrash } from "react-icons/hi2";
 import { Button } from "@/shared/components/Button";
 import { deleteDesign } from "@/server/actions/design-actions";
 import { useGlobalStore } from "@/shared/store/useGlobalStore";
+import { getActionErrorMessage } from "@/shared/utils/getActionErrorMessage";
 import { DashboardModal } from "./DashboardModal";
 
 interface DeleteDesignModalProps {
@@ -29,8 +30,14 @@ export function DeleteDesignModal({
       await deleteDesign(designId);
       showSnackbar("طرح با موفقیت حذف شد", "success");
       onClose();
-    } catch {
-      showSnackbar("خطا در حذف طرح", "error");
+    } catch (error) {
+      showSnackbar(
+        getActionErrorMessage(
+          error,
+          "حذف طرح انجام نشد. صفحه را نوسازی کنید و دوباره تلاش کنید."
+        ),
+        "error"
+      );
     } finally {
       setLoading(false);
     }

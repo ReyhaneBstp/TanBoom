@@ -44,8 +44,7 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
   }
 
   // ==================== MANNEQUIN CATEGORY ====================
-  const garmentKey =
-    payload.garmentType?.id || payload.garmentType?.label?.toLowerCase() || "";
+  const garmentKey =    payload.garmentType?.id || payload.garmentType?.label?.toLowerCase() || "";
   const category = GARMENT_MEASUREMENT_CATEGORY[garmentKey] || "upper_body";
 
   let mannequinType: string;
@@ -65,11 +64,10 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
       mannequinView = "front facing";
       break;
     case "upper_body":
-    case "upper_body":
     default:
       mannequinType = "upper-body mannequin";
       mannequinView =
-        "professional fashion product photography pose. The camera is framed VERY TIGHTLY from the neck/shoulders down to JUST BELOW the hem of the garment. The bottom of the frame must cut off cleanly and completely below the garment. ";
+        "professional fashion product photography pose, tightly framed from the neck/shoulders down to mid-thigh — zoomed in on the upper body so the garment fills most of the frame; the lower body and legs must stay mostly OUT of frame";
       break;
   }
 
@@ -119,8 +117,8 @@ Illustration, sketch, drawing, painting, anime, cartoon, CGI look, stylized art,
 - Plain white seamless background only.
 - Keep exact proportions and construction from the sketch.
 - Do not add extra details not present in the sketch.
-- CRITICAL FOR SHORT GARMENTS: For any upper-body garment that does not reach the hips (shirts, blouses, crop tops, short tops, etc.), the framing MUST be extremely tight. The image should end immediately below the hem.
-- The mannequin must appear complete within the frame — no awkward cutoffs or visible uncovered body parts.`,
+- CRITICAL FOR SHORT UPPER-BODY GARMENTS: If the garment is short (shirt, blouse, crop top, t-shirt) and any part of the mannequin's lower body is visible in the frame, NEVER leave it bare — dress it in a simple, neutral, well-matching bottom (e.g. plain tailored trousers or a plain skirt in a complementary muted color) that styles nicely with the main garment. The main garment must remain the clear focus.
+- Respect the framing defined in MANNEQUIN LOCK — never zoom out beyond it just to show more of the mannequin; no awkward cutoffs or visible uncovered body parts within the frame.`,
 
     "FINAL OUTPUT: One single, perfectly centered, front-view commercial product photograph.",
   ]
