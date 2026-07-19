@@ -67,7 +67,7 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
     default:
       mannequinType = "upper-body mannequin";
       mannequinView =
-        "professional fashion product photography pose, framed from the neck/shoulders down to mid-thigh";
+        "professional fashion product photography pose, tightly framed from the neck/shoulders down to mid-thigh — zoomed in on the upper body so the garment fills most of the frame; the lower body and legs must stay mostly OUT of frame";
       break;
   }
 
@@ -118,7 +118,7 @@ Illustration, sketch, drawing, painting, anime, cartoon, CGI look, stylized art,
 - Keep exact proportions and construction from the sketch.
 - Do not add extra details not present in the sketch.
 - CRITICAL FOR SHORT UPPER-BODY GARMENTS: If the garment is short (shirt, blouse, crop top, t-shirt) and any part of the mannequin's lower body is visible in the frame, NEVER leave it bare — dress it in a simple, neutral, well-matching bottom (e.g. plain tailored trousers or a plain skirt in a complementary muted color) that styles nicely with the main garment. The main garment must remain the clear focus.
-- The mannequin must appear complete within the frame — no awkward cutoffs or visible uncovered body parts.`,
+- Respect the framing defined in MANNEQUIN LOCK — never zoom out beyond it just to show more of the mannequin; no awkward cutoffs or visible uncovered body parts within the frame.`,
 
     "FINAL OUTPUT: One single, perfectly centered, front-view commercial product photograph.",
   ]
