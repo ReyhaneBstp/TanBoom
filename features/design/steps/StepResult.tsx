@@ -15,7 +15,7 @@ import { Button } from "@/shared/components/Button";
 import { Input } from "@/shared/components/Input";
 import { handleDownload } from "@/shared/utils/downloadFile";
 import { useGenerationStore } from "../store/generationStore";
-import { useStepStore } from "../store/stepStore";
+import { resetDesignStores } from "../store/resetDesignStores";
 import { useGenerateImage } from "../hooks/useGenerateImage";
 import {
   saveDesignToDashboard,
@@ -31,7 +31,7 @@ export function StepResult() {
   const backError = useGenerationStore((s) => s.backError);
   const { generateBackView, generateFront, isGeneratingFront, isGeneratingBack } =
     useGenerateImage();
-  const restart = useStepStore((s) => s.reset);
+  const restart = resetDesignStores;
 
   const hasBack = generatedImages.some((img) => img.id === "back");
 
