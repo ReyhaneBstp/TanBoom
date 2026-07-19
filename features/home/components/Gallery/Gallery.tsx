@@ -69,14 +69,6 @@ export function Gallery() {
               <div className="absolute bottom-0 right-0 left-0 p-4 text-white">
                 <div className="flex items-center justify-between gap-3 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                 <div className="font-bold text-sm mb-2">{item.title}</div>
-                  {/* <Motion
-                    as="button"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="bg-white/90 text-foreground text-[11px] font-black px-3 py-1.5 rounded-full hover:bg-white transition-colors"
-                  >
-                    سفارش بده
-                  </Motion> */}
                 </div>
                 <div className="text-[10px] font-medium opacity-70 mb-0.5">
                   {item.designer}

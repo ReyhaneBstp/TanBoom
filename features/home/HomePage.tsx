@@ -11,7 +11,6 @@ export default function HomePage() {
         <HowItWorks />
         <Gallery />
         <ForDesigners />
-        {/* <Testimonials /> */}
         <CTASection />
       </div>
     );

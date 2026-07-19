@@ -1,28 +1,17 @@
 "use client";
 
-import { LogoutButton } from "@/features/auth/components/LogoutButton";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { User } from "next-auth";
+import { LogoutButton } from "@/features/auth/components/LogoutButton";
+import { getInitials } from "../shared/getInitials";
 
-function getInitials(name?: string | null, email?: string | null): string {
-  if (name && name.trim().length > 0) {
-    const clean = name.trim();
-    return clean.slice(0, 2).toUpperCase();
-  }
-  if (email && email.trim().length > 0) {
-    const localPart = email.split("@")[0];
-    if (localPart) return localPart.slice(0, 2).toUpperCase();
-  }
-  return "U";
-}
-
-interface NavbarDropdownProps {
+interface DesktopUserDropdownProps {
   user: User;
 }
 
-export function NavbarDropdown({ user }: NavbarDropdownProps) {
+export function DesktopUserDropdown({ user }: DesktopUserDropdownProps) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -31,7 +20,10 @@ export function NavbarDropdown({ user }: NavbarDropdownProps) {
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     };

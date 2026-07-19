@@ -1,12 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { HiOutlineArrowPath } from "react-icons/hi2";
+import {
+  HiOutlineArrowPath,
+  HiOutlineCheckCircle,
+  HiOutlineDevicePhoneMobile,
+} from "react-icons/hi2";
 import { Button } from "@/shared/components/Button";
 import { Label } from "@/shared/components/Label";
 import { Input } from "@/shared/components/Input";
 import { createOrder } from "@/server/actions/design-actions";
 import { useGlobalStore } from "@/shared/store/useGlobalStore";
+import { getActionErrorMessage } from "@/shared/utils/getActionErrorMessage";
 import {
   GARMENT_MEASUREMENT_CATEGORY,
   MEASUREMENT_FIELDS_BY_CATEGORY,
@@ -30,6 +35,7 @@ export function OrderModal({ designId, onClose }: OrderModalProps) {
   const [notes, setNotes] = useState("");
   const [measurements, setMeasurements] = useState<BodyMeasurements>({});
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const { showSnackbar } = useGlobalStore();
 
   const garmentTypeId = useGarmentStore((s) => s.garmentTypeId);
@@ -63,6 +69,8 @@ export function OrderModal({ designId, onClose }: OrderModalProps) {
       return;
     }
 
+    if (loading) return;
+
     setLoading(true);
     try {
       await createOrder({
@@ -72,14 +80,56 @@ export function OrderModal({ designId, onClose }: OrderModalProps) {
         notes: notes || undefined,
         measurements,
       });
-      showSnackbar("سفارش شما با موفقیت ثبت شد", "success");
-      onClose();
+      setSubmitted(true);
     } catch (error: any) {
-      showSnackbar("خطا در ثبت سفارش", "error");
+      showSnackbar(
+        getActionErrorMessage(
+          error,
+          "ثبت سفارش انجام نشد. لطفاً دوباره تلاش کنید؛ اگر مشکل ادامه داشت با پشتیبانی تماس بگیرید."
+        ),
+        "error"
+      );
     } finally {
       setLoading(false);
     }
   };
+
+  if (submitted) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-lg text-center">
+          <span className="mx-auto flex size-16 items-center justify-center rounded-full bg-emerald-100">
+            <HiOutlineCheckCircle className="size-9 text-emerald-500" />
+          </span>
+          <h2 className="mt-4 text-lg font-bold text-foreground">
+            سفارش شما با موفقیت ثبت شد
+          </h2>
+          <div className="mt-4 rounded-2xl border border-primary-100 bg-primary-50/40 p-4 text-right">
+            <p className="text-sm leading-7 text-foreground/85">
+              چون قیمت هر لباس به طرح، پارچه و جزئیات دوخت بستگی دارد، تعیین
+              قیمت توسط خیاط انجام می‌شود. طی{" "}
+              <span className="font-bold">۲۴ ساعت آینده</span> قیمت سفارش شما
+              مشخص می‌شود و{" "}
+              <span className="font-bold">
+                لینک پرداخت به‌همراه اطلاعات خیاط و راه ارتباطی با او
+              </span>{" "}
+              برایتان پیامک می‌شود تا سفارشتان را کامل کنید.
+            </p>
+            <p className="mt-3 flex items-center justify-end gap-1.5 text-xs text-muted-foreground">
+              منتظر پیامک ما باشید
+              <HiOutlineDevicePhoneMobile className="size-4" />
+            </p>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            وضعیت سفارش را هر لحظه می‌توانید از داشبورد پیگیری کنید.
+          </p>
+          <Button type="button" onClick={onClose} className="mt-5 w-full">
+            متوجه شدم
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
@@ -149,6 +199,11 @@ export function OrderModal({ designId, onClose }: OrderModalProps) {
               rows={3}
             />
           </div>
+
+          <p className="rounded-xl bg-primary-50/60 p-3 text-xs leading-6 text-muted-foreground">
+            بعد از ثبت سفارش، قیمت طی ۲۴ ساعت توسط خیاط تعیین می‌شود و لینک
+            پرداخت و اطلاعات خیاط برایتان پیامک خواهد شد.
+          </p>
 
           <div className="flex justify-end gap-3 mt-6">
             <Button type="button" variant="ghost" onClick={onClose}>

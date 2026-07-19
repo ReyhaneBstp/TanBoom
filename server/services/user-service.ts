@@ -25,7 +25,7 @@ export async function findUserByEmail(email: string) {
 export async function createUser(data: RegisterInput) {
   const pb = await getPocketBase();
 
-  // پاکت‌بیس خودش رمز عبور را هش می‌کند
+
   const user = await pb.collection("users").create({
     name: data.name.trim(),
     email: data.email.toLowerCase(),
@@ -45,7 +45,6 @@ export async function createUser(data: RegisterInput) {
 }
 
 export async function authenticateUser(email: string, password: string) {
-  // کلاینت جداگانه تا وضعیت لاگین کاربر با کلاینت سرویس قاطی نشود
   const pb = createPocketBaseClient();
 
   try {

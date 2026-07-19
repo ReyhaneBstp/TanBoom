@@ -13,6 +13,7 @@ import {
 import type { DesignRecord } from "@/server/services/design-service";
 import { setDesignVisibility } from "@/server/actions/design-actions";
 import { useGlobalStore } from "@/shared/store/useGlobalStore";
+import { getActionErrorMessage } from "@/shared/utils/getActionErrorMessage";
 import { ease } from "@/shared/definitions/motion";
 import { formatPersianDate } from "../definitions/order-status";
 import { RenameDesignModal } from "./RenameDesignModal";
@@ -39,8 +40,14 @@ export function DesignCard({ design, index }: DesignCardProps) {
           : "طرح از گالری عمومی برداشته شد",
         "success"
       );
-    } catch {
-      showSnackbar("خطا در تغییر وضعیت انتشار", "error");
+    } catch (error) {
+      showSnackbar(
+        getActionErrorMessage(
+          error,
+          "تغییر وضعیت انتشار انجام نشد. لطفاً دوباره تلاش کنید."
+        ),
+        "error"
+      );
     } finally {
       setIsToggling(false);
     }

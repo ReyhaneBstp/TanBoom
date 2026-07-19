@@ -6,6 +6,7 @@ import { Button } from "@/shared/components/Button";
 import { Input } from "@/shared/components/Input";
 import { renameDesign } from "@/server/actions/design-actions";
 import { useGlobalStore } from "@/shared/store/useGlobalStore";
+import { getActionErrorMessage } from "@/shared/utils/getActionErrorMessage";
 import { DashboardModal } from "./DashboardModal";
 
 interface RenameDesignModalProps {
@@ -36,8 +37,14 @@ export function RenameDesignModal({
       await renameDesign(designId, title);
       showSnackbar("نام طرح با موفقیت تغییر کرد", "success");
       onClose();
-    } catch {
-      showSnackbar("خطا در تغییر نام طرح", "error");
+    } catch (error) {
+      showSnackbar(
+        getActionErrorMessage(
+          error,
+          "تغییر نام طرح انجام نشد. لطفاً دوباره تلاش کنید."
+        ),
+        "error"
+      );
     } finally {
       setLoading(false);
     }
