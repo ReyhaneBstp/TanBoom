@@ -22,7 +22,7 @@ export function StepFabric() {
   const removeCustomFabric = useFabricStore((s) => s.removeCustomFabric);
   const toggleFabric = useFabricStore((s) => s.toggleFabric);
 
-  const [colorHex, setColorHex] = useState("#c17b5c");
+  const [colorHex, setColorHex] = useState("#ff0000");
   const [materialInput, setMaterialInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -79,7 +79,7 @@ export function StepFabric() {
   const handleAdd = () => {
     if (!canAdd) return;
     addCustomFabric(colorHex, materialInput.trim());
-    setColorHex("#c17b5c");
+    setColorHex("#ff0000");
     setMaterialInput("");
     setShowSuggestions(false);
   };

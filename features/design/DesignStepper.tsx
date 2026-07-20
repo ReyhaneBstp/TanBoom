@@ -37,13 +37,6 @@ export function DesignStepper() {
 
   const isGenerating = isGeneratingFront || isGeneratingBack;
 
-  const handleNextClick = () => {
-    if (currentStepId === STEP_IDS.SKETCH) {
-      useGenerationStore.getState().reset();
-    }
-    handleGoNext();
-  };
-
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -118,7 +111,7 @@ export function DesignStepper() {
           {!isLastStep && (
             <Button
               type="button"
-              onClick={handleNextClick}
+              onClick={handleGoNext}
               disabled={!canGoNext || isGenerating}
             >
               {currentStepId === STEP_IDS.SKETCH
