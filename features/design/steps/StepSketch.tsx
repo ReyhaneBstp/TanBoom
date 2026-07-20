@@ -137,7 +137,7 @@ export function StepSketch() {
                     value={fabricAssignments[fabric!.id] || ""}
                     onChange={(e) => setFabricAssignment(fabric!.id, e.target.value)}
                     placeholder="مثلاً: یقه"
-                    className="mt-1 w-full rounded-md border border-primary-100/70 bg-white/60 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
+                    className="mt-1  px-2 py-1 text-xs placeholder:text-muted-foreground/60"
                   />
                 </div>
               </div>
@@ -171,7 +171,7 @@ export function StepSketch() {
                     value={accessoryPlacements[accessory!.id] || ""}
                     onChange={(e) => setAccessoryPlacement(accessory!.id, e.target.value)}
                     placeholder="مثلاً: یقه و حاشیه آستین"
-                    className="mt-1 w-full rounded-md border border-primary-100/70 bg-white/60 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
+                    className="mt-1 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
                   />
                 </div>
               </div>
