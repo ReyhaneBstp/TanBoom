@@ -37,6 +37,13 @@ export function DesignStepper() {
 
   const isGenerating = isGeneratingFront || isGeneratingBack;
 
+  const handleNextClick = () => {
+    if (currentStepId === STEP_IDS.SKETCH) {
+      useGenerationStore.getState().reset();
+    }
+    handleGoNext();
+  };
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -97,21 +104,21 @@ export function DesignStepper() {
           {currentStepId === STEP_IDS.RESULT && <StepResult />}
         </CardContent>
 
-        {!isLastStep && (
-          <div className="flex flex-col-reverse gap-3 border-t border-white/60 bg-white/35 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={handleGoBack}
-              disabled={!canGoBack}
-            >
-              <HiOutlineArrowRight className="size-4" />
-              بازگشت
-            </Button>
+        <div className="flex flex-col-reverse gap-3 border-t border-white/60 bg-white/35 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={handleGoBack}
+            disabled={!canGoBack || isGenerating}
+          >
+            <HiOutlineArrowRight className="size-4" />
+            بازگشت
+          </Button>
 
+          {!isLastStep && (
             <Button
               type="button"
-              onClick={handleGoNext}
+              onClick={handleNextClick}
               disabled={!canGoNext || isGenerating}
             >
               {currentStepId === STEP_IDS.SKETCH
@@ -120,8 +127,8 @@ export function DesignStepper() {
 
               <HiOutlineArrowLeft className="size-4" />
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </Card>
     </div>
   );

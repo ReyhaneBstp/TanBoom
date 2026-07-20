@@ -5,14 +5,17 @@ import { motion } from "motion/react";
 import { User } from "next-auth";
 import { NavLinks } from "../shared/NavLinks";
 import { MobileUserSection } from "./MobileUserSection";
+import { usePathname } from "next/navigation";
 
 interface MobileMenuProps {
   user: User | null | undefined;
   onClose: () => void;
 }
 
-
 export function MobileMenu({ user, onClose }: MobileMenuProps) {
+  const pathname = usePathname();
+  const isDesignPage = pathname === "/design";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -8 }}
@@ -33,17 +36,19 @@ export function MobileMenu({ user, onClose }: MobileMenuProps) {
           onClick={onClose}
           className="text-sm font-medium text-foreground hover:text-accent transition-colors"
         >
-          ورود
+          ثبت‌نام / ورود{" "}
         </Link>
       )}
 
-      <Link
-        href="/design"
-        onClick={onClose}
-        className="text-sm font-bold text-accent hover:text-accent/80 transition-colors"
-      >
-        شروع طراحی
-      </Link>
+      {!isDesignPage && (
+        <Link
+          href="/design"
+          onClick={onClose}
+          className="text-sm font-bold text-accent hover:text-accent/80 transition-colors"
+        >
+          شروع طراحی
+        </Link>
+      )}
     </motion.div>
   );
 }

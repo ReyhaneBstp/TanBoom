@@ -2,8 +2,15 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
+import { usePathname } from "next/navigation";
+
 
 export function DesignCta() {
+    const pathname = usePathname();
+    const isDesignPage = pathname === "/design";
+
+  if (isDesignPage) return null;
+
   return (
     <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
       <Link
