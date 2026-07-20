@@ -15,6 +15,10 @@ import { setDesignVisibility } from "@/server/actions/design-actions";
 import { useGlobalStore } from "@/shared/store/useGlobalStore";
 import { getActionErrorMessage } from "@/shared/utils/getActionErrorMessage";
 import { ease } from "@/shared/definitions/motion";
+import {
+  DesignLightbox,
+  type LightboxImage,
+} from "@/shared/components/DesignLightbox";
 import { formatPersianDate } from "../definitions/order-status";
 import { RenameDesignModal } from "./RenameDesignModal";
 import { DeleteDesignModal } from "./DeleteDesignModal";
@@ -28,7 +32,15 @@ export function DesignCard({ design, index }: DesignCardProps) {
   const [isToggling, setIsToggling] = useState(false);
   const [showRename, setShowRename] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [showLightbox, setShowLightbox] = useState(false);
   const { showSnackbar } = useGlobalStore();
+
+  const lightboxImages: LightboxImage[] = [
+    { src: design.frontImage, label: "نمای جلو" },
+    ...(design.backImage
+      ? [{ src: design.backImage, label: "نمای پشت" }]
+      : []),
+  ];
 
   const handleToggleVisibility = async () => {
     setIsToggling(true);
@@ -61,11 +73,18 @@ export function DesignCard({ design, index }: DesignCardProps) {
       className="group overflow-hidden rounded-[2rem] border border-white/80 bg-white/55 p-3 shadow-soft-rose backdrop-blur-xl transition-shadow hover:shadow-glass"
     >
       <div className="relative overflow-hidden rounded-[1.55rem]">
-        <img
-          src={design.frontImage}
-          alt={design.title}
-          className="aspect-[4/5] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-        />
+        <button
+          type="button"
+          onClick={() => setShowLightbox(true)}
+          aria-label={`نمایش بزرگ‌تر ${design.title}`}
+          className="block w-full"
+        >
+          <img
+            src={design.frontImage}
+            alt={design.title}
+            className="aspect-[4/5] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+          />
+        </button>
 
         <span
           className={`absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold backdrop-blur-md ${
@@ -137,6 +156,12 @@ export function DesignCard({ design, index }: DesignCardProps) {
         </div>
       </div>
 
+      <DesignLightbox
+        open={showLightbox}
+        title={design.title}
+        images={lightboxImages}
+        onClose={() => setShowLightbox(false)}
+      />
       <RenameDesignModal
         open={showRename}
         designId={design.id}
