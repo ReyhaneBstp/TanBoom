@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LuInstagram, LuScissors } from "react-icons/lu";
+import { LuScissors } from "react-icons/lu";
 
 export default function Footer() {
     return (
@@ -16,11 +16,6 @@ export default function Footer() {
               <p className="text-muted-foreground text-sm leading-relaxed max-w-[260px] mb-6">
                 پلتفرم طراحی لباس سفارشی ایران. از تخیل تا واقعیت.
               </p>
-              <div className="flex items-center gap-3">
-                <button className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center hover:border-accent transition-colors">
-                  <LuInstagram size={15} className="text-muted-foreground" />
-                </button>
-              </div>
             </div>
             {[
               {

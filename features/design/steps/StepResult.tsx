@@ -29,8 +29,12 @@ export function StepResult() {
   const generatedImages = useGenerationStore((s) => s.generatedImages);
   const frontError = useGenerationStore((s) => s.frontError);
   const backError = useGenerationStore((s) => s.backError);
-  const { generateBackView, generateFront, isGeneratingFront, isGeneratingBack } =
-    useGenerateImage();
+  const {
+    generateBackView,
+    generateFront,
+    isGeneratingFront,
+    isGeneratingBack,
+  } = useGenerateImage();
   const restart = resetDesignStores;
 
   const hasBack = generatedImages.some((img) => img.id === "back");
@@ -60,7 +64,7 @@ export function StepResult() {
     showLoading(
       action === "dashboard"
         ? "در حال ذخیره طرح در داشبورد..."
-        : "در حال انتشار طرح در گالری..."
+        : "در حال انتشار طرح در گالری...",
     );
     const title = designTitle.trim() || "طرح جدید";
     try {
@@ -87,9 +91,9 @@ export function StepResult() {
           error,
           action === "dashboard"
             ? "ذخیره‌ی طرح انجام نشد. لطفاً دوباره تلاش کنید؛ اگر مشکل ادامه داشت تصویر را دانلود و بعداً ذخیره کنید."
-            : "انتشار طرح انجام نشد. لطفاً دوباره تلاش کنید."
+            : "انتشار طرح انجام نشد. لطفاً دوباره تلاش کنید.",
         ),
-        "error"
+        "error",
       );
     } finally {
       hideLoading();
@@ -113,9 +117,9 @@ export function StepResult() {
         showSnackbar(
           getActionErrorMessage(
             error,
-            "آماده‌سازی سفارش انجام نشد. لطفاً دوباره روی «ثبت سفارش دوخت» بزنید."
+            "آماده‌سازی سفارش انجام نشد. لطفاً دوباره روی «ثبت سفارش دوخت» بزنید.",
           ),
-          "error"
+          "error",
         );
       } finally {
         hideLoading();
@@ -251,10 +255,23 @@ export function StepResult() {
 
       {frontImage && (
         <div className="space-y-5 rounded-[2rem] border border-white/80 bg-white/45 p-5 backdrop-blur-xl">
-          <h3 className="flex items-center gap-2 text-sm font-semibold">
-            <HiOutlineSparkles className="size-5 text-primary-500" />
-            مدیریت طرح
-          </h3>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="flex items-center gap-2 text-sm font-semibold">
+              <HiOutlineSparkles className="size-5 text-primary-500" />
+              مدیریت طرح
+            </h3>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={restart}
+              className="gap-1.5"
+            >
+              <HiOutlineArrowPath className="size-4" />
+              طراحی جدید
+            </Button>
+          </div>
 
           <div className="space-y-2">
             <label
@@ -325,22 +342,16 @@ export function StepResult() {
               </span>
             </button>
           </div>
-
-          <Button type="button" variant="ghost" onClick={restart} className="mt-1">
-            طراحی جدید
-          </Button>
         </div>
       )}
-
 
       {!frontImage && frontError && (
         <div className="flex justify-center">
           <Button type="button" variant="ghost" onClick={restart}>
-            بازگشت و طراحی جدید
+            شروع مجدد
           </Button>
         </div>
       )}
-
 
       {showOrderModal && currentDesignId && (
         <OrderModal
