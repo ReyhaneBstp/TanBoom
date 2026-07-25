@@ -43,6 +43,22 @@ export function buildEnhancedPrompt(payload: EnhancedPromptPayload): string {
     });
   }
 
+  // ==================== GARMENT PARTS ====================
+  const PART_TYPE_PROMPT_LABEL: Record<string, string> = {
+    base: "Base silhouette",
+    neckline: "Neckline / collar",
+    sleeve: "Sleeve",
+  };
+
+  const partLines: string[] = [];
+  if (payload.selectedParts) {
+    (["base", "neckline", "sleeve"] as const).forEach((partType) => {
+      const part = payload.selectedParts?.[partType];
+      if (!part) return;
+      partLines.push(`- ${PART_TYPE_PROMPT_LABEL[partType]}: ${part.name}.`);
+    });
+  }
+
   // ==================== MANNEQUIN CATEGORY ====================
   const garmentKey =    payload.garmentType?.id || payload.garmentType?.label?.toLowerCase() || "";
   const category = GARMENT_MEASUREMENT_CATEGORY[garmentKey] || "upper_body";
@@ -140,7 +156,14 @@ Illustration, sketch, drawing, painting, anime, cartoon, CGI look, stylized art,
       ? `\nACCESSORIES & DECORATIVE ELEMENTS:\n${accessoryLines.join("\n")}`
       : "";
 
-  return [basePrompt, measurementBlock, assignmentBlock, accessoryBlock]
+  const partsBlock =
+    partLines.length > 0
+      ? `\nGARMENT PARTS (predefined structural choices — follow exactly):\n${partLines.join(
+          "\n"
+        )}`
+      : "";
+
+  return [basePrompt, measurementBlock, assignmentBlock, accessoryBlock, partsBlock]
     .filter(Boolean)
     .join("\n");
 }

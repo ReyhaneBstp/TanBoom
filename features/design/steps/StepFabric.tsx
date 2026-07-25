@@ -18,9 +18,15 @@ import { useFabricStore } from "../store/fabricStore";
 export function StepFabric() {
   const customFabrics = useFabricStore((s) => s.customFabrics) as SolidFabric[];
   const selectedFabricIds = useFabricStore((s) => s.selectedFabricIds);
+  const fabricAssignments = useFabricStore((s) => s.fabricAssignments);
+  const setFabricAssignment = useFabricStore((s) => s.setFabricAssignment);
   const addCustomFabric = useFabricStore((s) => s.addCustomFabric);
   const removeCustomFabric = useFabricStore((s) => s.removeCustomFabric);
   const toggleFabric = useFabricStore((s) => s.toggleFabric);
+
+  const selectedFabricsData = selectedFabricIds
+    .map((id) => customFabrics.find((f) => f.id === id))
+    .filter(Boolean) as SolidFabric[];
 
   const [colorHex, setColorHex] = useState("#ff0000");
   const [materialInput, setMaterialInput] = useState("");
@@ -248,6 +254,47 @@ export function StepFabric() {
               </button>
             );
           })}
+        </div>
+      )}
+
+      {selectedFabricsData.length > 0 && (
+        <div className="rounded-2xl border border-white/70 bg-white/45 p-3 backdrop-blur-xl">
+          <h3 className="text-sm font-medium text-foreground/80">
+            محل استفاده هر پارچه
+          </h3>
+          <p className="mt-0.5 mb-3 text-xs text-muted-foreground">
+            برای هر پارچه مشخص کن که در کدام قسمت لباس استفاده می‌شود (تنه،
+            آستین، یقه و…).
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {selectedFabricsData.map((fabric) => (
+              <div
+                key={fabric.id}
+                className="flex items-start gap-2.5 rounded-xl bg-white/50 p-2"
+              >
+                <div className="flex-shrink-0 pt-0.5">
+                  <span
+                    className="flex size-8 items-center justify-center rounded-full border border-white/70 shadow-inner"
+                    style={{ backgroundColor: fabric.hex }}
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="block truncate text-xs font-semibold text-foreground">
+                    {fabric.label}
+                  </span>
+                  <Input
+                    type="text"
+                    value={fabricAssignments[fabric.id] || ""}
+                    onChange={(e) =>
+                      setFabricAssignment(fabric.id, e.target.value)
+                    }
+                    placeholder="مثلاً: تنه"
+                    className="mt-1 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

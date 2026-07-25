@@ -11,12 +11,12 @@ import { useStepStore } from "../store/stepStore";
 import { useGenderStore } from "../store/genderStore";
 import { useGarmentStore } from "../store/garmentStore";
 import { useFabricStore } from "../store/fabricStore";
-import { useSketchStore } from "../store/sketchStore";
 import { useGenerationStore } from "../store/generationStore";
 import { useAccessoryStore } from "../store/accessoryStore";
 import { useGlobalStore } from "@/shared/store/useGlobalStore";
 
 const OPTIONAL_STEPS: readonly StepId[] = [
+  STEP_IDS.PARTS,
   STEP_IDS.ACCESSORIES,
 ];
 
@@ -26,7 +26,6 @@ export function useDesignStepper() {
   const garmentTypeId = useGarmentStore((s) => s.garmentTypeId);
   const selectedFabricIds = useFabricStore((s) => s.selectedFabricIds);
   const fabricAssignments = useFabricStore((s) => s.fabricAssignments);
-  const sketch = useSketchStore((s) => s.sketch);
   const generatedImages = useGenerationStore((s) => s.generatedImages);
   const selectedAccessories = useAccessoryStore((s) => s.selectedAccessories);
   const accessoryPlacements = useAccessoryStore((s) => s.accessoryPlacements);
@@ -39,37 +38,25 @@ export function useDesignStepper() {
     [currentStepId]
   );
 
-  const sketchStepComplete = useMemo(
-    () =>
-      Boolean(sketch.file) &&
-      sketch.description.trim().length > 8 &&
-      selectedFabricIds.every((id) => fabricAssignments[id]?.trim()) &&
-      selectedAccessories.every((id) => accessoryPlacements[id]?.trim()),
-    [
-      sketch.file,
-      sketch.description,
-      selectedFabricIds,
-      fabricAssignments,
-      selectedAccessories,
-      accessoryPlacements,
-    ]
-  );
-
   const completedSteps = useMemo(
     () =>
       [
         Boolean(gender && garmentTypeId),
-        selectedFabricIds.length > 0,
-        selectedAccessories.length > 0,
-        sketchStepComplete,
+        true,
+        selectedFabricIds.length > 0 &&
+          selectedFabricIds.every((id) => fabricAssignments[id]?.trim()),
+        selectedAccessories.length > 0 &&
+          selectedAccessories.every((id) => accessoryPlacements[id]?.trim()),
+        true,
         generatedImages.length > 0,
       ] as const,
     [
       gender,
       garmentTypeId,
       selectedFabricIds,
+      fabricAssignments,
       selectedAccessories,
-      sketchStepComplete,
+      accessoryPlacements,
       generatedImages,
     ]
   );
@@ -98,24 +85,40 @@ export function useDesignStepper() {
 
   const currentStepInfo = stepsInfo[currentStepId];
 
-  const getSketchStepError = () => {
-    if (!sketch.file) return "لطفاً تصویر اسکچ طرح خود را بارگذاری کنید.";
-    if (sketch.description.trim().length <= 8)
-      return "لطفاً توضیحات طراحی را کامل‌تر بنویسید (حداقل چند کلمه).";
+  const getFabricStepError = () => {
+    if (selectedFabricIds.length === 0)
+      return "لطفاً حداقل یک پارچه انتخاب کنید.";
     if (!selectedFabricIds.every((id) => fabricAssignments[id]?.trim()))
       return "لطفاً محل استفاده همه پارچه‌های انتخاب‌شده را مشخص کنید.";
+    return null;
+  };
+
+  const getAccessoryStepError = () => {
+    // اکسسوری اختیاری است؛ فقط اگر انتخاب شده، محل استفاده لازم است.
     if (!selectedAccessories.every((id) => accessoryPlacements[id]?.trim()))
       return "لطفاً محل استفاده همه اکسسوری‌های انتخاب‌شده را مشخص کنید.";
     return null;
   };
 
   const handleGoNext = async () => {
-    if (currentStepId === STEP_IDS.SKETCH) {
-      const error = getSketchStepError();
+    if (currentStepId === STEP_IDS.FABRIC) {
+      const error = getFabricStepError();
       if (error) {
         showSnackbar(error, "error");
         return;
       }
+    }
+
+    if (currentStepId === STEP_IDS.ACCESSORIES) {
+      const error = getAccessoryStepError();
+      if (error) {
+        showSnackbar(error, "error");
+        return;
+      }
+    }
+
+    if (currentStepId === STEP_IDS.SKETCH) {
+      // اسکچ و توضیحات هر دو اختیاری‌اند؛ مستقیم به تولید تصویر می‌رویم.
       useGenerationStore.getState().reset();
     }
 

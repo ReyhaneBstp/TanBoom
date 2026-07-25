@@ -3,11 +3,20 @@
 import { HiOutlineCheck, HiOutlineSparkles } from "react-icons/hi2";
 import { ACCESSORIES } from "../definitions/design-options";
 import { cn } from "@/shared/utils/mergeClasses";
+import { Input } from "@/shared/components/Input";
 import { useAccessoryStore } from "../store/accessoryStore";
 
 export function StepAccessories() {
   const selectedAccessories = useAccessoryStore((s) => s.selectedAccessories);
+  const accessoryPlacements = useAccessoryStore((s) => s.accessoryPlacements);
   const toggleAccessory = useAccessoryStore((s) => s.toggleAccessory);
+  const setAccessoryPlacement = useAccessoryStore(
+    (s) => s.setAccessoryPlacement
+  );
+
+  const selectedAccessoriesData = selectedAccessories
+    .map((id) => ACCESSORIES.find((a) => a.id === id))
+    .filter(Boolean);
 
   return (
     <div className="flex flex-col gap-6 min-h-[22rem]">
@@ -48,6 +57,43 @@ export function StepAccessories() {
           );
         })}
       </div>
+
+      {selectedAccessoriesData.length > 0 && (
+        <div className="rounded-2xl border border-white/70 bg-white/45 p-3 backdrop-blur-xl">
+          <h3 className="text-sm font-medium text-foreground/80">
+            محل استفاده هر اکسسوری
+          </h3>
+          <p className="mt-0.5 mb-3 text-xs text-muted-foreground">
+            برای هر اکسسوری مشخص کن که روی کدام قسمت لباس قرار می‌گیرد.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {selectedAccessoriesData.map((accessory) => (
+              <div
+                key={accessory!.id}
+                className="flex items-start gap-2.5 rounded-xl bg-white/50 p-2"
+              >
+                <div className="flex-shrink-0 pt-0.5">
+                  <HiOutlineSparkles className="text-primary-400" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="block truncate text-xs font-semibold text-foreground">
+                    {accessory!.label}
+                  </span>
+                  <Input
+                    type="text"
+                    value={accessoryPlacements[accessory!.id] || ""}
+                    onChange={(e) =>
+                      setAccessoryPlacement(accessory!.id, e.target.value)
+                    }
+                    placeholder="مثلاً: یقه و حاشیه آستین"
+                    className="mt-1 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

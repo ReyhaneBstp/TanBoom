@@ -2,43 +2,16 @@
 "use client";
 
 import type { DragEvent } from "react";
-import { useMemo } from "react";
-import { HiOutlineArrowUpTray, HiOutlinePhoto, HiOutlineSparkles } from "react-icons/hi2";
+import { HiOutlineArrowUpTray, HiOutlinePhoto } from "react-icons/hi2";
 import { Textarea } from "@/shared/components/Textarea";
-import type { SolidFabric } from "@/features/design/types/design";
-import { ACCESSORIES } from "@/features/design/definitions/design-options";
 import { cn } from "@/shared/utils/mergeClasses";
-import { Input } from "@/shared/components/Input";
 import { useSketchStore } from "../store/sketchStore";
-import { useFabricStore } from "../store/fabricStore";
-import { useAccessoryStore } from "../store/accessoryStore";
 
 export function StepSketch() {
   const previewUrl = useSketchStore((s) => s.sketch.previewUrl);
   const description = useSketchStore((s) => s.sketch.description);
   const updateSketchFile = useSketchStore((s) => s.updateSketchFile);
   const updateDescription = useSketchStore((s) => s.updateDescription);
-
-  const selectedFabricIds = useFabricStore((s) => s.selectedFabricIds);
-  const customFabrics = useFabricStore((s) => s.customFabrics) as SolidFabric[];
-  const fabricAssignments = useFabricStore((s) => s.fabricAssignments);
-  const setFabricAssignment = useFabricStore((s) => s.setFabricAssignment);
-
-  const selectedAccessories = useAccessoryStore((s) => s.selectedAccessories);
-  const accessoryPlacements = useAccessoryStore((s) => s.accessoryPlacements);
-  const setAccessoryPlacement = useAccessoryStore((s) => s.setAccessoryPlacement);
-
-  const allFabrics = useMemo(() => [...customFabrics], [customFabrics]);
-
-  const selectedFabricsData = useMemo(
-    () => selectedFabricIds.map((id) => allFabrics.find((f) => f.id === id)).filter(Boolean),
-    [allFabrics, selectedFabricIds]
-  );
-
-  const selectedAccessoriesData = useMemo(
-    () => selectedAccessories.map((id) => ACCESSORIES.find((a) => a.id === id)).filter(Boolean),
-    [selectedAccessories]
-  );
 
   const handleDrop = (event: DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
@@ -86,7 +59,7 @@ export function StepSketch() {
                 اسکچ دستی را اینجا رها کنید
               </span>
               <span className="mt-1 max-w-xs text-xs leading-5 text-muted-foreground">
-                یا برای انتخاب فایل کلیک کنید
+                اختیاری — یا برای انتخاب فایل کلیک کنید
               </span>
             </>
           )}
@@ -97,7 +70,8 @@ export function StepSketch() {
               توضیحات طراحی
             </h3>
             <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
-              جزئیات دوخت، یقه، آستین و هرچیزی که برای شفاف‌تر شدن طرحت لازمه بدونیم رو بنویس.
+              اختیاری — جزئیات دوخت، یقه، آستین و هرچیزی که برای شفاف‌تر شدن طرحت
+              لازمه بدونیم رو بنویس.
             </p>
           </div>
           <Textarea
@@ -108,77 +82,6 @@ export function StepSketch() {
           />
         </div>
       </div>
-      {selectedFabricsData.length > 0 && (
-        <div className="rounded-2xl border border-white/70 bg-white/45 p-3 backdrop-blur-xl">
-          <h3 className="text-sm font-medium text-foreground/80">
-            پارچه‌های انتخاب‌شده و محل استفاده
-          </h3>
-          <p className="mt-0.5 mb-3 text-xs text-muted-foreground">
-            برای هر پارچه محل استفاده در لباس را مشخص کنید.
-          </p>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {selectedFabricsData.map((fabric) => (
-              <div
-                key={fabric!.id}
-                className="flex items-start gap-2.5 rounded-xl bg-white/50 p-2"
-              >
-                <div className="flex-shrink-0 pt-0.5">
-                  <span
-                    className="flex size-8 items-center justify-center rounded-full border border-white/70 shadow-inner"
-                    style={{ backgroundColor: (fabric as SolidFabric).hex }}
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <span className="block truncate text-xs font-semibold text-foreground">
-                    {fabric!.label}
-                  </span>
-                  <Input
-                    type="text"
-                    value={fabricAssignments[fabric!.id] || ""}
-                    onChange={(e) => setFabricAssignment(fabric!.id, e.target.value)}
-                    placeholder="مثلاً: یقه"
-                    className="mt-1  px-2 py-1 text-xs placeholder:text-muted-foreground/60"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-      {selectedAccessoriesData.length > 0 && (
-        <div className="rounded-2xl border border-white/70 bg-white/45 p-3 backdrop-blur-xl">
-          <h3 className="text-sm font-medium text-foreground/80">
-            اکسسوری‌های انتخاب‌شده و محل استفاده
-          </h3>
-          <p className="mt-0.5 mb-3 text-xs text-muted-foreground">
-            برای هر اکسسوری محل استفاده در لباس را مشخص کنید.
-          </p>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {selectedAccessoriesData.map((accessory) => (
-              <div
-                key={accessory!.id}
-                className="flex items-start gap-2.5 rounded-xl bg-white/50 p-2"
-              >
-                <div className="flex-shrink-0 pt-0.5">
-                  <HiOutlineSparkles className="text-primary-400" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <span className="block truncate text-xs font-semibold text-foreground">
-                    {accessory!.label}
-                  </span>
-                  <Input
-                    type="text"
-                    value={accessoryPlacements[accessory!.id] || ""}
-                    onChange={(e) => setAccessoryPlacement(accessory!.id, e.target.value)}
-                    placeholder="مثلاً: یقه و حاشیه آستین"
-                    className="mt-1 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -12,9 +12,10 @@ import {
 } from "@/shared/components/Card";
 import { Button } from "@/shared/components/Button";
 import { useDesignStepper } from "./hooks/useDesignStepper";
-import { STEP_IDS } from "./definitions/design-steps";
+import { STEP_IDS, STEPPER_STEPS } from "./definitions/design-steps";
 import { useGenerationStore } from "./store/generationStore";
 import { StepGender } from "./steps/StepGender";
+import { StepGarmentParts } from "./steps/StepGarmentParts";
 import { StepFabric } from "./steps/StepFabric";
 import { StepAccessories } from "./steps/StepAccessories";
 import { StepSketch } from "./steps/StepSketch";
@@ -72,7 +73,7 @@ export function DesignStepper() {
             <div className="mx-3 h-px flex-1 rounded-full bg-primary-100/40" />
 
             <span className="w-fit whitespace-nowrap rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-              مرحله {currentStepIndex + 1} از 5
+              مرحله {currentStepIndex + 1} از {STEPPER_STEPS.length}
             </span>
           </div>
 
@@ -91,6 +92,7 @@ export function DesignStepper() {
 
         <CardContent className="min-h-[28rem] pt-5 sm:pt-6">
           {currentStepId === STEP_IDS.GENDER && <StepGender />}
+          {currentStepId === STEP_IDS.PARTS && <StepGarmentParts />}
           {currentStepId === STEP_IDS.FABRIC && <StepFabric />}
           {currentStepId === STEP_IDS.ACCESSORIES && <StepAccessories />}
           {currentStepId === STEP_IDS.SKETCH && <StepSketch />}

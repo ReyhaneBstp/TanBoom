@@ -1,5 +1,6 @@
 export const STEP_IDS = {
   GENDER: "gender",
+  PARTS: "parts",
   FABRIC: "fabric",
   ACCESSORIES: "accessories",
   SKETCH: "sketch",
@@ -10,6 +11,7 @@ export type StepId = (typeof STEP_IDS)[keyof typeof STEP_IDS];
 
 export const STEPPER_STEPS = [
   { id: STEP_IDS.GENDER, label: "انتخاب نوع" },
+  { id: STEP_IDS.PARTS, label: "بخش‌های لباس" },
   { id: STEP_IDS.FABRIC, label: "انتخاب پارچه" },
   { id: STEP_IDS.ACCESSORIES, label: "اکسسوری" },
   { id: STEP_IDS.SKETCH, label: "طراحی" },
@@ -21,6 +23,12 @@ export const stepsInfo: Record<StepId, { eyebrow: string; title: string; descrip
     eyebrow: "شروع انتخاب",
     title: "چه لباسی مد نظرته؟",
     description: "جنسیت و نوع لباس رو مشخص کن تا مسیر طراحی دقیق‌تر بشه..",
+  },
+  [STEP_IDS.PARTS]: {
+    eyebrow: "اجزای لباس",
+    title: "بخش‌های لباست رو انتخاب کن",
+    description:
+      "برای هر بخش (یقه، آستین و…) می‌تونی یک گزینه انتخاب کنی. این مرحله اختیاریه و می‌تونی ردش کنی.",
   },
   [STEP_IDS.FABRIC]: {
     eyebrow: "انتخاب متریال",
