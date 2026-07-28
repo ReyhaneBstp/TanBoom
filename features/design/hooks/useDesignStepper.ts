@@ -94,7 +94,6 @@ export function useDesignStepper() {
   };
 
   const getAccessoryStepError = () => {
-    // اکسسوری اختیاری است؛ فقط اگر انتخاب شده، محل استفاده لازم است.
     if (!selectedAccessories.every((id) => accessoryPlacements[id]?.trim()))
       return "لطفاً محل استفاده همه اکسسوری‌های انتخاب‌شده را مشخص کنید.";
     return null;
@@ -118,7 +117,6 @@ export function useDesignStepper() {
     }
 
     if (currentStepId === STEP_IDS.SKETCH) {
-      // اسکچ و توضیحات هر دو اختیاری‌اند؛ مستقیم به تولید تصویر می‌رویم.
       useGenerationStore.getState().reset();
     }
 

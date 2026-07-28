@@ -62,7 +62,6 @@ export function useGarmentParts() {
     };
   }, [gender, garmentTypeId, baseKey]);
 
-  // فقط دسته‌هایی که هم مجازند و هم واقعاً گزینه دارند نمایش داده می‌شوند.
   const partsByCategory = useMemo(() => {
     const grouped = {} as Record<GarmentPartType, GarmentPartRecord[]>;
     for (const category of categories) {

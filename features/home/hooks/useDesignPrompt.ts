@@ -25,7 +25,6 @@ export function useDesignPrompt(): string {
     const selectedFabrics = customFabrics.filter((f) => selectedFabricIds.includes(f.id));
     const genderLabel = GENDER_OPTIONS.find((g) => g.id === gender)?.label ?? "";
 
-    // اسکچ و توضیحات اختیاری‌اند؛ فقط جنسیت، نوع لباس و حداقل یک پارچه لازم است.
     if (!gender || !selectedGarment || selectedFabrics.length === 0) {
       return "";
     }

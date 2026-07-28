@@ -5,7 +5,6 @@ import type {
 } from "@/features/design/types/design";
 
 interface PartsState {
-  // انتخاب هر بخش اختیاری است؛ کلید نبودن یعنی کاربر آن را رد کرده.
   selectedParts: Partial<Record<GarmentPartType, SelectedGarmentPart>>;
 }
 

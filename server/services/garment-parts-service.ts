@@ -15,7 +15,6 @@ export type GarmentPartRecord = {
   image: string | null;
 };
 
-// جنسیت داخلی برنامه: men/women — همان مقادیری که در فیلد چندانتخابی ذخیره می‌شود.
 const GENDER_TOKENS = new Set<Gender>(["men", "women"]);
 
 function mapGenders(value: unknown): Gender[] {
@@ -56,7 +55,7 @@ export async function getGarmentParts(params: {
 
   const mapped = records.map((record) => mapGarmentPart(pb, record));
 
-  // پایه‌ها به یک نوع لباس مشخص وابسته‌اند؛ فقط پایهٔ مرتبط را نگه می‌داریم.
+
   return mapped.filter((part) => {
     if (part.partType !== "base") return true;
     if (!params.baseKey) return false;

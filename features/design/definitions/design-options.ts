@@ -22,7 +22,7 @@ export const GARMENT_TYPES: GarmentType[] = [
 
   { id: "men-coat", gender: "men", label: "کت", icon: "coat" },
   { id: "mens-shirt", gender: "men", label: "پیراهن مردانه", icon: "mensShirt" },
-  { id: "men-shirt", gender: "men", label: "تی‌شرت", icon: "shirt" },
+  { id: "mens-tshirt", gender: "men", label: "تی‌شرت", icon: "shirt" },
   { id: "men-pants", gender: "men", label: "شلوار", icon: "pants" },
   { id: "men-hat", gender: "men", label: "کلاه", icon: "hat" },
 ];
@@ -181,7 +181,7 @@ export const GARMENT_BASE_KEY: Record<string, string> = {
   "women-dress": "dress",
   "women-hat": "hat",
   "mens-shirt": "shirt",
-  "men-shirt": "tshirt",
+  "mens-tshirt": "tshirt",
   "men-pants": "pants",
   "men-hat": "hat",
 };
