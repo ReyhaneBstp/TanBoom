@@ -1,4 +1,9 @@
-import type { Accessory, GarmentType, MeasurementCategory } from "@/features/design/types/design";
+import type {
+  Accessory,
+  GarmentPartType,
+  GarmentType,
+  MeasurementCategory,
+} from "@/features/design/types/design";
 
 export const GENDER_OPTIONS = [
   { id: "women" as const, label: "زنانه", description: "برای مشاهده انواع پوشاک بانوان کلیک کنید!" },
@@ -17,7 +22,7 @@ export const GARMENT_TYPES: GarmentType[] = [
 
   { id: "men-coat", gender: "men", label: "کت", icon: "coat" },
   { id: "mens-shirt", gender: "men", label: "پیراهن مردانه", icon: "mensShirt" },
-  { id: "men-shirt", gender: "men", label: "تی‌شرت", icon: "shirt" },
+  { id: "mens-tshirt", gender: "men", label: "تی‌شرت", icon: "shirt" },
   { id: "men-pants", gender: "men", label: "شلوار", icon: "pants" },
   { id: "men-hat", gender: "men", label: "کلاه", icon: "hat" },
 ];
@@ -155,3 +160,42 @@ export const MEASUREMENT_LABELS: Record<string, string> = Object.values(
     acc[field.key] ??= field.label;
     return acc;
   }, {});
+
+/** برچسب فارسی هر نوع بخش لباس برای نمایش در فرم مرحلهٔ بخش‌ها */
+export const GARMENT_PART_LABELS: Record<GarmentPartType, string> = {
+  base: "فرم پایه",
+  neckline: "یقه",
+  sleeve: "آستین",
+};
+
+/**
+ * نوع لباس هر گارمنت به یک baseKey در کالکشن garment_parts نگاشت می‌شود.
+ * انواعی که پایهٔ اختصاصی ندارند (مثل کت) در اینجا نیستند و بخش «فرم پایه»
+ * برایشان گزینه‌ای نشان نمی‌دهد.
+ */
+export const GARMENT_BASE_KEY: Record<string, string> = {
+  "women-shomiz": "shomiz",
+  "women-manto": "manto",
+  "women-pants": "pants",
+  "women-skirt": "skirt",
+  "women-dress": "dress",
+  "women-hat": "hat",
+  "mens-shirt": "shirt",
+  "mens-tshirt": "tshirt",
+  "men-pants": "pants",
+  "men-hat": "hat",
+};
+
+/**
+ * بخش‌های قابل‌نمایش برای هر نوع لباس بر اساس دستهٔ اندازه‌گیری:
+ * بالاتنه/تمام‌تنه → پایه + یقه + آستین، پایین‌تنه/سر → فقط پایه.
+ */
+export const GARMENT_PART_CATEGORIES: Record<
+  MeasurementCategory,
+  GarmentPartType[]
+> = {
+  upper_body: ["base", "neckline", "sleeve"],
+  full_body: ["base", "neckline", "sleeve"],
+  lower_body: ["base"],
+  head: ["base"],
+};

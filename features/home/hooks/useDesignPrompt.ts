@@ -3,6 +3,7 @@ import { GARMENT_TYPES, GENDER_OPTIONS } from "@/features/design/definitions/des
 import { buildEnhancedPrompt } from "@/features/design/utils/design-prompt";
 import { useGenderStore } from "@/features/design/store/genderStore";
 import { useGarmentStore } from "@/features/design/store/garmentStore";
+import { usePartsStore } from "@/features/design/store/partsStore";
 import { useFabricStore } from "@/features/design/store/fabricStore";
 import { useAccessoryStore } from "@/features/design/store/accessoryStore";
 import { useSketchStore } from "@/features/design/store/sketchStore";
@@ -11,6 +12,7 @@ import { useSketchStore } from "@/features/design/store/sketchStore";
 export function useDesignPrompt(): string {
   const gender = useGenderStore((s) => s.gender);
   const garmentTypeId = useGarmentStore((s) => s.garmentTypeId);
+  const selectedParts = usePartsStore((s) => s.selectedParts);
   const customFabrics = useFabricStore((s) => s.customFabrics);
   const selectedFabricIds = useFabricStore((s) => s.selectedFabricIds);
   const fabricAssignments = useFabricStore((s) => s.fabricAssignments);
@@ -23,7 +25,7 @@ export function useDesignPrompt(): string {
     const selectedFabrics = customFabrics.filter((f) => selectedFabricIds.includes(f.id));
     const genderLabel = GENDER_OPTIONS.find((g) => g.id === gender)?.label ?? "";
 
-    if (!gender || !selectedGarment || selectedFabrics.length === 0 || !sketch.description.trim()) {
+    if (!gender || !selectedGarment || selectedFabrics.length === 0) {
       return "";
     }
 
@@ -37,10 +39,12 @@ export function useDesignPrompt(): string {
       fabricAssignments,
       selectedAccessories,
       accessoryPlacements,
+      selectedParts,
     });
   }, [
     gender,
     garmentTypeId,
+    selectedParts,
     customFabrics,
     selectedFabricIds,
     fabricAssignments,

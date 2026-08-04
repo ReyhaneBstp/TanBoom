@@ -6,7 +6,7 @@ import type { DesignRecord } from "@/server/services/design-service";
 import {
   DesignLightbox,
   type LightboxImage,
-} from "@/shared/components/DesignLightbox";
+} from "@/features/gallery/DesignLightbox";
 
 interface GalleryCardProps {
   design: DesignRecord;
@@ -17,9 +17,7 @@ export function GalleryCard({ design }: GalleryCardProps) {
 
   const images: LightboxImage[] = [
     { src: design.frontImage, label: "نمای جلو" },
-    ...(design.backImage
-      ? [{ src: design.backImage, label: "نمای پشت" }]
-      : []),
+    ...(design.backImage ? [{ src: design.backImage, label: "نمای پشت" }] : []),
   ];
 
   return (

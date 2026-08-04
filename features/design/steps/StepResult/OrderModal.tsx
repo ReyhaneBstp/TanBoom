@@ -20,7 +20,7 @@ import type {
   BodyMeasurements,
   MeasurementCategory,
 } from "@/features/design/types/design";
-import { useGarmentStore } from "../store/garmentStore";
+import { useGarmentStore } from "../../store/garmentStore";
 
 interface OrderModalProps {
   designId: string;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import {
   HiOutlineChevronLeft,
@@ -30,9 +31,11 @@ export function DesignLightbox({
   const [activeIndex, setActiveIndex] = useState(0);
   const hasMultiple = images.length > 1;
 
+
   useEffect(() => {
     if (open) setActiveIndex(0);
   }, [open]);
+
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -56,39 +59,35 @@ export function DesignLightbox({
 
   const activeImage = images[activeIndex];
 
-  return (
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <AnimatePresence>
       {open && activeImage && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-0"
           onClick={onClose}
         >
           <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 24, scale: 0.96 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3, ease }}
-            className="w-full max-w-lg overflow-hidden rounded-[2rem] glass-panel bg-white/90 p-4"
+            className="relative flex h-full w-full items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-3 flex items-center justify-between px-1">
-              <h3 className="line-clamp-1 text-sm font-semibold text-foreground">
-                {title}
-              </h3>
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="بستن"
-                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/70 text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <HiOutlineXMark className="size-5" />
-              </button>
-            </div>
-
-            <div className="relative overflow-hidden rounded-[1.55rem]">
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="بستن"
+              className="absolute right-4 top-4 z-10 flex size-11 items-center justify-center rounded-full border border-white/30 bg-black/40 text-white/90 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white"
+            >
+              <HiOutlineXMark className="size-6" />
+            </button>
+            <div className="flex h-full w-full items-center justify-center p-4 md:p-8">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.img
                   key={activeIndex}
@@ -105,38 +104,35 @@ export function DesignLightbox({
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -32 }}
                   transition={{ duration: 0.25, ease }}
-                  className="aspect-[4/5] w-full cursor-grab select-none object-cover active:cursor-grabbing"
+                  className="max-h-[90vh] w-auto max-w-[90vw] select-none object-contain md:max-h-[85vh] md:max-w-[85vw]"
                 />
               </AnimatePresence>
-
-              <span className="absolute top-3 right-3 rounded-full border border-white/80 bg-white/80 px-3 py-1.5 text-[11px] font-bold text-foreground backdrop-blur-md">
-                {activeImage.label}
-              </span>
-
-              {hasMultiple && (
-                <>
-                  <button
-                    type="button"
-                    onClick={goNext}
-                    aria-label="تصویر بعدی"
-                    className="absolute right-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/75 text-foreground backdrop-blur-md transition-all hover:bg-white"
-                  >
-                    <HiOutlineChevronRight className="size-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={goPrev}
-                    aria-label="تصویر قبلی"
-                    className="absolute left-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/75 text-foreground backdrop-blur-md transition-all hover:bg-white"
-                  >
-                    <HiOutlineChevronLeft className="size-5" />
-                  </button>
-                </>
-              )}
             </div>
-
+            <span className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full border border-white/30 bg-black/40 px-4 py-1.5 text-sm font-medium text-white/90 backdrop-blur-sm">
+              {activeImage.label}
+            </span>
             {hasMultiple && (
-              <div className="mt-4 flex items-center justify-center gap-2">
+              <>
+                <button
+                  type="button"
+                  onClick={goNext}
+                  aria-label="تصویر بعدی"
+                  className="absolute right-2 top-1/2 flex size-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-black/40 text-white/90 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white md:right-6"
+                >
+                  <HiOutlineChevronRight className="size-6" />
+                </button>
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  aria-label="تصویر قبلی"
+                  className="absolute left-2 top-1/2 flex size-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-black/40 text-white/90 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white md:left-6"
+                >
+                  <HiOutlineChevronLeft className="size-6" />
+                </button>
+              </>
+            )}
+            {hasMultiple && (
+              <div className="absolute bottom-20 left-1/2 flex -translate-x-1/2 gap-2">
                 {images.map((image, index) => (
                   <button
                     key={image.label}
@@ -145,8 +141,8 @@ export function DesignLightbox({
                     aria-label={image.label}
                     className={`h-2 rounded-full transition-all ${
                       index === activeIndex
-                        ? "w-6 bg-primary-400"
-                        : "w-2 bg-primary-200 hover:bg-primary-300"
+                        ? "w-6 bg-white"
+                        : "w-2 bg-white/40 hover:bg-white/60"
                     }`}
                   />
                 ))}
@@ -155,6 +151,7 @@ export function DesignLightbox({
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

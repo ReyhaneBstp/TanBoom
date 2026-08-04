@@ -12,6 +12,15 @@ export interface Accessory {
   label: string;
 }
 
+export type GarmentPartType = "base" | "neckline" | "sleeve";
+
+export interface SelectedGarmentPart {
+  id: string;
+  name: string;
+  label: string;
+  image: string | null;
+}
+
 export interface SolidFabric {
   id: string;
   kind: "solid";
@@ -62,6 +71,7 @@ export interface EnhancedPromptPayload {
   fabricAssignments: Record<string, string>;
   selectedAccessories: string[];
   accessoryPlacements: Record<string, string>;
+  selectedParts?: Partial<Record<GarmentPartType, SelectedGarmentPart>>;
   measurements?: BodyMeasurements;
 }
 
