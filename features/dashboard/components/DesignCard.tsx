@@ -18,7 +18,7 @@ import { ease } from "@/shared/definitions/motion";
 import {
   DesignLightbox,
   type LightboxImage,
-} from "@/shared/components/DesignLightbox";
+} from "@/features/gallery/DesignLightbox";
 import { formatPersianDate } from "../definitions/order-status";
 import { RenameDesignModal } from "./RenameDesignModal";
 import { DeleteDesignModal } from "./DeleteDesignModal";
@@ -37,9 +37,7 @@ export function DesignCard({ design, index }: DesignCardProps) {
 
   const lightboxImages: LightboxImage[] = [
     { src: design.frontImage, label: "نمای جلو" },
-    ...(design.backImage
-      ? [{ src: design.backImage, label: "نمای پشت" }]
-      : []),
+    ...(design.backImage ? [{ src: design.backImage, label: "نمای پشت" }] : []),
   ];
 
   const handleToggleVisibility = async () => {
@@ -50,15 +48,15 @@ export function DesignCard({ design, index }: DesignCardProps) {
         res.isPublic
           ? "طرح در گالری عمومی منتشر شد"
           : "طرح از گالری عمومی برداشته شد",
-        "success"
+        "success",
       );
     } catch (error) {
       showSnackbar(
         getActionErrorMessage(
           error,
-          "تغییر وضعیت انتشار انجام نشد. لطفاً دوباره تلاش کنید."
+          "تغییر وضعیت انتشار انجام نشد. لطفاً دوباره تلاش کنید.",
         ),
-        "error"
+        "error",
       );
     } finally {
       setIsToggling(false);
