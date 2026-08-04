@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   GARMENT_BASE_KEY,
   GARMENT_MEASUREMENT_CATEGORY,
@@ -19,62 +19,98 @@ export function useGarmentParts() {
   const gender = useGenderStore((s) => s.gender);
   const garmentTypeId = useGarmentStore((s) => s.garmentTypeId);
 
-  const [parts, setParts] = useState<GarmentPartRecord[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const latestGenderRef = useRef(gender);
+  const latestGarmentTypeRef = useRef(garmentTypeId);
+  latestGenderRef.current = gender;
+  latestGarmentTypeRef.current = garmentTypeId;
 
-  const baseKey = garmentTypeId ? GARMENT_BASE_KEY[garmentTypeId] ?? null : null;
+  const baseKey = garmentTypeId
+    ? (GARMENT_BASE_KEY[garmentTypeId] ?? null)
+    : null;
 
-  const categories = useMemo<GarmentPartType[]>(() => {
+  const availableCategories = useMemo<GarmentPartType[]>(() => {
     if (!garmentTypeId) return [];
     const category: MeasurementCategory =
       GARMENT_MEASUREMENT_CATEGORY[garmentTypeId] ?? "upper_body";
     return GARMENT_PART_CATEGORIES[category] ?? [];
   }, [garmentTypeId]);
 
-  useEffect(() => {
-    if (!gender || !garmentTypeId) {
-      setParts([]);
-      return;
-    }
+  const [partsCache, setPartsCache] = useState<
+    Partial<Record<GarmentPartType, GarmentPartRecord[]>>
+  >({});
+  const [loadingCategory, setLoadingCategory] =
+    useState<GarmentPartType | null>(null);
+  const [errorCategory, setErrorCategory] =
+    useState<GarmentPartType | null>(null);
 
-    let cancelled = false;
-    setLoading(true);
-    setError(false);
+  const fetchPartsForCategory = useCallback(
+    async (partType: GarmentPartType) => {
+      if (!gender || !garmentTypeId) return [];
 
-    getGarmentParts({ gender, baseKey })
-      .then((result) => {
-        if (!cancelled) setParts(result);
-      })
-      .catch((err) => {
-        console.error(err);
-        if (!cancelled) {
-          setError(true);
-          setParts([]);
+      if (partsCache[partType]) {
+        return partsCache[partType]!;
+      }
+
+      if (partType === "base" && !baseKey) {
+        setPartsCache((prev) => ({ ...prev, base: [] }));
+        return [];
+      }
+
+      setLoadingCategory(partType);
+      setErrorCategory(null);
+
+      try {
+        const result = await getGarmentParts({
+          gender,
+          partType,
+          baseKey: partType === "base" ? baseKey : null, 
+        });
+
+
+        if (
+          latestGenderRef.current === gender &&
+          latestGarmentTypeRef.current === garmentTypeId
+        ) {
+          setPartsCache((prev) => ({ ...prev, [partType]: result }));
+          return result;
+        } else {
+          return [];
         }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [gender, garmentTypeId, baseKey]);
-
-  const partsByCategory = useMemo(() => {
-    const grouped = {} as Record<GarmentPartType, GarmentPartRecord[]>;
-    for (const category of categories) {
-      const items = parts.filter((p) => p.partType === category);
-      if (items.length > 0) grouped[category] = items;
-    }
-    return grouped;
-  }, [categories, parts]);
-
-  const availableCategories = useMemo(
-    () => categories.filter((c) => (partsByCategory[c]?.length ?? 0) > 0),
-    [categories, partsByCategory]
+      } catch (err) {
+        console.error(err);
+        if (
+          latestGenderRef.current === gender &&
+          latestGarmentTypeRef.current === garmentTypeId
+        ) {
+          setErrorCategory(partType);
+          setPartsCache((prev) => ({ ...prev, [partType]: [] }));
+        }
+        return [];
+      } finally {
+        if (
+          latestGenderRef.current === gender &&
+          latestGarmentTypeRef.current === garmentTypeId
+        ) {
+          setLoadingCategory(null);
+        }
+      }
+    },
+    [gender, garmentTypeId, baseKey, partsCache]
   );
 
-  return { partsByCategory, availableCategories, loading, error };
+  const resetCache = useCallback(() => {
+    setPartsCache({});
+    setLoadingCategory(null);
+    setErrorCategory(null);
+  }, []);
+
+  return {
+    availableCategories,
+    partsCache,
+    fetchPartsForCategory,
+    loadingCategory,
+    errorCategory,
+    resetCache,
+    baseKey,
+  };
 }

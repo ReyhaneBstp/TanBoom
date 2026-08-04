@@ -39,21 +39,35 @@ function mapGarmentPart(
 
 export async function getGarmentParts(params: {
   gender: Gender;
+  partType: GarmentPartType;
   baseKey?: string | null;
 }): Promise<GarmentPartRecord[]> {
   const pb = await getPocketBase();
 
+  if (params.partType === "base" && !params.baseKey) {
+    return [];
+  }
+
+  const genderCondition =
+    params.gender === "men"
+      ? `(genders = '["men"]' || genders = '["men","women"]')`
+      : `(genders = '["women"]' || genders = '["men","women"]')`;
+
+  const conditions: string[] = [
+    genderCondition,
+    `partType = "${params.partType}"`,
+  ];
+
+  if (params.partType === "base" && params.baseKey) {
+    conditions.push(`baseKey = "${params.baseKey}"`);
+  }
+
+  const filter = conditions.join(" && ");
+
   const records = await pb.collection("garment_parts").getFullList({
-    filter: pb.filter("genders ?~ {:gender}", { gender: params.gender }),
-    sort: "partType,name",
+    filter: filter,
+    sort: "name",
   });
 
-  const mapped = records.map((record) => mapGarmentPart(pb, record));
-
-
-  return mapped.filter((part) => {
-    if (part.partType !== "base") return true;
-    if (!params.baseKey) return false;
-    return part.baseKey === params.baseKey;
-  });
+  return records.map((record) => mapGarmentPart(pb, record));
 }

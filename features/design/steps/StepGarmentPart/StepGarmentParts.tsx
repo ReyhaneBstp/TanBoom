@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   HiOutlineChevronLeft,
   HiOutlineXMark,
@@ -15,19 +15,50 @@ import type { GarmentPartType } from "@/features/design/types/design";
 import type { GarmentPartRecord } from "@/server/services/garment-parts-service";
 import { useGarmentParts } from "../../hooks/useGarmentParts";
 import { usePartsStore } from "../../store/partsStore";
+import { useGenderStore } from "../../store/genderStore";
+import { useGarmentStore } from "../../store/garmentStore";
 import { GarmentPartModal } from "./GarmentPartModal";
 
 export function StepGarmentParts() {
-  const { partsByCategory, availableCategories, loading, error } =
-    useGarmentParts();
+  const gender = useGenderStore((s) => s.gender);
+  const garmentTypeId = useGarmentStore((s) => s.garmentTypeId);
+
+  const {
+    availableCategories,
+    partsCache,
+    fetchPartsForCategory,
+    loadingCategory,
+    errorCategory,
+    resetCache,
+  } = useGarmentParts();
 
   const selectedParts = usePartsStore((s) => s.selectedParts);
   const setPart = usePartsStore((s) => s.setPart);
   const clearPart = usePartsStore((s) => s.clearPart);
 
   const [openCategory, setOpenCategory] = useState<GarmentPartType | null>(
-    null,
+    null
   );
+  const [modalOptions, setModalOptions] = useState<GarmentPartRecord[]>([]);
+
+
+  useEffect(() => {
+    resetCache();
+    setOpenCategory(null);
+    setModalOptions([]);
+  }, [gender, garmentTypeId, resetCache]);
+
+  const handleOpenCategory = async (category: GarmentPartType) => {
+    setOpenCategory(category);
+
+    if (partsCache[category]) {
+      setModalOptions(partsCache[category]!);
+      return;
+    }
+
+    const options = await fetchPartsForCategory(category);
+    setModalOptions(options);
+  };
 
   const handleSelect = (category: GarmentPartType, part: GarmentPartRecord) => {
     setPart(category, {
@@ -39,38 +70,14 @@ export function StepGarmentParts() {
     setOpenCategory(null);
   };
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[22rem] items-center justify-center">
-        <span className="text-sm text-muted-foreground">
-          در حال بارگذاری بخش‌های لباس…
-        </span>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex min-h-[22rem] flex-col items-center justify-center gap-3 text-center">
-        <span className="flex size-14 items-center justify-center rounded-full bg-rose-100">
-          <HiOutlineExclamationTriangle className="size-7 text-rose-500" />
-        </span>
-        <p className="max-w-xs text-sm text-muted-foreground">
-          بارگذاری بخش‌های لباس ممکن نشد. می‌توانید این مرحله را رد کنید و طرح
-          خود را به‌صورت دستی ادامه دهید.
-        </p>
-      </div>
-    );
-  }
-
-  if (availableCategories.length === 0) {
+  if (!garmentTypeId || availableCategories.length === 0) {
     return (
       <div className="flex min-h-[22rem] flex-col items-center justify-center gap-3 text-center">
         <span className="flex size-14 items-center justify-center rounded-full bg-primary-100/60">
           <HiOutlineSquares2X2 className="size-7 text-primary-400" />
         </span>
         <p className="max-w-sm text-sm text-muted-foreground">
-          برای این نوع لباس بخش آماده‌ای ثبت نشده. می‌توانید این مرحله را رد
+          برای این نوع لباس بخش آماده‌ای تعریف نشده. می‌توانید این مرحله را رد
           کنید و طرح دلخواهتان را در مرحله‌ی طراحی به‌صورت دستی بسازید.
         </p>
       </div>
@@ -87,7 +94,7 @@ export function StepGarmentParts() {
               key={category}
               className={cn(
                 "flex items-center gap-3 rounded-2xl border border-white/70 bg-white/45 p-3 backdrop-blur-xl transition-all",
-                selected && "border-primary-300/70 bg-primary-50/50",
+                selected && "border-primary-300/70 bg-primary-50/50"
               )}
             >
               <div className="flex flex-1 items-center gap-3 min-w-0">
@@ -127,7 +134,7 @@ export function StepGarmentParts() {
                 type="button"
                 variant={selected ? "outline" : "ghost"}
                 size="sm"
-                onClick={() => setOpenCategory(category)}
+                onClick={() => handleOpenCategory(category)}
               >
                 {selected ? "تغییر" : "انتخاب"}
                 <HiOutlineChevronLeft className="size-4" />
@@ -141,8 +148,10 @@ export function StepGarmentParts() {
         <GarmentPartModal
           open
           title={GARMENT_PART_LABELS[openCategory]}
-          options={partsByCategory[openCategory] ?? []}
+          options={modalOptions}
           selectedId={selectedParts[openCategory]?.id ?? null}
+          isLoading={loadingCategory === openCategory}   
+          error={errorCategory}                         
           onClose={() => setOpenCategory(null)}
           onSelect={(part) => handleSelect(openCategory, part)}
         />
