@@ -14,7 +14,6 @@ export interface Accessory {
 
 export type GarmentPartType = "base" | "neckline" | "sleeve";
 
-/** یک گزینهٔ انتخاب‌شده برای یک بخش لباس (پایه/یقه/آستین). */
 export interface SelectedGarmentPart {
   id: string;
   name: string;

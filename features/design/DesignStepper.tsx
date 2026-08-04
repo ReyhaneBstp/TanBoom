@@ -15,11 +15,11 @@ import { useDesignStepper } from "./hooks/useDesignStepper";
 import { STEP_IDS, STEPPER_STEPS } from "./definitions/design-steps";
 import { useGenerationStore } from "./store/generationStore";
 import { StepGender } from "./steps/StepGender";
-import { StepGarmentParts } from "./steps/StepGarmentParts";
+import { StepGarmentParts } from "./steps/StepGarmentPart/StepGarmentParts";
 import { StepFabric } from "./steps/StepFabric";
 import { StepAccessories } from "./steps/StepAccessories";
 import { StepSketch } from "./steps/StepSketch";
-import { StepResult } from "./steps/StepResult";
+import { StepResult } from "./steps/StepResult/StepResult";
 
 export function DesignStepper() {
   const {
@@ -79,13 +79,9 @@ export function DesignStepper() {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <CardTitle className="mt-2">
-                {currentStepInfo.title}
-              </CardTitle>
+              <CardTitle className="mt-2">{currentStepInfo.title}</CardTitle>
 
-              <CardDescription>
-                {currentStepInfo.description}
-              </CardDescription>
+              <CardDescription>{currentStepInfo.description}</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -116,9 +112,7 @@ export function DesignStepper() {
               onClick={handleGoNext}
               disabled={!canGoNext || isGenerating}
             >
-              {currentStepId === STEP_IDS.SKETCH
-                ? "تولید تصویر"
-                : "ادامه"}
+              {currentStepId === STEP_IDS.SKETCH ? "تولید تصویر" : "ادامه"}
 
               <HiOutlineArrowLeft className="size-4" />
             </Button>

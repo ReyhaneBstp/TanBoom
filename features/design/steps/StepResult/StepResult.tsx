@@ -14,9 +14,9 @@ import {
 import { Button } from "@/shared/components/Button";
 import { Input } from "@/shared/components/Input";
 import { handleDownload } from "@/shared/utils/downloadFile";
-import { useGenerationStore } from "../store/generationStore";
-import { resetDesignStores } from "../store/resetDesignStores";
-import { useGenerateImage } from "../hooks/useGenerateImage";
+import { useGenerationStore } from "../../store/generationStore";
+import { resetDesignStores } from "../../store/resetDesignStores";
+import { useGenerateImage } from "../../hooks/useGenerateImage";
 import {
   saveDesignToDashboard,
   publishDesignToGallery,

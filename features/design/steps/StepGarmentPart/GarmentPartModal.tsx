@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { HiOutlineCheck, HiOutlineXMark } from "react-icons/hi2";
 import { ease } from "@/shared/definitions/motion";
@@ -25,6 +25,7 @@ export function GarmentPartModal({
   onClose,
   onSelect,
 }: GarmentPartModalProps) {
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -33,7 +34,8 @@ export function GarmentPartModal({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  return (
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
@@ -74,23 +76,24 @@ export function GarmentPartModal({
                     type="button"
                     onClick={() => onSelect(option)}
                     className={cn(
-                      "group relative flex flex-col items-center gap-2 rounded-2xl border border-white/70 bg-white/50 p-2.5 text-center backdrop-blur-xl transition-all duration-200",
-                      "hover:-translate-y-1 hover:bg-white/75 hover:shadow-lg hover:shadow-primary-200/15",
+                      "group relative flex flex-col items-center gap-2 rounded-2xl border border-white/70 bg-white/80 p-2.5 text-center transition-all duration-200",
+                      "hover:-translate-y-1 hover:bg-white/90 hover:shadow-lg hover:shadow-primary-200/15",
                       selected &&
-                        "border-primary-300/80 bg-primary-50/60 shadow-md shadow-primary-200/20 ring-2 ring-primary-300/40"
+                        "border-primary-300/80 bg-primary-50/80 shadow-md shadow-primary-200/20 ring-2 ring-primary-300/40",
                     )}
                   >
                     {selected && (
-                      <span className="absolute left-2 top-2 z-10 flex size-6 items-center justify-center rounded-full bg-primary-600/80 text-white shadow-sm">
+                      <span className="absolute left-2 top-2 z-20 flex size-6 items-center justify-center rounded-full bg-primary-600/80 text-white shadow-sm">
                         <HiOutlineCheck className="size-4" />
                       </span>
                     )}
                     {option.image ? (
-                      <img
-                        src={option.image}
-                        alt={option.label}
-                        className="aspect-square w-full rounded-xl object-cover"
-                      />
+                      <div className="relative  rounded-xl bg-white">
+                        <img
+                          src={option.image}
+                          alt={option.label}
+                        />
+                      </div>
                     ) : (
                       <span className="aspect-square w-full rounded-xl bg-primary-100/50" />
                     )}
@@ -104,6 +107,7 @@ export function GarmentPartModal({
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

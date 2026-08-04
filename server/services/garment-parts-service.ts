@@ -37,11 +37,6 @@ function mapGarmentPart(
   };
 }
 
-/**
- * دریافت بخش‌های لباس برای جنسیت انتخاب‌شده.
- * تصاویر مشترک (genders شامل هر دو) برای هر دو جنسیت برگردانده می‌شوند.
- * در صورت مشخص بودن baseKey، فقط پایه‌های همان نوع لباس فیلتر می‌شوند.
- */
 export async function getGarmentParts(params: {
   gender: Gender;
   baseKey?: string | null;

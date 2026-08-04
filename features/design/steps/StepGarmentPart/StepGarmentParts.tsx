@@ -10,11 +10,11 @@ import {
 } from "react-icons/hi2";
 import { Button } from "@/shared/components/Button";
 import { cn } from "@/shared/utils/mergeClasses";
-import { GARMENT_PART_LABELS } from "../definitions/design-options";
+import { GARMENT_PART_LABELS } from "../../definitions/design-options";
 import type { GarmentPartType } from "@/features/design/types/design";
 import type { GarmentPartRecord } from "@/server/services/garment-parts-service";
-import { useGarmentParts } from "../hooks/useGarmentParts";
-import { usePartsStore } from "../store/partsStore";
+import { useGarmentParts } from "../../hooks/useGarmentParts";
+import { usePartsStore } from "../../store/partsStore";
 import { GarmentPartModal } from "./GarmentPartModal";
 
 export function StepGarmentParts() {
@@ -25,7 +25,9 @@ export function StepGarmentParts() {
   const setPart = usePartsStore((s) => s.setPart);
   const clearPart = usePartsStore((s) => s.clearPart);
 
-  const [openCategory, setOpenCategory] = useState<GarmentPartType | null>(null);
+  const [openCategory, setOpenCategory] = useState<GarmentPartType | null>(
+    null,
+  );
 
   const handleSelect = (category: GarmentPartType, part: GarmentPartRecord) => {
     setPart(category, {
@@ -68,8 +70,8 @@ export function StepGarmentParts() {
           <HiOutlineSquares2X2 className="size-7 text-primary-400" />
         </span>
         <p className="max-w-sm text-sm text-muted-foreground">
-          برای این نوع لباس بخش آماده‌ای ثبت نشده. می‌توانید این مرحله را رد کنید
-          و طرح دلخواهتان را در مرحله‌ی طراحی به‌صورت دستی بسازید.
+          برای این نوع لباس بخش آماده‌ای ثبت نشده. می‌توانید این مرحله را رد
+          کنید و طرح دلخواهتان را در مرحله‌ی طراحی به‌صورت دستی بسازید.
         </p>
       </div>
     );
@@ -77,11 +79,6 @@ export function StepGarmentParts() {
 
   return (
     <div className="flex flex-col gap-4 min-h-[22rem]">
-      <p className="text-xs leading-6 text-muted-foreground">
-        برای هر بخش می‌توانید یک گزینه انتخاب کنید. انتخاب همه‌ی بخش‌ها اختیاری
-        است و می‌توانید هر کدام را رد کنید.
-      </p>
-
       <div className="flex flex-col gap-3">
         {availableCategories.map((category) => {
           const selected = selectedParts[category];
@@ -90,7 +87,7 @@ export function StepGarmentParts() {
               key={category}
               className={cn(
                 "flex items-center gap-3 rounded-2xl border border-white/70 bg-white/45 p-3 backdrop-blur-xl transition-all",
-                selected && "border-primary-300/70 bg-primary-50/50"
+                selected && "border-primary-300/70 bg-primary-50/50",
               )}
             >
               <div className="flex flex-1 items-center gap-3 min-w-0">
@@ -128,7 +125,7 @@ export function StepGarmentParts() {
 
               <Button
                 type="button"
-                variant={selected ? "outline" : "default"}
+                variant={selected ? "outline" : "ghost"}
                 size="sm"
                 onClick={() => setOpenCategory(category)}
               >

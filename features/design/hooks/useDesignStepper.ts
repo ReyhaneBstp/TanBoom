@@ -14,10 +14,13 @@ import { useFabricStore } from "../store/fabricStore";
 import { useGenerationStore } from "../store/generationStore";
 import { useAccessoryStore } from "../store/accessoryStore";
 import { useGlobalStore } from "@/shared/store/useGlobalStore";
+import { usePartsStore } from "../store/partsStore";
+import { useSketchStore } from "../store/sketchStore"; // ✅ اضافه شد
 
 const OPTIONAL_STEPS: readonly StepId[] = [
   STEP_IDS.PARTS,
   STEP_IDS.ACCESSORIES,
+  STEP_IDS.SKETCH
 ];
 
 export function useDesignStepper() {
@@ -31,7 +34,9 @@ export function useDesignStepper() {
   const accessoryPlacements = useAccessoryStore((s) => s.accessoryPlacements);
   const setCurrentStepId = useStepStore((s) => s.setCurrentStepId);
   const showSnackbar = useGlobalStore((s) => s.showSnackbar);
-
+  
+  const selectedParts = usePartsStore((s) => s.selectedParts);
+  const sketch = useSketchStore((s) => s.sketch); 
 
   const currentStepIndex = useMemo(
     () => STEPPER_STEPS.findIndex((step) => step.id === currentStepId),
@@ -42,21 +47,23 @@ export function useDesignStepper() {
     () =>
       [
         Boolean(gender && garmentTypeId),
-        true,
+        Object.keys(selectedParts).length > 0,
         selectedFabricIds.length > 0 &&
           selectedFabricIds.every((id) => fabricAssignments[id]?.trim()),
         selectedAccessories.length > 0 &&
           selectedAccessories.every((id) => accessoryPlacements[id]?.trim()),
-        true,
+        Boolean(sketch.file || sketch.description.trim()),
         generatedImages.length > 0,
       ] as const,
     [
       gender,
       garmentTypeId,
+      selectedParts,
       selectedFabricIds,
       fabricAssignments,
       selectedAccessories,
       accessoryPlacements,
+      sketch, 
       generatedImages,
     ]
   );

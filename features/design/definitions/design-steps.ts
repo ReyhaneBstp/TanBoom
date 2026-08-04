@@ -10,12 +10,12 @@ export const STEP_IDS = {
 export type StepId = (typeof STEP_IDS)[keyof typeof STEP_IDS];
 
 export const STEPPER_STEPS = [
-  { id: STEP_IDS.GENDER, label: "انتخاب نوع" },
-  { id: STEP_IDS.PARTS, label: "بخش‌های لباس" },
-  { id: STEP_IDS.FABRIC, label: "انتخاب پارچه" },
+  { id: STEP_IDS.GENDER, label: "نوع" },
+  { id: STEP_IDS.PARTS, label: "مدل" },
+  { id: STEP_IDS.FABRIC, label: "پارچه" },
   { id: STEP_IDS.ACCESSORIES, label: "اکسسوری" },
-  { id: STEP_IDS.SKETCH, label: "طراحی" },
-  { id: STEP_IDS.RESULT, label: "نتیجه" },
+  { id: STEP_IDS.SKETCH, label: "توضیحات" },
+  { id: STEP_IDS.RESULT, label: "خروجی" },
 ] as const;
 
 export const stepsInfo: Record<StepId, { eyebrow: string; title: string; description: string }> = {
