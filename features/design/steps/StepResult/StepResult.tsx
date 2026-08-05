@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   HiOutlineArrowDownTray,
   HiOutlineSparkles,
@@ -24,8 +25,12 @@ import {
 import { OrderModal } from "./OrderModal";
 import { useGlobalStore } from "@/shared/store/useGlobalStore";
 import { getActionErrorMessage } from "@/shared/utils/getActionErrorMessage";
+import { getCurrentUserProfile } from "@/server/actions/get-current-user-profile";
+import { isProfileCompleteForOrder } from "@/server/services/user-service";
+import { useDesignDraftStore } from "../../store/designDraftStore";
 
 export function StepResult() {
+  const router = useRouter();
   const generatedImages = useGenerationStore((s) => s.generatedImages);
   const frontError = useGenerationStore((s) => s.frontError);
   const backError = useGenerationStore((s) => s.backError);
@@ -36,6 +41,8 @@ export function StepResult() {
     isGeneratingBack,
   } = useGenerateImage();
   const restart = resetDesignStores;
+  const { showLoading, hideLoading, showSnackbar } = useGlobalStore();
+  const designDraftStore = useDesignDraftStore();
 
   const hasBack = generatedImages.some((img) => img.id === "back");
 
@@ -43,23 +50,61 @@ export function StepResult() {
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [currentDesignId, setCurrentDesignId] = useState<string | null>(null);
   const [designTitle, setDesignTitle] = useState("");
-  const { showLoading, hideLoading, showSnackbar } = useGlobalStore();
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
 
+  // ✅ اضافه کردن useEffect برای تولید خودکار تصویر جلو
   useEffect(() => {
     const { generatedImages, frontError, isGeneratingFront } =
       useGenerationStore.getState();
     if (generatedImages.length === 0 && !frontError && !isGeneratingFront) {
       generateFront();
     }
+  }, [generateFront]); // وابستگی به generateFront
+
+  // بازیابی پیش‌نویس طرح با اضافه کردن angle
+  useEffect(() => {
+    const draft = designDraftStore.draft;
+    if (draft) {
+      const setImages = useGenerationStore.getState().setGeneratedImages;
+      const images = [
+        {
+          id: "front",
+          angle: "front",
+          src: draft.frontImage,
+          title: "نمای جلو",
+        },
+      ];
+      if (draft.backImage) {
+        images.push({
+          id: "back",
+          angle: "back",
+          src: draft.backImage,
+          title: "نمای پشت",
+        });
+      }
+      setImages(images);
+      setDesignTitle(draft.title);
+      designDraftStore.clearDraft();
+      showSnackbar("طرح شما بازیابی شد. حالا می‌توانید ادامه دهید.", "info");
+    }
+  }, [designDraftStore, showSnackbar]);
+
+  // دریافت پروفایل کاربر
+  useEffect(() => {
+    getCurrentUserProfile()
+      .then((user) => {
+        setUserProfile(user);
+        setLoadingProfile(false);
+      })
+      .catch(() => setLoadingProfile(false));
   }, []);
 
   const frontImage = generatedImages.find((img) => img.id === "front")?.src;
   const backImage = generatedImages.find((img) => img.id === "back")?.src;
 
   const handleSave = async (action: "dashboard" | "gallery") => {
-    if (!frontImage) {
-      return;
-    }
+    if (!frontImage) return;
     setIsSaving(true);
     showLoading(
       action === "dashboard"
@@ -77,6 +122,12 @@ export function StepResult() {
         });
         showSnackbar("طرح در داشبورد شما ذخیره شد", "success");
       } else {
+        if (!userProfile?.name?.trim()) {
+          showSnackbar(
+            "برای نمایش نام شما در گالری، لطفاً نام کاربری خود را در بخش اطلاعات شخصی تکمیل کنید.",
+            "info"
+          );
+        }
         res = await publishDesignToGallery({
           title,
           frontImage,
@@ -102,6 +153,25 @@ export function StepResult() {
   };
 
   const handleOrderClick = async () => {
+    if (loadingProfile) {
+      showSnackbar("در حال بررسی اطلاعات شما...", "info");
+      return;
+    }
+
+    if (!userProfile || !isProfileCompleteForOrder(userProfile)) {
+      designDraftStore.setDraft({
+        title: designTitle.trim() || "طرح جدید",
+        frontImage: frontImage!,
+        backImage: backImage ?? undefined,
+      });
+      showSnackbar(
+        "برای ثبت سفارش، ابتدا اطلاعات شخصی خود را کامل کنید.",
+        "error"
+      );
+      router.push("/dashboard?profile=edit&returnTo=/design/result");
+      return;
+    }
+
     if (!currentDesignId && frontImage) {
       setIsSaving(true);
       showLoading("در حال آماده‌سازی سفارش...");

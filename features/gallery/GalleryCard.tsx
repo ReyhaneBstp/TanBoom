@@ -50,7 +50,7 @@ export function GalleryCard({ design }: GalleryCardProps) {
           {design.title}
         </h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          طراح: {design.creatorName ?? "کاربر تن‌بوم"}
+         {design.creatorName?.trim() || "کاربر تن بوم"}
         </p>
       </div>
 
