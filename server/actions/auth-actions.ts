@@ -1,73 +1,43 @@
 "use server";
 
 import { AuthError } from "next-auth";
-import { redirect } from "next/navigation";
 import { signIn, signOut } from "@/auth";
-import {
-  registerUser,
-  validateLoginInput,
-} from "@/server/services/auth-service";
+import { requestOtp } from "@/server/services/auth-service";
 
-export type AuthActionState = {
+export type SendOtpState = {
   success: boolean;
   message?: string;
+  retryAfterMs?: number;
   fieldErrors?: Record<string, string[] | undefined>;
 };
 
-export async function registerAction(
-  _prevState: AuthActionState,
-  formData: FormData
-): Promise<AuthActionState> {
-  const result = await registerUser({
-    name: String(formData.get("name") ?? ""),
-    email: String(formData.get("email") ?? ""),
-    phone: String(formData.get("phone") ?? ""),
-    password: String(formData.get("password") ?? ""),
-    confirmPassword: String(formData.get("confirmPassword") ?? ""),
-  });
-
-  if (!result.success) {
-    return result;
-  }
-
-  return {
-    success: true,
-    message: "ثبت‌نام با موفقیت انجام شد.",
-  };
+export async function sendOtpAction(mobile: string): Promise<SendOtpState> {
+  return requestOtp({ mobile });
 }
 
-export async function loginAction(
-  _prevState: AuthActionState,
-  formData: FormData
-): Promise<AuthActionState> {
-  const callbackUrl = String(formData.get("callbackUrl") ?? "/");
-  const loginResult = validateLoginInput({
-    email: String(formData.get("email") ?? ""),
-    password: String(formData.get("password") ?? ""),
-    rememberMe: formData.get("rememberMe") === "on",
-  });
+export type VerifyOtpState = {
+  success: boolean;
+  message?: string;
+};
 
-  if (!loginResult.success) {
-    return loginResult;
-  }
-
+export async function verifyOtpAction(
+  mobile: string,
+  otp: string
+): Promise<VerifyOtpState> {
   try {
-    await signIn("credentials", {
-      email: loginResult.data.email,
-      password: loginResult.data.password,
-      redirect: false,
-    });
+    // تأیید کد و تشخیص/ساخت کاربر داخل provider انجام می‌شود
+    await signIn("credentials", { mobile, otp, redirect: false });
   } catch (error) {
     if (error instanceof AuthError) {
       return {
         success: false,
-        message: "ایمیل یا رمز عبور نادرست است.",
+        message: "کد واردشده نادرست یا منقضی شده است.",
       };
     }
     throw error;
   }
 
-  redirect(callbackUrl);
+  return { success: true };
 }
 
 export async function logoutAction() {

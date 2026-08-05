@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { AuthCard } from "@/features/auth/components/AuthCard";
-import { LoginForm } from "@/features/auth/components/LoginForm";
+import { OtpLoginForm } from "@/features/auth/components/OtpLoginForm";
 
 export default async function LoginPage({
   searchParams,
@@ -16,11 +16,13 @@ export default async function LoginPage({
   }
 
   return (
-    <AuthCard
-      title="ورود به تن‌بوم"
-      description="برای ادامه طراحی، وارد حساب کاربری خود شوید."
-    >
-      <LoginForm callbackUrl={params.callbackUrl} />
-    </AuthCard>
+    <>
+      <AuthCard
+        title="ورود به تن‌بوم"
+        description="برای ورود، شماره موبایل خود را وارد کنید."
+      >
+        <OtpLoginForm callbackUrl={params.callbackUrl} />
+      </AuthCard>
+    </>
   );
 }

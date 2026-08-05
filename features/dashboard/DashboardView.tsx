@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import {
   HiOutlineGlobeAlt,
@@ -9,28 +10,42 @@ import {
   HiOutlineShoppingBag,
   HiOutlineSparkles,
   HiOutlineSquares2X2,
+  HiOutlineUser,
 } from "react-icons/hi2";
 import type { DesignRecord } from "@/server/services/design-service";
 import type { OrderRecord } from "@/server/services/order-service";
+import type { AuthUser } from "@/server/services/user-service";
 import { ease } from "@/shared/definitions/motion";
 import { DesignCard } from "./components/DesignCard";
 import { OrderCard } from "./components/OrderCard";
 import { EmptyState } from "./components/EmptyState";
+import { ProfileForm } from "./components/ProfileForm";
+import { useGlobalStore } from "@/shared/store/useGlobalStore";
 
-type TabKey = "orders" | "designs" | "public";
+type TabKey = "orders" | "designs" | "public" | "profile";
 
 interface DashboardViewProps {
-  userName: string | null;
+  user: AuthUser;
   designs: DesignRecord[];
   orders: OrderRecord[];
 }
 
-export function DashboardView({
-  userName,
-  designs,
-  orders,
-}: DashboardViewProps) {
+export function DashboardView({ user, designs, orders }: DashboardViewProps) {
+  const searchParams = useSearchParams();
+  const { showSnackbar } = useGlobalStore();
   const [activeTab, setActiveTab] = useState<TabKey>("orders");
+
+  // اگر پارامتر profile در URL باشد، تب پروفایل را فعال می‌کنیم
+  useEffect(() => {
+    if (searchParams.get("profile") === "edit") {
+      setActiveTab("profile");
+      // پیام توضیحی
+      showSnackbar(
+        "لطفاً اطلاعات شخصی خود را تکمیل کنید تا بتوانید سفارش ثبت کنید.",
+        "info"
+      );
+    }
+  }, [searchParams, showSnackbar]);
 
   const publicDesigns = useMemo(
     () => designs.filter((d) => d.isPublic),
@@ -68,6 +83,12 @@ export function DashboardView({
       icon: HiOutlineGlobeAlt,
       count: publicDesigns.length,
     },
+    {
+      key: "profile",
+      label: "اطلاعات شخصی",
+      icon: HiOutlineUser,
+      count: 0,
+    },
   ];
 
   const stats = [
@@ -102,7 +123,7 @@ export function DashboardView({
       >
         <div>
           <p className="text-sm text-muted-foreground">
-            خوش آمدید{userName ? `، ${userName}` : ""} 
+            خوش آمدید{user.name ? `، ${user.name}` : ""} 
           </p>
           <h1 className="mt-1 text-2xl font-black tracking-tight text-foreground sm:text-3xl">
             داشبورد شخصی
@@ -169,15 +190,17 @@ export function DashboardView({
               )}
               <tab.icon className="relative z-10 size-4" />
               <span className="relative z-10">{tab.label}</span>
-              <span
-                className={`relative z-10 flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] ${
-                  isActive
-                    ? "bg-white/25 text-accent-foreground"
-                    : "bg-primary-100/80 text-muted-foreground"
-                }`}
-              >
-                {tab.count.toLocaleString("fa-IR")}
-              </span>
+              {tab.key !== "profile" && (
+                <span
+                  className={`relative z-10 flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] ${
+                    isActive
+                      ? "bg-white/25 text-accent-foreground"
+                      : "bg-primary-100/80 text-muted-foreground"
+                  }`}
+                >
+                  {tab.count.toLocaleString("fa-IR")}
+                </span>
+              )}
             </button>
           );
         })}
@@ -233,6 +256,29 @@ export function DashboardView({
               ))}
             </div>
           ))}
+
+        {activeTab === "profile" && (
+          <div className="rounded-2xl border border-white/80 bg-white/55 p-6 shadow-soft-primary backdrop-blur-xl">
+            <h2 className="mb-4 text-lg font-bold text-foreground">
+              اطلاعات شخصی
+            </h2>
+            <p className="mb-6 text-sm text-muted-foreground">
+              این اطلاعات برای نمایش نام شما در گالری و همچنین ثبت سفارش‌های دوخت استفاده می‌شود.
+              <br />
+              <span className="font-medium text-rose-500">
+                تکمیل نام کاربری، نام و نام خانوادگی، آدرس و کد پستی برای ثبت سفارش الزامی است.
+              </span>
+            </p>
+            <ProfileForm
+              initialData={{
+                name: user.name,
+                fullName: user.fullName,
+                address: user.address,
+                postalCode: user.postalCode,
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
