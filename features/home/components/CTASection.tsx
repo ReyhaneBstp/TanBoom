@@ -36,10 +36,10 @@ export function CTASection() {
               whileTap={{ scale: 0.96 }}
             >
               <Link
-                href="/register"
+                href="/login"
                 className="inline-flex bg-white text-primary font-black text-base px-10 py-4 rounded-2xl shadow-xl"
               >
-                ثبت‌نام رایگان
+                ورود و شروع رایگان
               </Link>
             </Motion>
             <Link

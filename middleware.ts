@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import NextAuth from "next-auth";
+import { authConfig } from "@/auth.config";
 
-const authRoutes = new Set(["/login", "/register"]);
+const { auth } = NextAuth(authConfig);
+
+const authRoutes = new Set(["/login"]);
 const protectedRoutes = ["/design"];
 
 export default auth((req) => {
@@ -26,5 +29,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/design/:path*", "/login", "/register"],
+  matcher: ["/design/:path*", "/login"],
 };

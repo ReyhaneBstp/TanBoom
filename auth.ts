@@ -1,35 +1,26 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { loginSchema } from "@/features/auth/lib/validations";
-import { authenticateUser } from "@/server/services/user-service";
+import { authConfig } from "@/auth.config";
+import { verifyOtpSchema } from "@/features/auth/lib/validations";
+import { verifyOtpAndResolveUser } from "@/server/services/auth-service";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  secret: process.env.AUTH_SECRET,
-  trustHost: true,
-  session: {
-    strategy: "jwt",
-  },
-  pages: {
-    signIn: "/login",
-  },
+  ...authConfig,
   providers: [
     Credentials({
-      name: "credentials",
+      name: "otp",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        mobile: { label: "Mobile", type: "text" },
+        otp: { label: "OTP", type: "text" },
       },
       async authorize(credentials) {
-        const parsed = loginSchema.safeParse(credentials);
+        const parsed = verifyOtpSchema.safeParse(credentials);
 
         if (!parsed.success) {
           return null;
         }
 
-        const user = await authenticateUser(
-          parsed.data.email,
-          parsed.data.password
-        );
+        const user = await verifyOtpAndResolveUser(parsed.data);
 
         if (!user) {
           return null;
@@ -39,22 +30,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.name = user.name;
-        token.email = user.email ?? "";
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.name = token.name ?? "";
-        session.user.email = token.email as string;
-      }
-      return session;
-    },
-  },
 });

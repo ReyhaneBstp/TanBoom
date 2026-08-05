@@ -1,19 +1,37 @@
-import {
-  createPocketBaseClient,
-  getPocketBase,
-  isPbNotFound,
-} from "@/server/pocketbase/pocketbase";
-import { RegisterInput } from "@/features/auth/lib/validations";
+import { randomBytes } from "crypto";
+import { getPocketBase, isPbNotFound } from "@/server/pocketbase/pocketbase";
 
-export async function findUserByEmail(email: string) {
+export type AuthUser = {
+  id: string;
+  name: string;
+  email: string;
+  mobile: string;
+};
+
+function toAuthUser(record: {
+  id: string;
+  name?: string;
+  email?: string;
+  mobile?: string;
+}): AuthUser {
+  return {
+    id: record.id,
+    name: (record.name as string) ?? "",
+    email: (record.email as string) ?? "",
+    mobile: (record.mobile as string) ?? "",
+  };
+}
+
+export async function findUserByMobile(
+  mobile: string
+): Promise<AuthUser | null> {
   const pb = await getPocketBase();
 
   try {
-    return await pb
+    const record = await pb
       .collection("users")
-      .getFirstListItem(
-        pb.filter("email = {:email}", { email: email.toLowerCase() })
-      );
+      .getFirstListItem(pb.filter("mobile = {:mobile}", { mobile }));
+    return toAuthUser(record);
   } catch (error) {
     if (isPbNotFound(error)) {
       return null;
@@ -22,44 +40,20 @@ export async function findUserByEmail(email: string) {
   }
 }
 
-export async function createUser(data: RegisterInput) {
+/**
+ * ساخت کاربر جدید فقط با شماره موبایل.
+ * چون ورود بدون رمز عبور است، یک رمز تصادفی امن تولید می‌شود که کاربر هرگز از آن استفاده نمی‌کند.
+ */
+export async function createMobileUser(mobile: string): Promise<AuthUser> {
   const pb = await getPocketBase();
 
+  const password = randomBytes(24).toString("hex");
 
-  const user = await pb.collection("users").create({
-    name: data.name.trim(),
-    email: data.email.toLowerCase(),
-    phone: data.phone.trim(),
-    password: data.password,
-    passwordConfirm: data.confirmPassword,
-    emailVisibility: true,
+  const record = await pb.collection("users").create({
+    mobile,
+    password,
+    passwordConfirm: password,
   });
 
-  return {
-    id: user.id,
-    name: user.name as string,
-    email: user.email as string,
-    createdAt: user.created as string,
-    updatedAt: user.updated as string,
-  };
-}
-
-export async function authenticateUser(email: string, password: string) {
-  const pb = createPocketBaseClient();
-
-  try {
-    const { record } = await pb
-      .collection("users")
-      .authWithPassword(email.toLowerCase(), password);
-
-    return {
-      id: record.id,
-      name: record.name as string,
-      email: record.email as string,
-    };
-  } catch {
-    return null;
-  } finally {
-    pb.authStore.clear();
-  }
+  return toAuthUser(record);
 }

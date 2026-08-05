@@ -36,7 +36,7 @@ export function MobileMenu({ user, onClose }: MobileMenuProps) {
           onClick={onClose}
           className="text-sm font-medium text-foreground hover:text-accent transition-colors"
         >
-          ثبت‌نام / ورود{" "}
+          ورود{" "}
         </Link>
       )}
 
