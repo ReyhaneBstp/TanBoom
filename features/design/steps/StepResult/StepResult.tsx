@@ -13,7 +13,7 @@ import {
   HiOutlineExclamationTriangle,
 } from "react-icons/hi2";
 import { Button } from "@/shared/components/Button";
-import { Input } from "@/shared/components/Input";
+import { DebouncedInput } from "@/shared/components/DebouncedInput";
 import { handleDownload } from "@/shared/utils/downloadFile";
 import { useGenerationStore } from "../../store/generationStore";
 import { useGenerateImage } from "../../hooks/useGenerateImage";
@@ -105,6 +105,8 @@ export function StepResult() {
       .catch(() => setLoadingProfile(false));
   }, []);
 
+  // title از قبل توسط DebouncedInput دیبانس شده، پس این افکت
+  // فقط هر ۴۰۰ میلی‌ثانیه یک‌بار (نه هر keystroke) اجرا می‌شه
   useEffect(() => {
     setUrlTitle(title);
   }, [title, setUrlTitle]);
@@ -418,10 +420,10 @@ export function StepResult() {
                     <HiOutlinePencilSquare className="h-3.5 w-3.5" />
                     نام طرح
                   </label>
-                  <Input
+                  <DebouncedInput
                     id="design-title"
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    onDebouncedChange={setTitle}
                     placeholder="مثلاً: مانتو تابستانه"
                     maxLength={80}
                     className="text-sm"
