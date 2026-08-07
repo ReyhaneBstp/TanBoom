@@ -236,7 +236,8 @@ export function StepResult() {
 
   const handleProfileDialogComplete = () => {
     setProfileDialogOpen(false);
-    router.push("/dashboard?profile=edit");
+    const currentUrl = window.location.pathname + window.location.search;
+    router.push(`/dashboard?profile=edit&returnTo=${encodeURIComponent(currentUrl)}`);
   };
 
   const handleBackTabClick = () => {
