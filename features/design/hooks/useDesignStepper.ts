@@ -1,42 +1,84 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   STEPPER_STEPS,
   stepsInfo,
   STEP_IDS,
-  StepId,
+  type StepId,
 } from "@/features/design/definitions/design-steps";
-import { useStepStore } from "../store/stepStore";
+import { useStepUrl } from "./useStepUrl";
+import { useStepGenderUrl } from "./useStepGenderUrl";
+import { useStepGarmentUrl } from "./useStepGarmentUrl";
+import { useStepPartsUrl } from "./useStepPartsUrl";
+import { useStepFabricUrl } from "./useStepFabricUrl";
+import { useStepAccessoryUrl } from "./useStepAccessoryUrl";
+import { useStepSketchUrl } from "./useStepSketchUrl";
+import { useSketchStore } from "../store/sketchStore";
+import { useGlobalStore } from "@/shared/store/useGlobalStore";
+import { useGenerationStore } from "../store/generationStore";
+import { useResultDraftStore } from "../store/resultDraftStore";
+
+// Zustand stores for sync
 import { useGenderStore } from "../store/genderStore";
 import { useGarmentStore } from "../store/garmentStore";
-import { useFabricStore } from "../store/fabricStore";
-import { useGenerationStore } from "../store/generationStore";
-import { useAccessoryStore } from "../store/accessoryStore";
-import { useGlobalStore } from "@/shared/store/useGlobalStore";
 import { usePartsStore } from "../store/partsStore";
-import { useSketchStore } from "../store/sketchStore"; // ✅ اضافه شد
+import { useFabricStore } from "../store/fabricStore";
+import { useAccessoryStore } from "../store/accessoryStore";
 
 const OPTIONAL_STEPS: readonly StepId[] = [
   STEP_IDS.PARTS,
   STEP_IDS.ACCESSORIES,
-  STEP_IDS.SKETCH
+  STEP_IDS.SKETCH,
 ];
 
 export function useDesignStepper() {
-  const currentStepId = useStepStore((s) => s.currentStepId);
-  const gender = useGenderStore((s) => s.gender);
-  const garmentTypeId = useGarmentStore((s) => s.garmentTypeId);
-  const selectedFabricIds = useFabricStore((s) => s.selectedFabricIds);
-  const fabricAssignments = useFabricStore((s) => s.fabricAssignments);
-  const generatedImages = useGenerationStore((s) => s.generatedImages);
-  const selectedAccessories = useAccessoryStore((s) => s.selectedAccessories);
-  const accessoryPlacements = useAccessoryStore((s) => s.accessoryPlacements);
-  const setCurrentStepId = useStepStore((s) => s.setCurrentStepId);
+  const [currentStepId, setCurrentStepId] = useStepUrl();
+  const { gender } = useStepGenderUrl();
+  const { garmentTypeId } = useStepGarmentUrl();
+  const { selectedParts } = useStepPartsUrl();
+  const {
+    customFabrics,
+    selectedFabricIds,
+    fabricAssignments,
+  } = useStepFabricUrl();
+  const { selectedAccessories, accessoryPlacements } = useStepAccessoryUrl();
+  const { description: sketchDesc } = useStepSketchUrl();
+  const sketchFile = useSketchStore((s) => s.sketch.file);
+  const images = useResultDraftStore((s) => s.images);
   const showSnackbar = useGlobalStore((s) => s.showSnackbar);
-  
-  const selectedParts = usePartsStore((s) => s.selectedParts);
-  const sketch = useSketchStore((s) => s.sketch); 
+
+  // Sync Zustand stores with URL
+  useEffect(() => {
+    useGenderStore.setState({ gender });
+  }, [gender]);
+
+  useEffect(() => {
+    useGarmentStore.setState({ garmentTypeId });
+  }, [garmentTypeId]);
+
+  useEffect(() => {
+    usePartsStore.setState({ selectedParts });
+  }, [selectedParts]);
+
+  useEffect(() => {
+    useFabricStore.setState({
+      customFabrics,
+      selectedFabricIds,
+      fabricAssignments,
+    });
+  }, [customFabrics, selectedFabricIds, fabricAssignments]);
+
+  useEffect(() => {
+    useAccessoryStore.setState({
+      selectedAccessories,
+      accessoryPlacements,
+    });
+  }, [selectedAccessories, accessoryPlacements]);
+
+  useEffect(() => {
+    useSketchStore.getState().updateDescription(sketchDesc);
+  }, [sketchDesc]);
 
   const currentStepIndex = useMemo(
     () => STEPPER_STEPS.findIndex((step) => step.id === currentStepId),
@@ -52,8 +94,8 @@ export function useDesignStepper() {
           selectedFabricIds.every((id) => fabricAssignments[id]?.trim()),
         selectedAccessories.length > 0 &&
           selectedAccessories.every((id) => accessoryPlacements[id]?.trim()),
-        Boolean(sketch.file || sketch.description.trim()),
-        generatedImages.length > 0,
+        Boolean(sketchDesc.trim() || sketchFile),
+        images.length > 0,
       ] as const,
     [
       gender,
@@ -63,8 +105,9 @@ export function useDesignStepper() {
       fabricAssignments,
       selectedAccessories,
       accessoryPlacements,
-      sketch, 
-      generatedImages,
+      sketchDesc,
+      sketchFile,
+      images,
     ]
   );
 
@@ -125,12 +168,12 @@ export function useDesignStepper() {
 
     if (currentStepId === STEP_IDS.SKETCH) {
       useGenerationStore.getState().reset();
+      useResultDraftStore.getState().clear(); // پاک کردن تصاویر قبلی
     }
 
     if (!canGoNext) return;
 
     const nextIndex = currentStepIndex + 1;
-
     if (nextIndex < STEPPER_STEPS.length) {
       setCurrentStepId(STEPPER_STEPS[nextIndex].id);
     }
@@ -138,9 +181,7 @@ export function useDesignStepper() {
 
   const handleGoBack = () => {
     if (!canGoBack) return;
-
     const prevIndex = currentStepIndex - 1;
-
     if (prevIndex >= 0) {
       setCurrentStepId(STEPPER_STEPS[prevIndex].id);
     }

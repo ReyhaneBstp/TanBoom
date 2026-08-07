@@ -6,12 +6,12 @@ import { HiOutlineArrowUpTray, HiOutlinePhoto } from "react-icons/hi2";
 import { Textarea } from "@/shared/components/Textarea";
 import { cn } from "@/shared/utils/mergeClasses";
 import { useSketchStore } from "../store/sketchStore";
+import { useStepSketchUrl } from "../hooks/useStepSketchUrl";
 
 export function StepSketch() {
   const previewUrl = useSketchStore((s) => s.sketch.previewUrl);
-  const description = useSketchStore((s) => s.sketch.description);
   const updateSketchFile = useSketchStore((s) => s.updateSketchFile);
-  const updateDescription = useSketchStore((s) => s.updateDescription);
+  const { description, updateDescription } = useStepSketchUrl();
 
   const handleDrop = (event: DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
@@ -66,9 +66,7 @@ export function StepSketch() {
         </label>
         <div className="flex flex-col">
           <div className="mb-2">
-            <h3 className="text-sm font-medium text-foreground/80">
-              توضیحات طراحی
-            </h3>
+            <h3 className="text-sm font-medium text-foreground/80">توضیحات طراحی</h3>
             <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
               اختیاری — جزئیات دوخت، یقه، آستین و هرچیزی که برای شفاف‌تر شدن طرحت
               لازمه بدونیم رو بنویس.

@@ -86,7 +86,7 @@ export function DesignStepper() {
           </div>
         </CardHeader>
 
-        <CardContent className="min-h-[28rem] pt-5 sm:pt-6">
+        <CardContent className="min-h-[24rem] pt-5 sm:pt-6">
           {currentStepId === STEP_IDS.GENDER && <StepGender />}
           {currentStepId === STEP_IDS.PARTS && <StepGarmentParts />}
           {currentStepId === STEP_IDS.FABRIC && <StepFabric />}
