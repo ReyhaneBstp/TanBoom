@@ -5,14 +5,12 @@ import { GENDER_OPTIONS, GARMENT_TYPES } from "@/features/design/definitions/des
 import { GarmentIcon } from "../components/GarmentIcon";
 import { OptionCard } from "../components/OptionCard";
 import { GiFemale, GiMale } from "react-icons/gi";
-import { useGarmentStore } from "../store/garmentStore";
-import { useGenderStore } from "../store/genderStore";
+import { useStepGenderUrl } from "../hooks/useStepGenderUrl";
+import { useStepGarmentUrl } from "../hooks/useStepGarmentUrl";
 
 export function StepGender() {
-  const gender = useGenderStore((s) => s.gender);
-  const garmentTypeId = useGarmentStore((s) => s.garmentTypeId);
-  const setGender = useGenderStore((s) => s.setGender);
-  const setGarment = useGarmentStore((s) => s.setGarment);
+  const { gender, setGender } = useStepGenderUrl();
+  const { garmentTypeId, setGarment } = useStepGarmentUrl();
 
   const filteredGarments = GARMENT_TYPES.filter(
     (garment) => garment.gender === gender
@@ -42,10 +40,7 @@ export function StepGender() {
       </div>
 
       <div className="flex-1">
-        <h3 className="mb-4 text-sm font-medium text-foreground/80">
-          نوع پوشاک
-        </h3>
-
+        <h3 className="mb-4 text-sm font-medium text-foreground/80">نوع پوشاک</h3>
         {!gender ? (
           <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-primary-300/70 bg-white/30 px-6 py-10 text-center backdrop-blur-xl">
             <LuShirt className="size-10 text-primary-600 animate-bounce" />

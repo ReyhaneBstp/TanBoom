@@ -6,7 +6,6 @@ import {
   HiOutlineChevronLeft,
   HiOutlineXMark,
   HiOutlineSquares2X2,
-  HiOutlineExclamationTriangle,
 } from "react-icons/hi2";
 import { Button } from "@/shared/components/Button";
 import { cn } from "@/shared/utils/mergeClasses";
@@ -14,14 +13,14 @@ import { GARMENT_PART_LABELS } from "../../definitions/design-options";
 import type { GarmentPartType } from "@/features/design/types/design";
 import type { GarmentPartRecord } from "@/server/services/garment-parts-service";
 import { useGarmentParts } from "../../hooks/useGarmentParts";
-import { usePartsStore } from "../../store/partsStore";
-import { useGenderStore } from "../../store/genderStore";
-import { useGarmentStore } from "../../store/garmentStore";
+import { useStepPartsUrl } from "../../hooks/useStepPartsUrl";
+import { useStepGarmentUrl } from "../../hooks/useStepGarmentUrl";
+import { useStepGenderUrl } from "../../hooks/useStepGenderUrl";
 import { GarmentPartModal } from "./GarmentPartModal";
 
 export function StepGarmentParts() {
-  const gender = useGenderStore((s) => s.gender);
-  const garmentTypeId = useGarmentStore((s) => s.garmentTypeId);
+  const { gender } = useStepGenderUrl();
+  const { garmentTypeId } = useStepGarmentUrl();
 
   const {
     availableCategories,
@@ -30,17 +29,11 @@ export function StepGarmentParts() {
     loadingCategory,
     errorCategory,
     resetCache,
-  } = useGarmentParts();
+  } = useGarmentParts(gender, garmentTypeId);
 
-  const selectedParts = usePartsStore((s) => s.selectedParts);
-  const setPart = usePartsStore((s) => s.setPart);
-  const clearPart = usePartsStore((s) => s.clearPart);
-
-  const [openCategory, setOpenCategory] = useState<GarmentPartType | null>(
-    null
-  );
+  const { selectedParts, setPart, clearPart } = useStepPartsUrl();
+  const [openCategory, setOpenCategory] = useState<GarmentPartType | null>(null);
   const [modalOptions, setModalOptions] = useState<GarmentPartRecord[]>([]);
-
 
   useEffect(() => {
     resetCache();
@@ -50,12 +43,10 @@ export function StepGarmentParts() {
 
   const handleOpenCategory = async (category: GarmentPartType) => {
     setOpenCategory(category);
-
     if (partsCache[category]) {
       setModalOptions(partsCache[category]!);
       return;
     }
-
     const options = await fetchPartsForCategory(category);
     setModalOptions(options);
   };
@@ -150,8 +141,8 @@ export function StepGarmentParts() {
           title={GARMENT_PART_LABELS[openCategory]}
           options={modalOptions}
           selectedId={selectedParts[openCategory]?.id ?? null}
-          isLoading={loadingCategory === openCategory}   
-          error={errorCategory}                         
+          isLoading={loadingCategory === openCategory}
+          error={errorCategory}
           onClose={() => setOpenCategory(null)}
           onSelect={(part) => handleSelect(openCategory, part)}
         />

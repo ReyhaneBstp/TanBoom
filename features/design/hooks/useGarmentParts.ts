@@ -10,15 +10,14 @@ import type {
   GarmentPartType,
   MeasurementCategory,
 } from "@/features/design/types/design";
+import type { Gender } from "@/features/design/types/design";
 import { getGarmentParts } from "@/server/actions/garment-parts-actions";
 import type { GarmentPartRecord } from "@/server/services/garment-parts-service";
-import { useGenderStore } from "../store/genderStore";
-import { useGarmentStore } from "../store/garmentStore";
 
-export function useGarmentParts() {
-  const gender = useGenderStore((s) => s.gender);
-  const garmentTypeId = useGarmentStore((s) => s.garmentTypeId);
-
+export function useGarmentParts(
+  gender: Gender | null,
+  garmentTypeId: string | null
+) {
   const latestGenderRef = useRef(gender);
   const latestGarmentTypeRef = useRef(garmentTypeId);
   latestGenderRef.current = gender;
@@ -45,7 +44,9 @@ export function useGarmentParts() {
 
   const fetchPartsForCategory = useCallback(
     async (partType: GarmentPartType) => {
-      if (!gender || !garmentTypeId) return [];
+      const currentGender = latestGenderRef.current;
+      const currentGarment = latestGarmentTypeRef.current;
+      if (!currentGender || !currentGarment) return [];
 
       if (partsCache[partType]) {
         return partsCache[partType]!;
@@ -61,15 +62,14 @@ export function useGarmentParts() {
 
       try {
         const result = await getGarmentParts({
-          gender,
+          gender: currentGender,
           partType,
-          baseKey: partType === "base" ? baseKey : null, 
+          baseKey: partType === "base" ? baseKey : null,
         });
 
-
         if (
-          latestGenderRef.current === gender &&
-          latestGarmentTypeRef.current === garmentTypeId
+          latestGenderRef.current === currentGender &&
+          latestGarmentTypeRef.current === currentGarment
         ) {
           setPartsCache((prev) => ({ ...prev, [partType]: result }));
           return result;
@@ -79,8 +79,8 @@ export function useGarmentParts() {
       } catch (err) {
         console.error(err);
         if (
-          latestGenderRef.current === gender &&
-          latestGarmentTypeRef.current === garmentTypeId
+          latestGenderRef.current === currentGender &&
+          latestGarmentTypeRef.current === currentGarment
         ) {
           setErrorCategory(partType);
           setPartsCache((prev) => ({ ...prev, [partType]: [] }));
@@ -88,14 +88,14 @@ export function useGarmentParts() {
         return [];
       } finally {
         if (
-          latestGenderRef.current === gender &&
-          latestGarmentTypeRef.current === garmentTypeId
+          latestGenderRef.current === currentGender &&
+          latestGarmentTypeRef.current === currentGarment
         ) {
           setLoadingCategory(null);
         }
       }
     },
-    [gender, garmentTypeId, baseKey, partsCache]
+    [baseKey, partsCache]
   );
 
   const resetCache = useCallback(() => {

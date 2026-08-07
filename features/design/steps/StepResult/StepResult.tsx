@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   HiOutlineArrowDownTray,
@@ -16,7 +16,6 @@ import { Button } from "@/shared/components/Button";
 import { Input } from "@/shared/components/Input";
 import { handleDownload } from "@/shared/utils/downloadFile";
 import { useGenerationStore } from "../../store/generationStore";
-import { resetDesignStores } from "../../store/resetDesignStores";
 import { useGenerateImage } from "../../hooks/useGenerateImage";
 import {
   saveDesignToDashboard,
@@ -27,11 +26,15 @@ import { useGlobalStore } from "@/shared/store/useGlobalStore";
 import { getActionErrorMessage } from "@/shared/utils/getActionErrorMessage";
 import { getCurrentUserProfile } from "@/server/actions/get-current-user-profile";
 import { isProfileCompleteForOrder } from "@/server/services/user-service";
-import { useDesignDraftStore } from "../../store/designDraftStore";
+import { ProfileIncompleteDialog } from "./ProfileIncompleteDialog";
+import { useStepResultUrl } from "../../hooks/useStepResultUrl";
+import { useResetDesign } from "../../hooks/useResetDesign";
+import { useResultDraftStore } from "../../store/resultDraftStore";
+
+type DesignView = "front" | "back";
 
 export function StepResult() {
   const router = useRouter();
-  const generatedImages = useGenerationStore((s) => s.generatedImages);
   const frontError = useGenerationStore((s) => s.frontError);
   const backError = useGenerationStore((s) => s.backError);
   const {
@@ -40,57 +43,59 @@ export function StepResult() {
     isGeneratingFront,
     isGeneratingBack,
   } = useGenerateImage();
-  const restart = resetDesignStores;
+  const resetDesign = useResetDesign();
   const { showLoading, hideLoading, showSnackbar } = useGlobalStore();
-  const designDraftStore = useDesignDraftStore();
 
-  const hasBack = generatedImages.some((img) => img.id === "back");
+  const images = useResultDraftStore((s) => s.images);
+  const title = useResultDraftStore((s) => s.title);
+  const setTitle = useResultDraftStore((s) => s.setTitle);
+
+  const { setDesignTitle: setUrlTitle } = useStepResultUrl();
+
+  const hasBack = images.some((img) => img.id === "back");
 
   const [isSaving, setIsSaving] = useState(false);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [currentDesignId, setCurrentDesignId] = useState<string | null>(null);
-  const [designTitle, setDesignTitle] = useState("");
   const [userProfile, setUserProfile] = useState<any>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
 
-  // ✅ اضافه کردن useEffect برای تولید خودکار تصویر جلو
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+  const [profileDialogAction, setProfileDialogAction] = useState<
+    "order" | "gallery" | null
+  >(null);
+
+  const [activeView, setActiveView] = useState<DesignView>("front");
+  const hasAutoSwitchedRef = useRef(false);
+  const prevHasBackRef = useRef(hasBack);
+  const userNavigatedRef = useRef(false);
+
+  const goToView = (view: DesignView) => {
+    userNavigatedRef.current = true;
+    setActiveView(view);
+  };
+
   useEffect(() => {
-    const { generatedImages, frontError, isGeneratingFront } =
-      useGenerationStore.getState();
-    if (generatedImages.length === 0 && !frontError && !isGeneratingFront) {
+    if (images.length === 0 && !frontError && !isGeneratingFront) {
       generateFront();
     }
-  }, [generateFront]); // وابستگی به generateFront
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [images.length, frontError, isGeneratingFront]);
 
-  // بازیابی پیش‌نویس طرح با اضافه کردن angle
   useEffect(() => {
-    const draft = designDraftStore.draft;
-    if (draft) {
-      const setImages = useGenerationStore.getState().setGeneratedImages;
-      const images = [
-        {
-          id: "front",
-          angle: "front",
-          src: draft.frontImage,
-          title: "نمای جلو",
-        },
-      ];
-      if (draft.backImage) {
-        images.push({
-          id: "back",
-          angle: "back",
-          src: draft.backImage,
-          title: "نمای پشت",
-        });
-      }
-      setImages(images);
-      setDesignTitle(draft.title);
-      designDraftStore.clearDraft();
-      showSnackbar("طرح شما بازیابی شد. حالا می‌توانید ادامه دهید.", "info");
+    const justFinishedGenerating = hasBack && !prevHasBackRef.current;
+    prevHasBackRef.current = hasBack;
+    if (
+      justFinishedGenerating &&
+      !isGeneratingBack &&
+      !hasAutoSwitchedRef.current &&
+      !userNavigatedRef.current
+    ) {
+      setActiveView("back");
+      hasAutoSwitchedRef.current = true;
     }
-  }, [designDraftStore, showSnackbar]);
+  }, [hasBack, isGeneratingBack]);
 
-  // دریافت پروفایل کاربر
   useEffect(() => {
     getCurrentUserProfile()
       .then((user) => {
@@ -100,51 +105,40 @@ export function StepResult() {
       .catch(() => setLoadingProfile(false));
   }, []);
 
-  const frontImage = generatedImages.find((img) => img.id === "front")?.src;
-  const backImage = generatedImages.find((img) => img.id === "back")?.src;
+  useEffect(() => {
+    setUrlTitle(title);
+  }, [title, setUrlTitle]);
 
-  const handleSave = async (action: "dashboard" | "gallery") => {
+  const frontImage = images.find((img) => img.id === "front")?.src;
+  const backImage = images.find((img) => img.id === "back")?.src;
+  const activeImage = activeView === "front" ? frontImage : backImage ?? frontImage;
+
+  const executePublishToGallery = async () => {
     if (!frontImage) return;
     setIsSaving(true);
-    showLoading(
-      action === "dashboard"
-        ? "در حال ذخیره طرح در داشبورد..."
-        : "در حال انتشار طرح در گالری...",
-    );
-    const title = designTitle.trim() || "طرح جدید";
+    showLoading("در حال انتشار طرح در گالری...");
+    const designTitle = title.trim() || "طرح جدید";
     try {
-      let res;
-      if (action === "dashboard") {
-        res = await saveDesignToDashboard({
-          title,
-          frontImage,
-          backImage: backImage ?? undefined,
-        });
-        showSnackbar("طرح در داشبورد شما ذخیره شد", "success");
-      } else {
-        if (!userProfile?.name?.trim()) {
-          showSnackbar(
-            "برای نمایش نام شما در گالری، لطفاً نام کاربری خود را در بخش اطلاعات شخصی تکمیل کنید.",
-            "info"
-          );
-        }
-        res = await publishDesignToGallery({
-          title,
-          frontImage,
-          backImage: backImage ?? undefined,
-        });
-        showSnackbar("طرح در گالری عمومی منتشر شد", "success");
+      if (!userProfile?.name?.trim()) {
+        showSnackbar(
+          "برای نمایش نام شما در گالری، لطفاً نام کاربری خود را در بخش اطلاعات شخصی تکمیل کنید.",
+          "info"
+        );
       }
+      const res = await publishDesignToGallery({
+        title: designTitle,
+        frontImage,
+        backImage: backImage ?? undefined,
+      });
+      showSnackbar("طرح در گالری عمومی منتشر شد", "success");
       setCurrentDesignId(res.designId);
     } catch (error: any) {
       showSnackbar(
         getActionErrorMessage(
           error,
-          action === "dashboard"
-            ? "ذخیره‌ی طرح انجام نشد. لطفاً دوباره تلاش کنید؛ اگر مشکل ادامه داشت تصویر را دانلود و بعداً ذخیره کنید."
-            : "انتشار طرح انجام نشد. لطفاً دوباره تلاش کنید.",
+          "انتشار طرح انجام نشد. لطفاً دوباره تلاش کنید."
         ),
-        "error",
+        "error"
       );
     } finally {
       hideLoading();
@@ -152,32 +146,23 @@ export function StepResult() {
     }
   };
 
-  const handleOrderClick = async () => {
-    if (loadingProfile) {
-      showSnackbar("در حال بررسی اطلاعات شما...", "info");
+  const initiateGalleryPublish = () => {
+    if (!frontImage) return;
+    if (!userProfile || !userProfile?.name?.trim()) {
+      setProfileDialogAction("gallery");
+      setProfileDialogOpen(true);
       return;
     }
+    executePublishToGallery();
+  };
 
-    if (!userProfile || !isProfileCompleteForOrder(userProfile)) {
-      designDraftStore.setDraft({
-        title: designTitle.trim() || "طرح جدید",
-        frontImage: frontImage!,
-        backImage: backImage ?? undefined,
-      });
-      showSnackbar(
-        "برای ثبت سفارش، ابتدا اطلاعات شخصی خود را کامل کنید.",
-        "error"
-      );
-      router.push("/dashboard?profile=edit&returnTo=/design/result");
-      return;
-    }
-
+  const executeOrderFlow = async () => {
     if (!currentDesignId && frontImage) {
       setIsSaving(true);
       showLoading("در حال آماده‌سازی سفارش...");
       try {
         const res = await saveDesignToDashboard({
-          title: designTitle.trim() || "طرح جدید",
+          title: title.trim() || "طرح جدید",
           frontImage,
           backImage: backImage ?? undefined,
         });
@@ -187,9 +172,9 @@ export function StepResult() {
         showSnackbar(
           getActionErrorMessage(
             error,
-            "آماده‌سازی سفارش انجام نشد. لطفاً دوباره روی «ثبت سفارش دوخت» بزنید.",
+            "آماده‌سازی سفارش انجام نشد. لطفاً دوباره روی «ثبت سفارش دوخت» بزنید."
           ),
-          "error",
+          "error"
         );
       } finally {
         hideLoading();
@@ -200,233 +185,329 @@ export function StepResult() {
     }
   };
 
+  const initiateOrder = () => {
+    if (loadingProfile) {
+      showSnackbar("در حال بررسی اطلاعات شما...", "info");
+      return;
+    }
+    if (!userProfile || !isProfileCompleteForOrder(userProfile)) {
+      setProfileDialogAction("order");
+      setProfileDialogOpen(true);
+      return;
+    }
+    executeOrderFlow();
+  };
+
+  const handleSaveToDashboard = async () => {
+    if (!frontImage) return;
+    setIsSaving(true);
+    showLoading("در حال ذخیره طرح در داشبورد...");
+    const designTitle = title.trim() || "طرح جدید";
+    try {
+      const res = await saveDesignToDashboard({
+        title: designTitle,
+        frontImage,
+        backImage: backImage ?? undefined,
+      });
+      showSnackbar("طرح در داشبورد شما ذخیره شد", "success");
+      setCurrentDesignId(res.designId);
+    } catch (error: any) {
+      showSnackbar(
+        getActionErrorMessage(
+          error,
+          "ذخیره‌ی طرح انجام نشد. لطفاً دوباره تلاش کنید."
+        ),
+        "error"
+      );
+    } finally {
+      hideLoading();
+      setIsSaving(false);
+    }
+  };
+
+  const handleProfileDialogContinue = () => {
+    setProfileDialogOpen(false);
+    if (profileDialogAction === "order") {
+      executeOrderFlow();
+    } else if (profileDialogAction === "gallery") {
+      executePublishToGallery();
+    }
+  };
+
+  const handleProfileDialogComplete = () => {
+    setProfileDialogOpen(false);
+    router.push("/dashboard?profile=edit");
+  };
+
+  const handleBackTabClick = () => {
+    if (hasBack) {
+      goToView("back");
+    } else if (!isGeneratingBack) {
+      userNavigatedRef.current = true;
+      generateBackView();
+    }
+  };
+
+  const handleToggleView = () => {
+    goToView(activeView === "front" ? "back" : "front");
+  };
+
+  const handleRestart = () => {
+    hasAutoSwitchedRef.current = false;
+    userNavigatedRef.current = false;
+    prevHasBackRef.current = false;
+    resetDesign();
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2">
-        {!frontImage && frontError && (
-          <div className="flex aspect-[4/5] flex-col items-center justify-center rounded-[2rem] border border-dashed border-rose-300 bg-rose-50/60 p-6 text-center backdrop-blur-xl">
-            <span className="flex size-14 items-center justify-center rounded-full bg-rose-100">
-              <HiOutlineExclamationTriangle className="size-7 text-rose-500" />
-            </span>
-            <h3 className="mt-4 text-sm font-semibold text-foreground">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-1">
+      <div className="overflow-hidden rounded-2xl border border-white/80 bg-white/55 p-4 shadow-soft-primary backdrop-blur-xl sm:p-6">
+        {frontError && !frontImage ? (
+          <div className="flex aspect-[4/5] flex-col items-center justify-center rounded-xl border border-dashed border-rose-300 bg-rose-50/60 p-4 text-center">
+            <HiOutlineExclamationTriangle className="mb-2 h-7 w-7 text-rose-500" />
+            <p className="text-sm font-semibold text-foreground">
               تولید تصویر ناموفق بود
-            </h3>
-            <p className="mt-1 max-w-[220px] text-xs leading-5 text-muted-foreground">
-              مشکلی در تولید تصویر پیش آمد. نگران نباشید، می‌توانید دوباره تلاش
-              کنید.
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              مشکلی پیش آمد، می‌توانید دوباره تلاش کنید.
             </p>
             <Button
-              type="button"
               onClick={generateFront}
               disabled={isGeneratingFront}
-              className="mt-5 gap-2"
+              className="mt-4 gap-1.5 text-xs"
+              size="sm"
             >
               {isGeneratingFront ? (
                 <>
-                  <HiOutlineArrowPath className="size-4 animate-spin" />
+                  <HiOutlineArrowPath className="h-4 w-4 animate-spin" />
                   در حال تولید...
                 </>
               ) : (
                 <>
-                  <HiOutlineArrowPath className="size-4" />
+                  <HiOutlineArrowPath className="h-4 w-4" />
                   تلاش مجدد
                 </>
               )}
             </Button>
           </div>
-        )}
-
-        {generatedImages.map((image) => (
-          <article
-            key={image.id}
-            className="overflow-hidden rounded-[2rem] border border-white/80 bg-white/55 p-3 shadow-soft-primary backdrop-blur-xl"
-          >
-            <img
-              src={image.src}
-              alt={image.title}
-              className="aspect-[4/5] w-full rounded-[1.55rem] object-cover"
-            />
-            <div className="flex items-center justify-between px-2 py-3">
-              <div>
-                <h3 className="text-sm font-semibold text-foreground">
-                  {image.title}
-                </h3>
+        ) : (
+          <div className="flex flex-col md:flex-row md:gap-5">
+            <div className="flex-1">
+              <div className="mb-3 flex gap-1 rounded-xl bg-muted/30 p-1">
+                <button
+                  type="button"
+                  onClick={() => goToView("front")}
+                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium transition ${
+                    activeView === "front"
+                      ? "bg-white text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  نمای جلو
+                </button>
+                <button
+                  type="button"
+                  onClick={handleBackTabClick}
+                  disabled={isGeneratingBack}
+                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition ${
+                    activeView === "back" && hasBack
+                      ? "bg-white text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  } disabled:cursor-wait`}
+                >
+                  {isGeneratingBack ? (
+                    <>
+                      <HiOutlineArrowPath className="h-3.5 w-3.5 animate-spin" />
+                      در حال تولید...
+                    </>
+                  ) : hasBack ? (
+                    "نمای پشت"
+                  ) : backError ? (
+                    <>
+                      <HiOutlineExclamationTriangle className="h-3.5 w-3.5 text-rose-500" />
+                      خطا
+                    </>
+                  ) : (
+                    <>
+                      <HiOutlineSparkles className="h-3.5 w-3.5" />
+                      تولید نمای پشت
+                    </>
+                  )}
+                </button>
               </div>
-              <button
-                onClick={() =>
-                  handleDownload(image.src, `${image.id}-design.png`)
-                }
-                className="flex size-9 items-center justify-center rounded-full bg-white/80 text-primary-500 transition-transform hover:scale-110"
-              >
-                <HiOutlineArrowDownTray className="size-5" />
-              </button>
-            </div>
-          </article>
-        ))}
 
-        {frontImage && !hasBack && (
-          <div
-            className={`flex flex-col items-center justify-center rounded-[2rem] border border-dashed p-6 text-center backdrop-blur-xl ${
-              backError
-                ? "border-rose-300 bg-rose-50/60"
-                : "border-rose-200 bg-white/45"
-            }`}
-          >
-            {backError ? (
-              <>
-                <span className="flex size-12 items-center justify-center rounded-full bg-rose-100">
-                  <HiOutlineExclamationTriangle className="size-6 text-rose-500" />
-                </span>
-                <h3 className="mt-3 text-sm font-semibold text-foreground">
-                  تولید نمای پشت ناموفق بود
-                </h3>
-                <p className="mt-1 max-w-[220px] text-xs leading-5 text-muted-foreground">
-                  مشکلی پیش آمد؛ لطفاً دوباره تلاش کنید.
-                </p>
-              </>
-            ) : (
-              <>
-                <HiOutlineSparkles className="mb-3 size-8 text-rose-400" />
-                <h3 className="text-sm font-semibold text-foreground">
-                  نمای پشت لباس
-                </h3>
-                <p className="mt-1 max-w-[200px] text-xs text-muted-foreground">
-                  بر اساس نمای جلو و توضیحات شما، پشت لباس طراحی شود.
-                </p>
-              </>
+              <div className="group relative aspect-[4/5] overflow-hidden rounded-xl bg-muted/10">
+                {activeImage ? (
+                  <img
+                    key={activeView}
+                    src={activeImage}
+                    alt={activeView === "front" ? "نمای جلو" : "نمای پشت"}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
+                    در حال بارگذاری...
+                  </div>
+                )}
+
+                {activeImage && (
+                  <button
+                    onClick={() =>
+                      handleDownload(activeImage, `${activeView}-design.png`)
+                    }
+                    className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-primary-500 opacity-0 backdrop-blur transition group-hover:opacity-100"
+                    title="دانلود"
+                  >
+                    <HiOutlineArrowDownTray className="h-4 w-4" />
+                  </button>
+                )}
+
+                {frontImage && backImage && (
+                  <>
+                    <button
+                      onClick={handleToggleView}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-primary-500 shadow backdrop-blur"
+                      aria-label="تغییر نما"
+                    >
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={handleToggleView}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-primary-500 shadow backdrop-blur"
+                      aria-label="تغییر نما"
+                    >
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {frontImage && (
+              <div className="mt-4 flex flex-col gap-3 md:mt-0 md:w-44 md:shrink-0">
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="design-title"
+                    className="flex items-center gap-1 text-xs font-medium text-muted-foreground"
+                  >
+                    <HiOutlinePencilSquare className="h-3.5 w-3.5" />
+                    نام طرح
+                  </label>
+                  <Input
+                    id="design-title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="مثلاً: مانتو تابستانه"
+                    maxLength={80}
+                    className="text-sm"
+                  />
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 md:flex md:flex-col md:gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSaveToDashboard}
+                    disabled={isSaving}
+                    className="flex flex-col items-center justify-center gap-1 rounded-xl border border-primary-200/70 bg-gradient-to-b from-white/90 to-primary-50/70 px-2 py-3 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-primary-400 disabled:opacity-45 md:flex-row md:justify-start md:gap-2 md:px-3 md:py-2.5"
+                  >
+                    <HiOutlineBookmark className="h-5 w-5 text-primary-600" />
+                    <div className="text-center md:text-left">
+                      <span className="text-[11px] font-bold leading-tight text-foreground md:text-xs">
+                        ذخیره
+                      </span>
+                      <span className="block text-[9px] leading-tight text-muted-foreground md:hidden">
+                        در داشبورد
+                      </span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={initiateGalleryPublish}
+                    disabled={isSaving}
+                    className="flex flex-col items-center justify-center gap-1 rounded-xl border border-sky-200/70 bg-gradient-to-b from-white/90 to-sky-50/70 px-2 py-3 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-sky-400 disabled:opacity-45 md:flex-row md:justify-start md:gap-2 md:px-3 md:py-2.5"
+                  >
+                    <HiOutlineGlobeAlt className="h-5 w-5 text-sky-600" />
+                    <div className="text-center md:text-left">
+                      <span className="text-[11px] font-bold leading-tight text-foreground md:text-xs">
+                        انتشار
+                      </span>
+                      <span className="block text-[9px] leading-tight text-muted-foreground md:hidden">
+                        در گالری
+                      </span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={initiateOrder}
+                    disabled={isSaving}
+                    className="flex flex-col items-center justify-center gap-1 rounded-xl border border-rose-200/70 bg-gradient-to-b from-white/90 to-rose-50/70 px-2 py-3 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-rose-400 disabled:opacity-45 md:flex-row md:justify-start md:gap-2 md:px-3 md:py-2.5"
+                  >
+                    <HiOutlineShoppingBag className="h-5 w-5 text-rose-600" />
+                    <div className="text-center md:text-left">
+                      <span className="text-[11px] font-bold leading-tight text-foreground md:text-xs">
+                        سفارش
+                      </span>
+                      <span className="block text-[9px] leading-tight text-muted-foreground md:hidden">
+                        دوخت
+                      </span>
+                    </div>
+                  </button>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRestart}
+                  className="mt-auto gap-1 text-xs md:mt-2"
+                >
+                  <HiOutlineArrowPath className="h-4 w-4" />
+                  طراحی جدید
+                </Button>
+              </div>
             )}
-            <Button
-              type="button"
-              variant={backError ? "default" : "glass"}
-              onClick={generateBackView}
-              disabled={isGeneratingBack}
-              className="mt-5 gap-2"
-            >
-              {isGeneratingBack ? (
-                <>
-                  <HiOutlineArrowPath className="size-4 animate-spin" />
-                  در حال تولید...
-                </>
-              ) : backError ? (
-                <>
-                  <HiOutlineArrowPath className="size-4" />
-                  تلاش مجدد
-                </>
-              ) : (
-                <>
-                  <HiOutlineSparkles className="size-4" />
-                  تولید نمای پشت
-                </>
-              )}
-            </Button>
           </div>
         )}
       </div>
-
-      {frontImage && (
-        <div className="space-y-5 rounded-[2rem] border border-white/80 bg-white/45 p-5 backdrop-blur-xl">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3 className="flex items-center gap-2 text-sm font-semibold">
-              <HiOutlineSparkles className="size-5 text-primary-500" />
-              مدیریت طرح
-            </h3>
-
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={restart}
-              className="gap-1.5"
-            >
-              <HiOutlineArrowPath className="size-4" />
-              طراحی جدید
-            </Button>
-          </div>
-
-          <div className="space-y-2">
-            <label
-              htmlFor="design-title"
-              className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground"
-            >
-              <HiOutlinePencilSquare className="size-4" />
-              نام طرح
-            </label>
-            <Input
-              id="design-title"
-              value={designTitle}
-              onChange={(e) => setDesignTitle(e.target.value)}
-              placeholder="مثلاً: مانتو تابستانه لینن"
-              maxLength={80}
-            />
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-3">
-            <button
-              type="button"
-              onClick={() => handleSave("dashboard")}
-              disabled={isSaving}
-              className="group flex flex-col items-center gap-2.5 rounded-2xl border border-primary-200/70 bg-gradient-to-b from-white/90 to-primary-50/70 px-4 py-5 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary-400 hover:shadow-soft-primary disabled:pointer-events-none disabled:opacity-45"
-            >
-              <span className="flex size-11 items-center justify-center rounded-full bg-primary-100 text-primary-600 transition-transform group-hover:scale-110">
-                <HiOutlineBookmark className="size-5" />
-              </span>
-              <span className="text-sm font-bold text-foreground">
-                ذخیره در داشبورد
-              </span>
-              <span className="text-[11px] leading-4 text-muted-foreground">
-                طرح فقط برای خودتان ذخیره می‌شود
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleSave("gallery")}
-              disabled={isSaving}
-              className="group flex flex-col items-center gap-2.5 rounded-2xl border border-sky-200/70 bg-gradient-to-b from-white/90 to-sky-50/70 px-4 py-5 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-sky-400 hover:shadow-soft-primary disabled:pointer-events-none disabled:opacity-45"
-            >
-              <span className="flex size-11 items-center justify-center rounded-full bg-sky-100 text-sky-600 transition-transform group-hover:scale-110">
-                <HiOutlineGlobeAlt className="size-5" />
-              </span>
-              <span className="text-sm font-bold text-foreground">
-                انتشار در گالری
-              </span>
-              <span className="text-[11px] leading-4 text-muted-foreground">
-                طرح شما برای عموم نمایش داده می‌شود
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleOrderClick}
-              disabled={isSaving}
-              className="group flex flex-col items-center gap-2.5 rounded-2xl border border-rose-200/70 bg-gradient-to-b from-white/90 to-rose-50/70 px-4 py-5 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-rose-400 hover:shadow-soft-primary disabled:pointer-events-none disabled:opacity-45"
-            >
-              <span className="flex size-11 items-center justify-center rounded-full bg-rose-100 text-rose-600 transition-transform group-hover:scale-110">
-                <HiOutlineShoppingBag className="size-5" />
-              </span>
-              <span className="text-sm font-bold text-foreground">
-                ثبت سفارش دوخت
-              </span>
-              <span className="text-[11px] leading-4 text-muted-foreground">
-                طرح شما توسط خیاط دوخته می‌شود
-              </span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {!frontImage && frontError && (
-        <div className="flex justify-center">
-          <Button type="button" variant="ghost" onClick={restart}>
-            شروع مجدد
-          </Button>
-        </div>
-      )}
 
       {showOrderModal && currentDesignId && (
         <OrderModal
           designId={currentDesignId}
           onClose={() => setShowOrderModal(false)}
+        />
+      )}
+
+      {profileDialogOpen && (
+        <ProfileIncompleteDialog
+          open={profileDialogOpen}
+          actionType={profileDialogAction!}
+          onCompleteProfile={handleProfileDialogComplete}
+          onContinue={handleProfileDialogContinue}
+          onClose={() => setProfileDialogOpen(false)}
         />
       )}
     </div>

@@ -8,16 +8,14 @@ import { STEP_IDS } from "../definitions/design-steps";
 import { useDesignPrompt } from "@/features/home/hooks/useDesignPrompt";
 import { useSketchStore } from "../store/sketchStore";
 import { useGenerationStore } from "../store/generationStore";
-import { useStepStore } from "../store/stepStore";
+import { useResultDraftStore } from "../store/resultDraftStore";
+import { useStepUrl } from "./useStepUrl";
 import { generateImageAction } from "@/server/actions/generate-image";
 
 export function useGenerateImage() {
   const generatedAiPrompt = useDesignPrompt();
-  const sketch = useSketchStore((s) => s.sketch);
+  const sketchFile = useSketchStore((s) => s.sketch.file);
   const {
-    generatedImages,
-    setGeneratedImages,
-    addGeneratedImage,
     setisGeneratingFront,
     setIsGeneratingBack,
     isGeneratingFront,
@@ -25,8 +23,12 @@ export function useGenerateImage() {
     setFrontError,
     setBackError,
   } = useGenerationStore();
-  const setCurrentStepId = useStepStore((s) => s.setCurrentStepId);
 
+  const setImages = useResultDraftStore((s) => s.setImages);
+  const addImage = useResultDraftStore((s) => s.addImage);
+  const images = useResultDraftStore((s) => s.images);
+
+  const [, setCurrentStepId] = useStepUrl();
   const { showLoading, hideLoading, showSnackbar } = useGlobalStore();
 
   const generateFront = async () => {
@@ -39,8 +41,8 @@ export function useGenerateImage() {
 
     try {
       let sketchBase64: string | undefined;
-      if (sketch.file) {
-        sketchBase64 = await fileToBase64(sketch.file);
+      if (sketchFile) {
+        sketchBase64 = await fileToBase64(sketchFile);
       }
       const result = await generateImageAction(generatedAiPrompt, sketchBase64);
 
@@ -58,7 +60,7 @@ export function useGenerateImage() {
         src: result.imageUrl,
       };
 
-      setGeneratedImages([frontImage]);
+      setImages([frontImage]);
       setCurrentStepId(STEP_IDS.RESULT);
     } catch (error) {
       console.error(error);
@@ -75,7 +77,7 @@ export function useGenerateImage() {
   };
 
   const generateBackView = async () => {
-    if (generatedImages.length === 0) return;
+    if (images.length === 0) return;
     if (useGenerationStore.getState().isGeneratingBack) return;
 
     showLoading("در حال تولید نمای پشت...");
@@ -84,7 +86,7 @@ export function useGenerateImage() {
 
     try {
       const backPrompt = buildBackViewPrompt(generatedAiPrompt);
-      const frontImageSrc = generatedImages[0].src;
+      const frontImageSrc = images[0].src;
 
       const result = await generateImageAction(backPrompt, frontImageSrc);
 
@@ -101,7 +103,7 @@ export function useGenerateImage() {
         src: result.imageUrl,
       };
 
-      addGeneratedImage(backImage);
+      addImage(backImage);
     } catch (error) {
       console.error(error);
       setBackError(true);

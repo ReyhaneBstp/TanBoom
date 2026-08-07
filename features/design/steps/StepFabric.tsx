@@ -13,16 +13,18 @@ import type { SolidFabric } from "@/features/design/types/design";
 import { cn } from "@/shared/utils/mergeClasses";
 import { Button } from "@/shared/components/Button";
 import { Input } from "@/shared/components/Input";
-import { useFabricStore } from "../store/fabricStore";
+import { useStepFabricUrl } from "../hooks/useStepFabricUrl";
 
 export function StepFabric() {
-  const customFabrics = useFabricStore((s) => s.customFabrics) as SolidFabric[];
-  const selectedFabricIds = useFabricStore((s) => s.selectedFabricIds);
-  const fabricAssignments = useFabricStore((s) => s.fabricAssignments);
-  const setFabricAssignment = useFabricStore((s) => s.setFabricAssignment);
-  const addCustomFabric = useFabricStore((s) => s.addCustomFabric);
-  const removeCustomFabric = useFabricStore((s) => s.removeCustomFabric);
-  const toggleFabric = useFabricStore((s) => s.toggleFabric);
+  const {
+    customFabrics,
+    selectedFabricIds,
+    fabricAssignments,
+    setFabricAssignment,
+    addCustomFabric,
+    removeCustomFabric,
+    toggleFabric,
+  } = useStepFabricUrl();
 
   const selectedFabricsData = selectedFabricIds
     .map((id) => customFabrics.find((f) => f.id === id))
@@ -42,10 +44,7 @@ export function StepFabric() {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(e.target as Node)
-      ) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
       }
     };
@@ -92,13 +91,9 @@ export function StepFabric() {
 
   return (
     <div className="flex flex-col gap-6 min-h-[22rem]">
-
       <div className="flex items-end gap-3 flex-wrap">
-
         <div className="flex flex-col items-center gap-1.5">
-          <span className="text-[10px] font-medium text-muted-foreground">
-            رنگ
-          </span>
+          <span className="text-[10px] font-medium text-muted-foreground">رنگ</span>
           <button
             type="button"
             onClick={() => colorInputRef.current?.click()}
@@ -120,9 +115,7 @@ export function StepFabric() {
         <div className="h-10 w-px bg-white/50 self-center hidden sm:block" />
 
         <div className="flex flex-col gap-1.5 relative flex-1 min-w-[160px]" ref={wrapperRef}>
-          <label className="text-xs font-medium text-foreground/80">
-            جنس پارچه
-          </label>
+          <label className="text-xs font-medium text-foreground/80">جنس پارچه</label>
           <div className="relative">
             <Input
               type="text"
@@ -190,9 +183,7 @@ export function StepFabric() {
             <LuPalette className="size-8 text-primary-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-foreground/70">
-              هنوز پارچه‌ای اضافه نشده
-            </p>
+            <p className="text-sm font-medium text-foreground/70">هنوز پارچه‌ای اضافه نشده</p>
             <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">
               یک رنگ و جنس انتخاب کنید، سپس روی دکمه «افزودن پارچه» بزنید.
             </p>
@@ -203,12 +194,19 @@ export function StepFabric() {
           {customFabrics.map((fabric) => {
             const selected = selectedFabricIds.includes(fabric.id);
             return (
-              <button
+              <div
                 key={fabric.id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 onClick={() => toggleFabric(fabric.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    toggleFabric(fabric.id);
+                  }
+                }}
                 className={cn(
-                  "group relative flex flex-col items-center gap-2.5 rounded-2xl border border-white/70 bg-white/40 px-4 py-5 text-center backdrop-blur-xl transition-all duration-200",
+                  "group relative flex flex-col items-center gap-2.5 rounded-2xl border border-white/70 bg-white/40 px-4 py-5 text-center backdrop-blur-xl transition-all duration-200 cursor-pointer",
                   "hover:-translate-y-1 hover:bg-white/65 hover:shadow-lg hover:shadow-primary-200/15",
                   selected &&
                     "border-primary-300/80 bg-primary-50/60 shadow-md shadow-primary-200/20 ring-2 ring-primary-300/40"
@@ -221,7 +219,7 @@ export function StepFabric() {
                     removeCustomFabric(fabric.id);
                   }}
                   className={cn(
-                    "absolute top-2 right-2 flex size-5 items-center justify-center rounded-full bg-white/80 text-muted-foreground shadow-sm transition-all duration-200",
+                    "absolute top-2 right-2 flex size-5 items-center justify-center rounded-full bg-white/80 text-muted-foreground shadow-sm transition-all duration-200 z-10",
                     "opacity-0 group-hover:opacity-100 hover:bg-red-100 hover:text-red-500 hover:scale-110"
                   )}
                   title="حذف پارچه"
@@ -251,7 +249,7 @@ export function StepFabric() {
                     {fabric.hex}
                   </span>
                 </div>
-              </button>
+              </div>
             );
           })}
         </div>
@@ -259,12 +257,9 @@ export function StepFabric() {
 
       {selectedFabricsData.length > 0 && (
         <div className="rounded-2xl border border-white/70 bg-white/45 p-3 backdrop-blur-xl">
-          <h3 className="text-sm font-medium text-foreground/80">
-            محل استفاده هر پارچه
-          </h3>
+          <h3 className="text-sm font-medium text-foreground/80">محل استفاده هر پارچه</h3>
           <p className="mt-0.5 mb-3 text-xs text-muted-foreground">
-            برای هر پارچه مشخص کن که در کدام قسمت لباس استفاده می‌شود (تنه،
-            آستین، یقه و…).
+            برای هر پارچه مشخص کن که در کدام قسمت لباس استفاده می‌شود (تنه، آستین، یقه و…).
           </p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {selectedFabricsData.map((fabric) => (
@@ -285,9 +280,7 @@ export function StepFabric() {
                   <Input
                     type="text"
                     value={fabricAssignments[fabric.id] || ""}
-                    onChange={(e) =>
-                      setFabricAssignment(fabric.id, e.target.value)
-                    }
+                    onChange={(e) => setFabricAssignment(fabric.id, e.target.value)}
                     placeholder="مثلاً: تنه"
                     className="mt-1 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
                   />
@@ -297,7 +290,6 @@ export function StepFabric() {
           </div>
         </div>
       )}
-
     </div>
   );
 }
