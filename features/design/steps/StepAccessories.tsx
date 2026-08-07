@@ -3,7 +3,7 @@
 import { HiOutlineCheck, HiOutlineSparkles } from "react-icons/hi2";
 import { ACCESSORIES } from "../definitions/design-options";
 import { cn } from "@/shared/utils/mergeClasses";
-import { Input } from "@/shared/components/Input";
+import { DebouncedInput } from "@/shared/components/DebouncedInput";
 import { useStepAccessoryUrl } from "../hooks/useStepAccessoryUrl";
 
 export function StepAccessories() {
@@ -73,10 +73,10 @@ export function StepAccessories() {
                   <span className="block truncate text-xs font-semibold text-foreground">
                     {accessory!.label}
                   </span>
-                  <Input
+                  <DebouncedInput
                     type="text"
                     value={accessoryPlacements[accessory!.id] || ""}
-                    onChange={(e) => setAccessoryPlacement(accessory!.id, e.target.value)}
+                    onDebouncedChange={(v) => setAccessoryPlacement(accessory!.id, v)}
                     placeholder="مثلاً: یقه و حاشیه آستین"
                     className="mt-1 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
                   />

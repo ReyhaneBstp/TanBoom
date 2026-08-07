@@ -3,7 +3,7 @@
 
 import type { DragEvent } from "react";
 import { HiOutlineArrowUpTray, HiOutlinePhoto } from "react-icons/hi2";
-import { Textarea } from "@/shared/components/Textarea";
+import { DebouncedTextarea } from "@/shared/components/DebouncedTextarea";
 import { cn } from "@/shared/utils/mergeClasses";
 import { useSketchStore } from "../store/sketchStore";
 import { useStepSketchUrl } from "../hooks/useStepSketchUrl";
@@ -72,9 +72,9 @@ export function StepSketch() {
               لازمه بدونیم رو بنویس.
             </p>
           </div>
-          <Textarea
+          <DebouncedTextarea
             value={description}
-            onChange={(event) => updateDescription(event.target.value)}
+            onDebouncedChange={updateDescription}
             placeholder="مثلاً: یقه کار شده با تور، آستین آزاد…"
             className="min-h-44 flex-1"
           />

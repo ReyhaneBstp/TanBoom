@@ -13,6 +13,7 @@ import type { SolidFabric } from "@/features/design/types/design";
 import { cn } from "@/shared/utils/mergeClasses";
 import { Button } from "@/shared/components/Button";
 import { Input } from "@/shared/components/Input";
+import { DebouncedInput } from "@/shared/components/DebouncedInput";
 import { useStepFabricUrl } from "../hooks/useStepFabricUrl";
 
 export function StepFabric() {
@@ -277,10 +278,10 @@ export function StepFabric() {
                   <span className="block truncate text-xs font-semibold text-foreground">
                     {fabric.label}
                   </span>
-                  <Input
+                  <DebouncedInput
                     type="text"
                     value={fabricAssignments[fabric.id] || ""}
-                    onChange={(e) => setFabricAssignment(fabric.id, e.target.value)}
+                    onDebouncedChange={(v) => setFabricAssignment(fabric.id, v)}
                     placeholder="مثلاً: تنه"
                     className="mt-1 px-2 py-1 text-xs placeholder:text-muted-foreground/60"
                   />
